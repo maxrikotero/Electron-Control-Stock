@@ -111,28 +111,36 @@ export default merge.smart(baseConfig, {
           },
         ],
       },
-      // SASS support - compile all other .scss files and pipe it to style.css
       {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
+        test: /\.scss$/,
         use: [
-          {
-            loader: 'typings-for-css-modules-loader',
-          },
-          {
-            loader: 'typings-for-css-modules-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'sass-loader',
-          },
+          'style-loader', // creates style nodes from JS strings
+          'css-loader', // translates CSS into CommonJS
+          'sass-loader', // compiles Sass to CSS, using Node Sass by default
         ],
       },
+      // SASS support - compile all other .scss files and pipe it to style.css
+      // {
+      //   test: /^((?!\.global).)*\.(scss|sass)$/,
+      //   use: [
+      //     {
+      //       loader: 'typings-for-css-modules-loader',
+      //     },
+      //     {
+      //       loader: 'typings-for-css-modules-loader',
+      //       options: {
+      //         modules: {
+      //           localIdentName: '[name]__[local]__[hash:base64:5]',
+      //         },
+      //         sourceMap: true,
+      //         importLoaders: 1,
+      //       },
+      //     },
+      //     {
+      //       loader: 'sass-loader',
+      //     },
+      //   ],
+      // },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

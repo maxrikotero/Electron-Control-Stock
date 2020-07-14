@@ -27,6 +27,7 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
+
 # OSX
 .DS_Store
 
@@ -38,6 +39,8 @@ app/renderer.prod.js
 app/renderer.prod.js.map
 app/style.css
 app/style.css.map
+app/package-lock.json
+package-lock.json
 dist
 dll
 main.js
