@@ -62,63 +62,17 @@ export default merge.smart(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.global\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
+        test: /\.(scss|less|css)$/,
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
       },
-      {
-        test: /^((?!\.global).)*\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-        ],
-      },
-      // SASS support - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'sass-loader',
-          },
-        ],
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader', // creates style nodes from JS strings
-          'css-loader', // translates CSS into CommonJS
-          'sass-loader', // compiles Sass to CSS, using Node Sass by default
-        ],
-      },
+      // {
+      //   test: /\.(scss)$/,
+      //   use: [
+      //     'style-loader', // creates style nodes from JS strings
+      //     'css-loader', // translates CSS into CommonJS
+      //     'sass-loader', // compiles Sass to CSS, using Node Sass by default
+      //   ],
+      // },
       // SASS support - compile all other .scss files and pipe it to style.css
       // {
       //   test: /^((?!\.global).)*\.(scss|sass)$/,
