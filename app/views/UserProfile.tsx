@@ -1,21 +1,4 @@
-/*!
-
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Row,
@@ -26,93 +9,163 @@ import {
 } from 'react-bootstrap';
 
 import { Card } from '../components/Card/Card';
-import { FormInputs } from '../components/FormInputs/FormInputs';
-import { UserCard } from '../components/UserCard/UserCard';
 import Button from '../components/CustomButton/CustomButton';
 
-import avatar from '../assets/img/faces/face-3.jpg';
+const UserProfile = () => {
+  const [state, setState] = useState({
+    dni: null,
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    password: '',
+    phone: null,
+  });
 
-class UserProfile extends Component {
-  render() {
-    return (
-      <div className="content">
-        <Grid fluid>
-          <Row>
-            <Col md={12}>
-              <Card
-                title="Editar Usuario"
-                content={
-                  <form>
-                    <FormInputs
-                      ncols={['col-md-4', 'col-md-4', 'col-md-4']}
-                      properties={[
-                        {
-                          label: 'DNI',
-                          type: 'text',
-                          bsClass: 'form-control',
-                          placeholder: 'DNI',
-                        },
-                        {
-                          label: 'Nombre',
-                          type: 'text',
-                          bsClass: 'form-control',
-                          placeholder: 'Nombre',
-                        },
-                        {
-                          label: 'Apellido',
-                          type: 'text',
-                          bsClass: 'form-control',
-                          placeholder: 'Apellido',
-                        },
-                      ]}
-                    />
-                    <FormInputs
-                      ncols={['col-md-6', 'col-md-6']}
-                      properties={[
-                        {
-                          label: 'Usuario',
-                          type: 'text',
-                          bsClass: 'form-control',
-                          placeholder: 'Usuario',
-                        },
-                        {
-                          label: 'Email',
-                          type: 'email',
-                          bsClass: 'form-control',
-                          placeholder: 'Email',
-                        },
-                      ]}
-                    />
-                    <FormInputs
-                      ncols={['col-md-6', 'col-md-6']}
-                      properties={[
-                        {
-                          label: 'Contraseña',
-                          type: 'password',
-                          bsClass: 'form-control',
-                          placeholder: 'Contraseña',
-                        },
-                        {
-                          label: 'Celular',
-                          type: 'number',
-                          bsClass: 'form-control',
-                          placeholder: 'Celular',
-                        },
-                      ]}
-                    />
-                    <Button bsStyle="info" pullRight fill type="submit">
-                      Guardar
-                    </Button>
-                    <div className="clearfix" />
-                  </form>
-                }
-              />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
-    );
-  }
-}
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = () => {
+    fetch('http://192.168.0.13:3000/api/users/1')
+      .then((res) => res.json())
+      .then((data) => {
+        setState(data);
+      })
+      .catch(() => console.log(' Blocked by browser?'));
+  };
+
+  const { dni, firstName, lastName, userName, email, password, phone } = state;
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value }: { name: string; value: string } = event.target;
+
+    setState((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    fetchTasks();
+  };
+
+  return (
+    <div className="content">
+      <Grid fluid>
+        <Row>
+          <Col md={12}>
+            <Card
+              title="Editar Usuario"
+              content={
+                <form onSubmit={handleSubmit}>
+                  <Row>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="idControl">
+                        <ControlLabel>DNI</ControlLabel>
+                        <FormControl
+                          type="number"
+                          name="dni"
+                          onChange={handleChange}
+                          placeHolder="DNI"
+                          bsClass="form-control"
+                          value={dni}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="firstNameControl">
+                        <ControlLabel>Nombre</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="firstName"
+                          onChange={handleChange}
+                          placeHolder="Nombre"
+                          bsClass="form-control"
+                          value={firstName}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="lastNameControl">
+                        <ControlLabel>Apellido</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="lastName"
+                          onChange={handleChange}
+                          placeHolder="Nombre"
+                          bsClass="form-control"
+                          value={lastName}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="userControl">
+                        <ControlLabel>Usuario</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="userName"
+                          onChange={handleChange}
+                          placeHolder="Usuario"
+                          bsClass="form-control"
+                          value={userName}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="emailControl">
+                        <ControlLabel>Email</ControlLabel>
+                        <FormControl
+                          type="email"
+                          name="email"
+                          onChange={handleChange}
+                          placeHolder="Email"
+                          bsClass="form-control"
+                          value={email}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="passwordControl">
+                        <ControlLabel>Contraseña</ControlLabel>
+                        <FormControl
+                          type="password"
+                          name="password"
+                          onChange={handleChange}
+                          placeHolder="Contraseña"
+                          bsClass="form-control"
+                          value={password}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="phoneControl">
+                        <ControlLabel>Email</ControlLabel>
+                        <FormControl
+                          type="Celular"
+                          name="number"
+                          onChange={handleChange}
+                          placeHolder="Celular"
+                          bsClass="form-control"
+                          value={phone}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Button bsStyle="info" pullRight fill type="submit">
+                    Guardar
+                  </Button>
+                  <div className="clearfix" />
+                </form>
+              }
+            />
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+  );
+};
 
 export default UserProfile;
