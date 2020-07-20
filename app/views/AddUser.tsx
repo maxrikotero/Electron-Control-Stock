@@ -1,5 +1,5 @@
 /*eslint-disable */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Grid,
   Row,
@@ -8,11 +8,16 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
+import { Redirect, useRouteMatch } from 'react-router-dom';
+import NotificationSystem from 'react-notification-system';
+import { style } from '../variables/Variables';
 
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
-const UserProfile = () => {
+const AddUser = ({ notification }) => {
+  const { path } = useRouteMatch();
+  const [redirect, setRedirect] = useState(false);
   const [state, setState] = useState({
     dni: null,
     firstName: '',
@@ -23,21 +28,9 @@ const UserProfile = () => {
     phone: null,
   });
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const notificationSystem = useRef();
 
-  const fetchUser = () => {
-    fetch('http://192.168.0.13:3000/api/users/1')
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      })
-      .catch(() => console.log(' Blocked by browser?'));
-  };
-
-  const handleAdd = (event) => {
-    debugger;
+  const handleSubmit = (event) => {
     event.preventDefault();
     fetch('http://192.168.0.13:3000/api/users', {
       method: 'POST',
@@ -48,8 +41,9 @@ const UserProfile = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        notification('tc', 'Usuario Agregado', 1);
+        setRedirect((prevState) => !prevState);
       })
       .catch((err) => console.error(err));
   };
@@ -62,20 +56,17 @@ const UserProfile = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    fetchTasks();
-  };
-
   return (
     <div className="content">
+      {redirect && <Redirect from="/" to="/admin/principal" />}
+
       <Grid fluid>
         <Row>
           <Col md={12}>
             <Card
-              title="Editar Usuario"
+              title="Agregar Usuario"
               content={
-                <form onSubmit={handleAdd}>
+                <form onSubmit={handleSubmit}>
                   <Row>
                     <Col xs={12} md={4}>
                       <FormGroup controlId="idControl">
@@ -183,8 +174,9 @@ const UserProfile = () => {
           </Col>
         </Row>
       </Grid>
+      <NotificationSystem ref={notificationSystem} style={style} />
     </div>
   );
 };
 
-export default UserProfile;
+export default AddUser;

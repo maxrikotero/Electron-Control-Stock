@@ -1,5 +1,5 @@
 /*eslint-disable */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Grid,
   Row,
@@ -8,38 +8,26 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import { style } from '../variables/Variables';
 
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
-const UserProfile = () => {
+const AddProvider = ({ notification }) => {
+  const [redirect, setRedirect] = useState(false);
   const [state, setState] = useState({
+    socialId: null,
     dni: null,
-    firstName: '',
-    lastName: '',
-    userName: '',
+    brand: '',
+    phone: '',
+    mobile: '',
     email: '',
-    password: '',
-    phone: null,
   });
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const fetchUser = () => {
-    fetch('http://192.168.0.13:3000/api/users/1')
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      })
-      .catch(() => console.log(' Blocked by browser?'));
-  };
-
-  const handleAdd = (event) => {
-    debugger;
+  const handleSubmit = (event) => {
     event.preventDefault();
-    fetch('http://192.168.0.13:3000/api/users', {
+    fetch('http://192.168.0.13:3000/api/providers', {
       method: 'POST',
       body: JSON.stringify(state),
       headers: {
@@ -48,13 +36,14 @@ const UserProfile = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        notification('tc', 'Proveedor Agregado', 1);
+        setRedirect((prevState) => !prevState);
       })
       .catch((err) => console.error(err));
   };
 
-  const { dni, firstName, lastName, userName, email, password, phone } = state;
+  const { socialId, dni, brand, phone, mobile, email } = state;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value }: { name: string; value: string } = event.target;
@@ -62,23 +51,32 @@ const UserProfile = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    fetchTasks();
-  };
-
   return (
     <div className="content">
+      {redirect && <Redirect from="/" to="/admin/principal" />}
       <Grid fluid>
         <Row>
           <Col md={12}>
             <Card
-              title="Editar Usuario"
+              title="Agregar Proveedor"
               content={
-                <form onSubmit={handleAdd}>
+                <form onSubmit={handleSubmit}>
                   <Row>
                     <Col xs={12} md={4}>
                       <FormGroup controlId="idControl">
+                        <ControlLabel>Razón Social</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="socialId"
+                          onChange={handleChange}
+                          placeHolder="Razón Social"
+                          bsClass="form-control"
+                          value={socialId}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="firstNameControl">
                         <ControlLabel>DNI</ControlLabel>
                         <FormControl
                           type="number"
@@ -91,28 +89,15 @@ const UserProfile = () => {
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="firstNameControl">
-                        <ControlLabel>Nombre</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="firstName"
-                          onChange={handleChange}
-                          placeHolder="Nombre"
-                          bsClass="form-control"
-                          value={firstName}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={4}>
                       <FormGroup controlId="lastNameControl">
-                        <ControlLabel>Apellido</ControlLabel>
+                        <ControlLabel>Marca</ControlLabel>
                         <FormControl
                           type="text"
-                          name="lastName"
+                          name="brand"
                           onChange={handleChange}
-                          placeHolder="Nombre"
+                          placeHolder="Marca"
                           bsClass="form-control"
-                          value={lastName}
+                          value={brand}
                         />
                       </FormGroup>
                     </Col>
@@ -120,19 +105,34 @@ const UserProfile = () => {
                   <Row>
                     <Col xs={12} md={6}>
                       <FormGroup controlId="userControl">
-                        <ControlLabel>Usuario</ControlLabel>
+                        <ControlLabel>Fijo</ControlLabel>
                         <FormControl
-                          type="text"
-                          name="userName"
+                          type="number"
+                          name="phone"
                           onChange={handleChange}
-                          placeHolder="Usuario"
+                          placeHolder="Fijo"
                           bsClass="form-control"
-                          value={userName}
+                          value={phone}
                         />
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={6}>
                       <FormGroup controlId="emailControl">
+                        <ControlLabel>Celular</ControlLabel>
+                        <FormControl
+                          type="number"
+                          name="mobile"
+                          onChange={handleChange}
+                          placeHolder="Celular"
+                          bsClass="form-control"
+                          value={mobile}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="phoneControl">
                         <ControlLabel>Email</ControlLabel>
                         <FormControl
                           type="email"
@@ -141,34 +141,6 @@ const UserProfile = () => {
                           placeHolder="Email"
                           bsClass="form-control"
                           value={email}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="passwordControl">
-                        <ControlLabel>Contraseña</ControlLabel>
-                        <FormControl
-                          type="password"
-                          name="password"
-                          onChange={handleChange}
-                          placeHolder="Contraseña"
-                          bsClass="form-control"
-                          value={password}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="phoneControl">
-                        <ControlLabel>Email</ControlLabel>
-                        <FormControl
-                          type="Celular"
-                          name="number"
-                          onChange={handleChange}
-                          placeHolder="Celular"
-                          bsClass="form-control"
-                          value={phone}
                         />
                       </FormGroup>
                     </Col>
@@ -187,4 +159,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default AddProvider;

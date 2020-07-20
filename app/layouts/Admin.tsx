@@ -15,14 +15,18 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+/*eslint-disable */
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
 
 import AdminNavbar from '../components/Navbars/AdminNavbar';
 import Footer from '../components/Footer/Footer';
 import Sidebar from '../components/Sidebar/Sidebar';
 import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
+import AddUser from '../views/AddUser';
+import AddProduct from '../views/AddProduct';
+import AddProvider from '../views/AddProvider';
 
 import { style } from '../variables/Variables';
 
@@ -41,8 +45,7 @@ class Admin extends Component {
       fixedClasses: 'dropdown show-dropdown open',
     };
   }
-  handleNotificationClick = (position) => {
-    var color = Math.floor(Math.random() * 4 + 1);
+  handleNotificationClick = (position, message, color) => {
     var level;
     switch (color) {
       case 1:
@@ -62,12 +65,7 @@ class Admin extends Component {
     }
     this.state._notificationSystem.addNotification({
       title: <span data-notify="icon" className="pe-7s-gift" />,
-      message: (
-        <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
-        </div>
-      ),
+      message: <div>{message}</div>,
       level: level,
       position: position,
       autoDismiss: 15,
@@ -169,6 +167,7 @@ class Admin extends Component {
       this.refs.mainPanel.scrollTop = 0;
     }
   }
+
   render() {
     return (
       <div className="wrapper">
@@ -180,10 +179,36 @@ class Admin extends Component {
           color={this.state.color}
           hasImage={this.state.hasImage}
         />
-        <div id="main-panel" className="main-panel" ref="mainPanel">
+        <div
+          id="main-panel"
+          className="main-panel"
+          ref="mainPanel"
+          style={{ height: '100%' }}
+        >
           <Switch>{this.getRoutes(routes)}</Switch>
-          <Footer />
-          <FixedPlugin
+          <Route
+            render={() => (
+              <AddUser notification={this.handleNotificationClick} />
+            )}
+            path="/user"
+            layout="/admin"
+          />
+          <Route
+            render={() => (
+              <AddProduct notification={this.handleNotificationClick} />
+            )}
+            path="/product"
+            layout="/admin"
+          />
+          <Route
+            render={() => (
+              <AddProvider notification={this.handleNotificationClick} />
+            )}
+            path="/provider"
+            layout="/admin"
+          />
+          {/* <Footer /> */}
+          {/* <FixedPlugin
             handleImageClick={this.handleImageClick}
             handleColorClick={this.handleColorClick}
             handleHasImage={this.handleHasImage}
@@ -192,7 +217,7 @@ class Admin extends Component {
             mini={this.state['mini']}
             handleFixedClick={this.handleFixedClick}
             fixedClasses={this.state.fixedClasses}
-          />
+          /> */}
         </div>
       </div>
     );
