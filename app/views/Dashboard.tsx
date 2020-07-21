@@ -5,6 +5,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import { Card } from '../components/Card/Card';
 import { StatsCard } from '../components/StatsCard/StatsCard';
+import { NavLink } from 'react-router-dom';
 import { Tasks } from '../components/Tasks/Tasks';
 // import {
 //   dataPie,
@@ -35,30 +36,78 @@ class Dashboard extends Component {
       <div className="content">
         <Grid fluid>
           <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                statsText="Agregar Usuario"
-                to="/user"
-              />
+            <Col lg={4} sm={4}>
+              <div className="wrimagecard wrimagecard-topimage">
+                <NavLink
+                  to="/user"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <div
+                    className="wrimagecard-topimage_header"
+                    style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
+                  >
+                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                      {' '}
+                    </i>
+                  </div>
+                  <div className="wrimagecard-topimage_title">
+                    <h6>
+                      Agregar Usuario
+                      <div className="pull-right badge" id="WrGridSystem"></div>
+                    </h6>
+                  </div>
+                </NavLink>
+              </div>
             </Col>
-          </Row>
-          <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                statsText="Agregar Producto"
-                to="/product"
-              />
+
+            <Col lg={4} sm={4}>
+              <div className="wrimagecard wrimagecard-topimage">
+                <NavLink
+                  to="/product"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <div
+                    className="wrimagecard-topimage_header"
+                    style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
+                  >
+                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                      {' '}
+                    </i>
+                  </div>
+                  <div className="wrimagecard-topimage_title">
+                    <h6>
+                      Agregar Producto
+                      <div className="pull-right badge" id="WrGridSystem"></div>
+                    </h6>
+                  </div>
+                </NavLink>
+              </div>
             </Col>
-          </Row>
-          <Row>
-            <Col lg={3} sm={6}>
-              <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                statsText="Agregar Proveedor"
-                to="/provider"
-              />
+            <Col lg={4} sm={4}>
+              <div className="wrimagecard wrimagecard-topimage">
+                <NavLink
+                  to="/provider"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <div
+                    className="wrimagecard-topimage_header"
+                    style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
+                  >
+                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                      {' '}
+                    </i>
+                  </div>
+                  <div className="wrimagecard-topimage_title">
+                    <h6>
+                      Agregar Proveedor
+                      <div className="pull-right badge" id="WrGridSystem"></div>
+                    </h6>
+                  </div>
+                </NavLink>
+              </div>
             </Col>
           </Row>
         </Grid>

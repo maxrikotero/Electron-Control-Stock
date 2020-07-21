@@ -38,22 +38,7 @@ class Sidebar extends Component {
         {this.props.hasImage ? (
           <div className="sidebar-background" style={sidebarBackground} />
         ) : null}
-        <div className="logo">
-          <a
-            href="https://www.creative-tim.com?ref=lbd-sidebar"
-            className="simple-text logo-mini"
-          >
-            <div className="logo-img">
-              <img src={logo} alt="logo_image" />
-            </div>
-          </a>
-          <a
-            href="https://www.creative-tim.com?ref=lbd-sidebar"
-            className="simple-text logo-normal"
-          >
-            Creative Tim
-          </a>
-        </div>
+
         <div className="sidebar-wrapper">
           <ul className="nav">
             {this.state.width <= 991 ? <AdminNavbarLinks /> : null}
