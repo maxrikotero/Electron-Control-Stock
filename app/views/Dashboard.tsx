@@ -47,7 +47,7 @@ class Dashboard extends Component {
                     className="wrimagecard-topimage_header"
                     style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
                   >
-                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                    <i className="fa fa-user" style={{ color: '#3369e8' }}>
                       {' '}
                     </i>
                   </div>
@@ -72,7 +72,10 @@ class Dashboard extends Component {
                     className="wrimagecard-topimage_header"
                     style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
                   >
-                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                    <i
+                      className="fa fa-product-hunt"
+                      style={{ color: '#3369e8' }}
+                    >
                       {' '}
                     </i>
                   </div>
@@ -96,7 +99,7 @@ class Dashboard extends Component {
                     className="wrimagecard-topimage_header"
                     style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
                   >
-                    <i className="fa fa-table" style={{ color: '#3369e8' }}>
+                    <i className="fa fa-industry" style={{ color: '#3369e8' }}>
                       {' '}
                     </i>
                   </div>
