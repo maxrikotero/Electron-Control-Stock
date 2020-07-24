@@ -17,14 +17,30 @@
 */
 import Dashboard from '../views/Dashboard';
 import UserProfile from '../views/UserProfile';
-import TableList from '../views/TableList';
+import ProductList from '../views/ProductList';
 import Typography from '../views/Typography';
 import Icons from '../views/Icons';
 import Maps from '../views/Maps';
 import Notifications from '../views/Notifications';
 import Upgrade from '../views/Upgrade';
+import AddUser from '../views/AddUser';
+import ProvidertList from '../views/ProvidertList';
 
 const dashboardRoutes = [
+  // {
+  //   path: '/user/add',
+  //   name: 'Agregar Usuario',
+  //   // icon: 'pe-7s-graph',
+  //   component: AddUser,
+  //   layout: '/admin',
+  // },
+  {
+    path: '/principal',
+    name: 'Principal',
+    // icon: 'pe-7s-graph',
+    component: Dashboard,
+    layout: '/admin',
+  },
   {
     path: '/perfil',
     name: 'Perfil',
@@ -36,7 +52,14 @@ const dashboardRoutes = [
     path: '/inventario',
     name: 'Inventario General',
     // icon: 'pe-7s-user',
-    component: TableList,
+    component: ProductList,
+    layout: '/admin',
+  },
+  {
+    path: '/providers',
+    name: 'Proveedores',
+    // icon: 'pe-7s-user',
+    component: ProvidertList,
     layout: '/admin',
   },
   // {
