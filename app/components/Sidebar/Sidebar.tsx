@@ -42,6 +42,7 @@ class Sidebar extends Component {
         <div className="sidebar-wrapper">
           <ul className="nav">
             {this.state.width <= 991 ? <AdminNavbarLinks /> : null}
+
             {this.props.routes.map((prop, key) => {
               if (!prop.redirect)
                 return (
@@ -65,6 +66,15 @@ class Sidebar extends Component {
                 );
               return null;
             })}
+            <li>
+              <NavLink
+                to="/admin/logout"
+                className="nav-link"
+                activeClassName="active"
+              >
+                <p>Log out</p>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>

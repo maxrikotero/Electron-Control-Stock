@@ -15,9 +15,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+
 import Dashboard from '../views/Dashboard';
 import UserProfile from '../views/UserProfile';
 import ProductList from '../views/ProductList';
+import Sales from '../views/SalesList';
+import AddSale from '../views/AddSales';
 import Typography from '../views/Typography';
 import Icons from '../views/Icons';
 import Maps from '../views/Maps';
@@ -27,13 +30,14 @@ import AddUser from '../views/AddUser';
 import ProvidertList from '../views/ProvidertList';
 
 const dashboardRoutes = [
-  // {
-  //   path: '/user/add',
-  //   name: 'Agregar Usuario',
-  //   // icon: 'pe-7s-graph',
-  //   component: AddUser,
-  //   layout: '/admin',
-  // },
+  {
+    path: '/user',
+    name: 'Agregar Usuario',
+    // icon: 'pe-7s-graph',
+    component: AddUser,
+    layout: '/admin',
+    redirect: true,
+  },
   {
     path: '/principal',
     name: 'Principal',
@@ -53,6 +57,13 @@ const dashboardRoutes = [
     name: 'Inventario General',
     // icon: 'pe-7s-user',
     component: ProductList,
+    layout: '/admin',
+  },
+  {
+    path: '/sales',
+    name: 'Ventas',
+    // icon: 'pe-7s-user',
+    component: Sales,
     layout: '/admin',
   },
   {

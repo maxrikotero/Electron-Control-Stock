@@ -11,8 +11,10 @@ import {
 
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
+import { Redirect } from 'react-router';
 
 const UserProfile = () => {
+  const [goRedirect, setGoRedirect] = useState(false);
   const [state, setState] = useState({
     dni: null,
     firstName: '',
@@ -37,21 +39,22 @@ const UserProfile = () => {
   };
 
   const handleAdd = (event) => {
-    debugger;
-    event.preventDefault();
-    fetch('http://192.168.0.13:3000/api/users', {
-      method: 'POST',
-      body: JSON.stringify(state),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => console.error(err));
+    setGoRedirect(true);
+    // debugger;
+    // event.preventDefault();
+    // fetch('http://192.168.0.13:3000/api/users', {
+    //   method: 'POST',
+    //   body: JSON.stringify(state),
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    //   .catch((err) => console.error(err));
   };
 
   const { dni, firstName, lastName, userName, email, password, phone } = state;
@@ -69,6 +72,7 @@ const UserProfile = () => {
 
   return (
     <div className="content">
+      {goRedirect && <Redirect from="/" to="/admin/principal" />}
       <Grid fluid>
         <Row>
           <Col md={12}>

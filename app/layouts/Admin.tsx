@@ -17,7 +17,7 @@
 */
 /*eslint-disable */
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, HashRouter } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
 
 import AdminNavbar from '../components/Navbars/AdminNavbar';
@@ -27,6 +27,8 @@ import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
 import AddUser from '../views/AddUser';
 import AddProduct from '../views/AddProduct';
 import AddProvider from '../views/AddProvider';
+import AddSale from '../views/AddSales';
+import LogOut from '../views/LogOut';
 
 import { style } from '../variables/Variables';
 
@@ -121,37 +123,6 @@ class Admin extends Component {
   };
   componentDidMount() {
     this.setState({ _notificationSystem: this.refs.notificationSystem });
-    var _notificationSystem = this.refs.notificationSystem;
-    var color = Math.floor(Math.random() * 4 + 1);
-    var level;
-    switch (color) {
-      case 1:
-        level = 'success';
-        break;
-      case 2:
-        level = 'warning';
-        break;
-      case 3:
-        level = 'error';
-        break;
-      case 4:
-        level = 'info';
-        break;
-      default:
-        break;
-    }
-    _notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
-      message: (
-        <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
-        </div>
-      ),
-      level: level,
-      position: 'tr',
-      autoDismiss: 15,
-    });
   }
   componentDidUpdate(e) {
     if (
@@ -185,39 +156,29 @@ class Admin extends Component {
           ref="mainPanel"
           style={{ height: '100%' }}
         >
-          <Switch>{this.getRoutes(routes)}</Switch>
-          <Route
-            render={() => (
-              <AddUser notification={this.handleNotificationClick} />
-            )}
-            path="/user"
-            layout="/admin"
-          />
-          <Route
-            render={() => (
-              <AddProduct notification={this.handleNotificationClick} />
-            )}
-            path="/product"
-            layout="/admin"
-          />
-          <Route
-            render={() => (
-              <AddProvider notification={this.handleNotificationClick} />
-            )}
-            path="/provider"
-            layout="/admin"
-          />
-          {/* <Footer /> */}
-          {/* <FixedPlugin
-            handleImageClick={this.handleImageClick}
-            handleColorClick={this.handleColorClick}
-            handleHasImage={this.handleHasImage}
-            bgColor={this.state['color']}
-            bgImage={this.state['image']}
-            mini={this.state['mini']}
-            handleFixedClick={this.handleFixedClick}
-            fixedClasses={this.state.fixedClasses}
-          /> */}
+          <Switch>
+            {this.getRoutes(routes)}
+
+            <Route
+              render={() => (
+                <AddProduct notification={this.handleNotificationClick} />
+              )}
+              path="/admin/product"
+            />
+            <Route
+              render={() => (
+                <AddProvider notification={this.handleNotificationClick} />
+              )}
+              path="/admin/provider"
+            />
+            <Route
+              render={() => (
+                <AddSale notification={this.handleNotificationClick} />
+              )}
+              path="/admin/sale"
+            />
+            <Route render={() => <LogOut />} path="/admin/logout" />
+          </Switch>
         </div>
       </div>
     );

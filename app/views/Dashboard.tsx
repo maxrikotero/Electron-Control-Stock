@@ -39,7 +39,7 @@ class Dashboard extends Component {
             <Col lg={4} sm={4}>
               <div className="wrimagecard wrimagecard-topimage">
                 <NavLink
-                  to="/user"
+                  to="/admin/user"
                   className="nav-link"
                   activeClassName="active"
                 >
@@ -64,7 +64,7 @@ class Dashboard extends Component {
             <Col lg={4} sm={4}>
               <div className="wrimagecard wrimagecard-topimage">
                 <NavLink
-                  to="/product"
+                  to="/admin/product"
                   className="nav-link"
                   activeClassName="active"
                 >
@@ -91,7 +91,7 @@ class Dashboard extends Component {
             <Col lg={4} sm={4}>
               <div className="wrimagecard wrimagecard-topimage">
                 <NavLink
-                  to="/provider"
+                  to="/admin/provider"
                   className="nav-link"
                   activeClassName="active"
                 >
@@ -106,6 +106,32 @@ class Dashboard extends Component {
                   <div className="wrimagecard-topimage_title">
                     <h6>
                       Agregar Proveedor
+                      <div className="pull-right badge" id="WrGridSystem"></div>
+                    </h6>
+                  </div>
+                </NavLink>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={4} sm={4}>
+              <div className="wrimagecard wrimagecard-topimage">
+                <NavLink
+                  to="/admin/sale"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <div
+                    className="wrimagecard-topimage_header"
+                    style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
+                  >
+                    <i className="fa fa-industry" style={{ color: '#3369e8' }}>
+                      {' '}
+                    </i>
+                  </div>
+                  <div className="wrimagecard-topimage_title">
+                    <h6>
+                      Nueva Venta
                       <div className="pull-right badge" id="WrGridSystem"></div>
                     </h6>
                   </div>

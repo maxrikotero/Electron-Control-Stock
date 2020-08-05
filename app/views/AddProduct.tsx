@@ -14,17 +14,25 @@ import { Card } from '../components/Card/Card';
 
 import Button from '../components/CustomButton/CustomButton';
 
+import useApiUrl from '../hooks/useApiUrl';
+
 const AddProduct = ({ notification }) => {
   const [redirect, setRedirect] = useState(false);
   const [state, setState] = useState({
-    product_name: '',
+    name: '',
     price: null,
     category: '',
+    brand: '',
+    countInStock: 0,
+    description: '',
+    code: 0,
   });
+
+  const apiUrl = useApiUrl();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch('http://192.168.0.13:3000/api/products', {
+    fetch(`${apiUrl}/products`, {
       method: 'POST',
       body: JSON.stringify(state),
       headers: {
@@ -42,11 +50,18 @@ const AddProduct = ({ notification }) => {
       });
   };
 
-  const { product_name, price, category } = state;
+  const {
+    name,
+    price,
+    category,
+    brand,
+    countInStock,
+    description,
+    code,
+  } = state;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value }: { name: string; value: string } = event.target;
-
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
@@ -62,20 +77,33 @@ const AddProduct = ({ notification }) => {
                 <form onSubmit={handleSubmit}>
                   <Row>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="idControl">
-                        <ControlLabel>Nombre</ControlLabel>
+                      <FormGroup controlId="codeControl">
+                        <ControlLabel>Codigo</ControlLabel>
                         <FormControl
                           type="text"
-                          name="product_name"
+                          name="code"
                           onChange={handleChange}
-                          placeHolder="Producto"
+                          placeHolder="Codigo"
                           bsClass="form-control"
-                          value={product_name}
+                          value={code}
                         />
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="firstNameControl">
+                      <FormGroup controlId="nameControl">
+                        <ControlLabel>Nombre</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="name"
+                          onChange={handleChange}
+                          placeHolder="Producto"
+                          bsClass="form-control"
+                          value={name}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="priceControl">
                         <ControlLabel>Precio</ControlLabel>
                         <FormControl
                           type="number"
@@ -87,8 +115,10 @@ const AddProduct = ({ notification }) => {
                         />
                       </FormGroup>
                     </Col>
+                  </Row>
+                  <Row>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="lastNameControl">
+                      <FormGroup controlId="categoryControl">
                         <ControlLabel>Categoria</ControlLabel>
                         <FormControl
                           type="text"
@@ -97,6 +127,47 @@ const AddProduct = ({ notification }) => {
                           placeHolder="Categoria"
                           bsClass="form-control"
                           value={category}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="brandControl">
+                        <ControlLabel>Marca</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="brand"
+                          onChange={handleChange}
+                          placeHolder="Marca"
+                          bsClass="form-control"
+                          value={brand}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="inStockControl">
+                        <ControlLabel>Stock</ControlLabel>
+                        <FormControl
+                          type="number"
+                          name="countInStock"
+                          onChange={handleChange}
+                          placeHolder="Producto"
+                          bsClass="form-control"
+                          value={countInStock}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="descrControl">
+                        <ControlLabel>Descripción</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="description"
+                          onChange={handleChange}
+                          placeHolder="Descripcion"
+                          bsClass="form-control"
+                          value={description}
                         />
                       </FormGroup>
                     </Col>

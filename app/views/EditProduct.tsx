@@ -12,29 +12,45 @@ import {
 import { Card } from '../components/Card/Card';
 
 import Button from '../components/CustomButton/CustomButton';
+import useApiUrl from '../hooks/useApiUrl';
 
 const EditProduct = ({ handleClick, product, onClose, fetchProducts }) => {
   const [state, setState] = useState({
     _id: '',
-    product_name: '',
+    name: '',
     price: null,
     category: '',
+    brand: '',
+    countInStock: 10,
+    description: '',
   });
+
+  const apiUrl = useApiUrl();
 
   useEffect(() => {
     setState(product);
   }, []);
 
-  const { _id, product_name, price, category } = state;
+  const {
+    _id,
+    name,
+    price,
+    category,
+    brand,
+    countInStock,
+    description,
+  } = state;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value }: { name: string; value: string } = event.target;
+    const { name, value } = event.target;
 
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleEdit = () => {
-    fetch(`http://192.168.0.13:3000/api/products/${_id}`, {
+    console.log('handleEdit', state);
+
+    fetch(`${apiUrl}/products/${_id}`, {
       method: 'PUT',
       body: JSON.stringify(state),
       headers: {
@@ -47,7 +63,8 @@ const EditProduct = ({ handleClick, product, onClose, fetchProducts }) => {
         handleClick('tc', 'Producto Modificado', 1);
         onClose();
         fetchProducts();
-      });
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -61,20 +78,20 @@ const EditProduct = ({ handleClick, product, onClose, fetchProducts }) => {
                 <form>
                   <Row>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="idControl">
+                      <FormGroup controlId="nameControl">
                         <ControlLabel>Nombre</ControlLabel>
                         <FormControl
                           type="text"
-                          name="product_name"
+                          name="name"
                           onChange={handleChange}
                           placeHolder="Producto"
                           bsClass="form-control"
-                          value={product_name}
+                          value={name}
                         />
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="firstNameControl">
+                      <FormGroup controlId="priceControl">
                         <ControlLabel>Precio</ControlLabel>
                         <FormControl
                           type="number"
@@ -87,7 +104,7 @@ const EditProduct = ({ handleClick, product, onClose, fetchProducts }) => {
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={4}>
-                      <FormGroup controlId="lastNameControl">
+                      <FormGroup controlId="categoryControl">
                         <ControlLabel>Categoria</ControlLabel>
                         <FormControl
                           type="text"
@@ -96,6 +113,50 @@ const EditProduct = ({ handleClick, product, onClose, fetchProducts }) => {
                           placeHolder="Categoria"
                           bsClass="form-control"
                           value={category}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="brandControl">
+                        <ControlLabel>Marca</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="brand"
+                          onChange={handleChange}
+                          placeHolder="Marca"
+                          bsClass="form-control"
+                          value={brand}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="inStockControl">
+                        <ControlLabel>Stock</ControlLabel>
+                        <FormControl
+                          type="number"
+                          name="countInStock"
+                          onChange={handleChange}
+                          placeHolder="Producto"
+                          bsClass="form-control"
+                          value={countInStock}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={4}>
+                      <FormGroup controlId="descrControl">
+                        <ControlLabel>Descripción</ControlLabel>
+                        <FormControl
+                          rows="5"
+                          componentClass="textarea"
+                          name="description"
+                          onChange={handleChange}
+                          placeHolder="Descripcion"
+                          bsClass="form-control"
+                          value={description}
                         />
                       </FormGroup>
                     </Col>

@@ -1,22 +1,33 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { Grid, Row, Col, Table, Button, Modal } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import EditProduct from './EditProduct';
-
 import Card from '../components/Card/Card';
-import { thArray, tdArray } from '../variables/Variables';
+import Movement from '../views/ProductMovement';
+import useApiUrl from '../hooks/useApiUrl';
 
 const ProductList = ({ handleClick }) => {
-  debugger;
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState({});
   const [show, setShow] = useState(false);
+  const [movement, setMovementId] = useState({
+    showMovement: false,
+    movementId: 0,
+  });
+
+  const { user } = useSelector((store) => store);
+
+  debugger;
+  const apiUrl = useApiUrl();
+
+  const { showMovement, movementId } = movement;
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const fetchProducts = () => {
-    fetch('http://192.168.0.13:3000/api/products')
+    fetch(`${apiUrl}/products`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -33,9 +44,19 @@ const ProductList = ({ handleClick }) => {
     handleShow();
   };
 
+  const handleShowMovement = (id) => {
+    setMovementId({
+      showMovement: true,
+      movementId: id,
+    });
+  };
+
+  const handleCloseMovement = () => {
+    setMovementId(0);
+  };
+
   const deleteProduct = (id) => {
-    // if (confirm('Are you sure you want to delete it?')) {
-    fetch(`http://192.168.0.13:3000/api/products/${id}`, {
+    fetch(`http://192.168.0.14:3000/api/products/${id}`, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -47,7 +68,6 @@ const ProductList = ({ handleClick }) => {
         handleClick('tc', 'Producto Borrado', 1);
         fetchProducts();
       });
-    // }
   };
 
   return (
@@ -65,6 +85,7 @@ const ProductList = ({ handleClick }) => {
                     <tr>
                       <th>Nombre</th>
                       <th>Precio</th>
+                      <th>Stock</th>
                       <th>Categoria</th>
                     </tr>
                   </thead>
@@ -72,12 +93,13 @@ const ProductList = ({ handleClick }) => {
                     {products.map((item, key) => {
                       return (
                         <tr key={key}>
-                          <td>{item.product_name}</td>
+                          <td>{item.name}</td>
                           <td>{item.price}</td>
+                          <td>{item.countInStock}</td>
                           <td>{item.category}</td>
                           <td>
                             <Row>
-                              <Col xs={12} md={6}>
+                              <Col xs={12} md={3}>
                                 <Button
                                   bsStyle="info"
                                   onClick={() => handleEdit(item._id)}
@@ -85,12 +107,20 @@ const ProductList = ({ handleClick }) => {
                                   Edit
                                 </Button>
                               </Col>
-                              <Col xs={12} md={6}>
+                              <Col xs={12} md={3}>
                                 <Button
                                   bsStyle="danger"
                                   onClick={() => deleteProduct(item._id)}
                                 >
                                   Borrar
+                                </Button>
+                              </Col>
+                              <Col xs={12} md={3}>
+                                <Button
+                                  bsStyle="info"
+                                  onClick={() => handleShowMovement(item._id)}
+                                >
+                                  Movimientos
                                 </Button>
                               </Col>
                             </Row>
@@ -123,6 +153,9 @@ const ProductList = ({ handleClick }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      {showMovement && (
+        <Movement id={movementId} onClose={handleCloseMovement} />
+      )}
     </div>
   );
 };
