@@ -82,7 +82,7 @@ class Admin extends Component {
             render={(props) => (
               <prop.component
                 {...props}
-                handleClick={this.handleNotificationClick}
+                notification={this.handleNotificationClick}
               />
             )}
             key={key}

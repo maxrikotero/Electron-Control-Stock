@@ -274,6 +274,8 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@hot-loader/react-dom": "^16.13.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.4.0",
     "awesome-debounce-promise": "^2.1.0",
     "bootstrap": "3.3.7",
@@ -285,6 +287,8 @@
     "formik": "^2.1.5",
     "history": "4.7.2",
     "jwt-decode": "^2.2.0",
+    "material-table": "^1.68.0",
+    "moment": "^2.27.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-async-hook": "^3.6.1",
@@ -296,10 +300,12 @@
     "react-notification-system": "0.2.17",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
+    "react-text-mask": "^5.4.3",
     "react-toggle": "4.0.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.19",
+    "text-mask-addons": "^3.8.0",
     "use-constant": "^1.0.0"
   },
   "devEngines": {

@@ -1,23 +1,17 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Grid, Row, Col, Table, Button, Modal } from 'react-bootstrap';
-import Card from '../components/Card/Card';
-import useApiUrl from '../hooks/useApiUrl';
+import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import MaterialTable from 'material-table';
+import moment from 'moment';
+import apiCall from '../utils/apiCall';
 
 const ProductMovement = ({ id, onClose }) => {
-  debugger;
-  const [movement, setMovement] = useState([]);
+  const [movements, setMovements] = useState([]);
   const [show, setShow] = useState(true);
 
-  const apiUrl = useApiUrl();
-
-  const fetchProductMovement = () => {
-    fetch(`${apiUrl}/products/movement/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setMovement(data);
-      })
-      .catch((error) => console.log(error));
+  const fetchProductMovement = async () => {
+    const response = await apiCall({ url: `products/movement/${id}` });
+    setMovements(response);
   };
 
   useEffect(() => {
@@ -31,7 +25,7 @@ const ProductMovement = ({ id, onClose }) => {
 
   return (
     <div className="content">
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} bsSize="large">
         <Modal.Header closeButton>
           <Modal.Title>Lista de movimiento del Producto</Modal.Title>
         </Modal.Header>
@@ -39,30 +33,43 @@ const ProductMovement = ({ id, onClose }) => {
           <Grid fluid>
             <Row>
               <Col md={12}>
-                <Card
-                  //   title="Lista de movimiento del Producto"
-                  ctTableFullWidth
-                  ctTableResponsive
-                  content={
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                          <th>Fecha</th>
-                          <th>Catidad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {movement.map((item, key) => {
-                          return (
-                            <tr key={key}>
-                              <td>{item.dateAt}</td>
-                              <td>{item.quality}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </Table>
-                  }
+                <MaterialTable
+                  title=""
+                  components={{ Container: (props) => props.children }}
+                  options={{
+                    actionsColumnIndex: -1,
+                  }}
+                  columns={[
+                    {
+                      title: 'Fecha',
+                      render: (rowData) =>
+                        moment(rowData.dateAt).format(
+                          'YYYY-MM-DD HH, h:mm:ss a'
+                        ),
+                    },
+                    { title: 'Catidad', field: 'quality' },
+                    {
+                      title: 'Entrada',
+                      render: (rowData) =>
+                        Boolean(rowData.input) ? 'Si' : 'No',
+                    },
+                    {
+                      title: 'Salida',
+                      render: (rowData) =>
+                        Boolean(rowData.output) ? 'Si' : 'No',
+                    },
+                    {
+                      title: 'Fue Venta',
+                      render: (rowData) =>
+                        Boolean(rowData.isSale) ? 'Si' : 'No',
+                    },
+                    {
+                      title: 'Fue Actualizado',
+                      render: (rowData) =>
+                        Boolean(rowData.isUpdated) ? 'Si' : 'No',
+                    },
+                  ]}
+                  data={movements}
                 />
               </Col>
             </Row>

@@ -8,15 +8,17 @@ export class StatsCard extends Component {
     return (
       <div className="card card-stats">
         <div className="content">
-          <NavLink
-            to={this.props.to}
-            className="nav-link"
-            activeClassName="active"
-          >
-            {/* <i className={prop.icon} /> */}
-            <p>{this.props.statsText}</p>
-          </NavLink>
-          <div className="footer"></div>
+          <Row>
+            <Col xs={12}>
+              <div>
+                <p>{this.props.statsText}</p>
+              </div>
+            </Col>
+          </Row>
+          <div className="footer">
+            <hr />
+            <div>{this.props.statsValue}</div>
+          </div>
         </div>
       </div>
     );

@@ -1,5 +1,6 @@
 /*eslint-disable */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Grid,
   Row,
@@ -8,180 +9,240 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-
+import { Formik } from 'formik';
+import apiCall from '../utils/apiCall';
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
-import { Redirect } from 'react-router';
 
-const UserProfile = () => {
-  const [goRedirect, setGoRedirect] = useState(false);
-  const [state, setState] = useState({
-    dni: null,
-    firstName: '',
-    lastName: '',
-    userName: '',
-    email: '',
-    password: '',
-    phone: null,
-  });
+const UserProfile = ({ notification }) => {
+  const [state, setState] = useState({});
+  const { sessionData } = useSelector(({ user }) => user);
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    const fetchUser = async () => {
+      const response = await apiCall({ url: `users/${sessionData._id}` });
 
-  const fetchUser = () => {
-    fetch('http://192.168.0.13:3000/api/users/1')
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      })
-      .catch(() => console.log(' Blocked by browser?'));
-  };
-
-  const handleAdd = (event) => {
-    setGoRedirect(true);
-    // debugger;
-    // event.preventDefault();
-    // fetch('http://192.168.0.13:3000/api/users', {
-    //   method: 'POST',
-    //   body: JSON.stringify(state),
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   })
-    //   .catch((err) => console.error(err));
-  };
-
-  const { dni, firstName, lastName, userName, email, password, phone } = state;
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value }: { name: string; value: string } = event.target;
-
-    setState((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    fetchTasks();
-  };
+      if (response.success) setState({ ...response.data });
+    };
+    if (sessionData._id) {
+      fetchUser();
+    }
+  }, [sessionData]);
 
   return (
     <div className="content">
-      {goRedirect && <Redirect from="/" to="/admin/principal" />}
       <Grid fluid>
         <Row>
           <Col md={12}>
             <Card
               title="Editar Usuario"
               content={
-                <form onSubmit={handleAdd}>
-                  <Row>
-                    <Col xs={12} md={4}>
-                      <FormGroup controlId="idControl">
-                        <ControlLabel>DNI</ControlLabel>
-                        <FormControl
-                          type="number"
-                          name="dni"
-                          onChange={handleChange}
-                          placeHolder="DNI"
-                          bsClass="form-control"
-                          value={dni}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={4}>
-                      <FormGroup controlId="firstNameControl">
-                        <ControlLabel>Nombre</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="firstName"
-                          onChange={handleChange}
-                          placeHolder="Nombre"
-                          bsClass="form-control"
-                          value={firstName}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={4}>
-                      <FormGroup controlId="lastNameControl">
-                        <ControlLabel>Apellido</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="lastName"
-                          onChange={handleChange}
-                          placeHolder="Nombre"
-                          bsClass="form-control"
-                          value={lastName}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="userControl">
-                        <ControlLabel>Usuario</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="userName"
-                          onChange={handleChange}
-                          placeHolder="Usuario"
-                          bsClass="form-control"
-                          value={userName}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="emailControl">
-                        <ControlLabel>Email</ControlLabel>
-                        <FormControl
-                          type="email"
-                          name="email"
-                          onChange={handleChange}
-                          placeHolder="Email"
-                          bsClass="form-control"
-                          value={email}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="passwordControl">
-                        <ControlLabel>Contraseña</ControlLabel>
-                        <FormControl
-                          type="password"
-                          name="password"
-                          onChange={handleChange}
-                          placeHolder="Contraseña"
-                          bsClass="form-control"
-                          value={password}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="phoneControl">
-                        <ControlLabel>Email</ControlLabel>
-                        <FormControl
-                          type="Celular"
-                          name="number"
-                          onChange={handleChange}
-                          placeHolder="Celular"
-                          bsClass="form-control"
-                          value={phone}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Button bsStyle="info" pullRight fill type="submit">
-                    Guardar
-                  </Button>
-                  <div className="clearfix" />
-                </form>
+                <Formik
+                  initialValues={state}
+                  enableReinitialize={true}
+                  validate={(values) => {
+                    const errors = {};
+                    if (!values.dni) {
+                      errors.dni = 'Requerido';
+                    }
+                    if (!values.firstName) {
+                      errors.firstName = 'Requerido';
+                    }
+                    if (!values.lastName) {
+                      errors.lastName = 'Requerido';
+                    }
+                    if (!values.userName) {
+                      errors.userName = 'Requerido';
+                    }
+                    if (!values.password) {
+                      errors.password = 'Requerido';
+                    }
+                    if (!values.email) {
+                      errors.email = 'Requerido';
+                    } else if (
+                      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
+                        values.email
+                      )
+                    ) {
+                      errors.email = 'Email Invalido';
+                    }
+                    return errors;
+                  }}
+                  onSubmit={async (values, { setSubmitting }) => {
+                    var response = await apiCall({
+                      url: `users/${values._id}`,
+                      method: 'PUT',
+                      body: JSON.stringify(values),
+                    });
+                    if (response.success) {
+                      setSubmitting(false);
+                      notification('tc', 'Usuario Actualizado', 1);
+                    } else {
+                      let message = 'Actualizar Error';
+                      if (response.error.indexOf('userName') > -1)
+                        message = 'Usuario Existente';
+                      if (response.error.indexOf('email') > -1)
+                        message = 'Email Existente';
+                      setSubmitting(false);
+                      notification('tc', message, 3);
+                    }
+                  }}
+                >
+                  {({
+                    values,
+                    errors,
+                    handleChange,
+                    handleSubmit,
+                    isSubmitting,
+                  }) => (
+                    <form onSubmit={handleSubmit}>
+                      <Row>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="idControl">
+                            <ControlLabel>DNI</ControlLabel>
+                            <FormControl
+                              type="number"
+                              name="dni"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.dni}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}> {errors.dni}</span>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="cuilControl">
+                            <ControlLabel>CUIL</ControlLabel>
+                            <FormControl
+                              type="number"
+                              name="cuil"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.cuil}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="firstNameControl">
+                            <ControlLabel>Nombre</ControlLabel>
+                            <FormControl
+                              type="text"
+                              name="firstName"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.firstName}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}>
+                            {' '}
+                            {errors.firstName}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="lastNameControl">
+                            <ControlLabel>Apellido</ControlLabel>
+                            <FormControl
+                              type="text"
+                              name="lastName"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.lastName}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}>
+                            {' '}
+                            {errors.lastName}
+                          </span>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="mobileControl">
+                            <ControlLabel>Celular</ControlLabel>
+                            <FormControl
+                              type="number"
+                              name="mobile"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.mobile}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="phoneControl">
+                            <ControlLabel>Telefono Fijo</ControlLabel>
+                            <FormControl
+                              type="number"
+                              name="phone"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.phone}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="userControl">
+                            <ControlLabel>Usuario</ControlLabel>
+                            <FormControl
+                              type="text"
+                              name="userName"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.userName}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}>
+                            {' '}
+                            {errors.userName}
+                          </span>
+                        </Col>
+
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="emailControl">
+                            <ControlLabel>Email</ControlLabel>
+                            <FormControl
+                              type="email"
+                              name="email"
+                              onChange={handleChange}
+                              placeHolder="Email"
+                              bsClass="form-control"
+                              value={values.email}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}> {errors.email}</span>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <FormGroup controlId="passwordControl">
+                            <ControlLabel>Contraseña</ControlLabel>
+                            <FormControl
+                              type="password"
+                              name="password"
+                              onChange={handleChange}
+                              bsClass="form-control"
+                              value={values.password}
+                            />
+                          </FormGroup>
+                          <span style={{ color: 'red' }}>
+                            {' '}
+                            {errors.password}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Button
+                        bsStyle="info"
+                        pullRight
+                        fill
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        Guardar
+                      </Button>
+                      <div className="clearfix" />
+                    </form>
+                  )}
+                </Formik>
               }
             />
           </Col>

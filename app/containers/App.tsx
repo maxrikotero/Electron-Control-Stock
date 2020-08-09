@@ -1,39 +1,32 @@
 import React, { ReactNode, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import useApiUrl from '../hooks/useApiUrl';
+import apiCall from '../utils/apiCall';
 import { set } from '../features/user/userSlice';
+import { setCategories } from '../features/selects/selectsSlice';
 
 type Props = {
   children: ReactNode;
 };
 
 const App = (props: Props) => {
-  const apiUrl = useApiUrl();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    debugger;
-    const fetchUser = (token) => {
-      fetch(`${apiUrl}/users/userdata`, {
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+    const getUserData = async () => {
+      let [userData, categories] = await Promise.all([
+        apiCall({
+          url: 'users/userdata',
         }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          debugger;
-          dispatch(set(data));
-        })
-        .catch((err) => {
-          debugger;
-        });
+        apiCall({
+          url: 'categories',
+        }),
+      ]);
+      debugger;
+      dispatch(set(userData));
+      dispatch(setCategories(categories));
     };
 
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUser(token);
-    }
+    getUserData();
   }, []);
   const { children } = props;
   return <>{children}</>;
