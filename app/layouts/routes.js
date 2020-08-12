@@ -27,12 +27,22 @@ import Maps from '../views/Maps';
 import Notifications from '../views/Notifications';
 import Upgrade from '../views/Upgrade';
 import AddUser from '../views/AddUser';
+import AddClient from '../views/AddClient';
+import ClientList from '../views/ClientList';
 import AddCategory from '../views/AddCategory';
 import ProvidertList from '../views/ProvidertList';
 import CategoryList from '../views/CategoryList';
 import Reports from '../views/Reports';
 
 const dashboardRoutes = [
+  {
+    path: '/client',
+    name: 'Agregar Client',
+    // icon: 'pe-7s-graph',
+    component: AddClient,
+    layout: '/admin',
+    redirect: true,
+  },
   {
     path: '/user',
     name: 'Agregar Usuario',
@@ -96,6 +106,13 @@ const dashboardRoutes = [
     name: 'Categorias',
     // icon: 'pe-7s-user',
     component: CategoryList,
+    layout: '/admin',
+  },
+  {
+    path: '/clients',
+    name: 'Clientes',
+    // icon: 'pe-7s-graph',
+    component: ClientList,
     layout: '/admin',
   },
 ];

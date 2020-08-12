@@ -12,6 +12,7 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
+import apiCall from '../../utils/apiCall';
 
 // interface Options {
 //   id: number;
@@ -21,80 +22,76 @@ import {
 //   options: Options[];
 // }
 
-const Dropdown = ({ onAdd, clientId }) => {
+const ClientSelect = ({ onAdd, clientId }) => {
   debugger;
-  const [state, setState] = useState({
-    id: 0,
-    fullName: '',
-    address: '',
-  });
+  const [clients, setClients] = useState([]);
+  const [client, setClient] = useState({});
 
-  const { fullName, address, id } = state;
-
-  const client = [
-    {
-      id: 1,
-      firstName: 'Maxi',
-      lastName: 'Orellana',
-      address: 'Avenida tavella',
-    },
-    { id: 2, firstName: 'Yamil', lastName: 'Alegre', address: 'El tribuno' },
-  ];
+  const fetchClients = async () => {
+    const data = await apiCall({ url: 'clients' });
+    if (data) setClients(data);
+  };
 
   useEffect(() => {
-    if (clientId > 0) {
-      const clientData = client.filter((item) => item.id === clientId);
-      setState({
-        id: clientData[0].id,
-        fullName: clientData[0].firstName,
-        address: clientData[0].address,
-      });
-    } else {
-      setState({
-        id: 0,
-        fullName: '',
-        address: '',
-      });
-    }
-  }, [clientId]);
+    fetchClients();
+  }, []);
 
-  const handleSelected = (opt) => {
+  // useEffect(() => {
+  //   debugger;
+  //   if (clientId) {
+  //     setClient({});
+  //   }
+  // }, [clientId]);
+
+  debugger;
+  const handleSelected = ({ target: { value } }) => {
     debugger;
-    onAdd(opt.id);
+    if (value) {
+      setClient(
+        clients.reduce(
+          (acc, client) => (client._id === value ? client : acc),
+          {}
+        )
+      );
+      onAdd(value);
+    } else {
+      setClient({});
+    }
   };
 
   return (
     <div className="content">
       <Row>
         <Col md={3}>
-          <FormGroup controlId="clientontrol">
-            <ControlLabel style={{ display: 'flex' }}>Cliente</ControlLabel>
-            <DropdownButton
-              bsStyle="test"
-              title={fullName || 'Seleccionar Cliente'}
-              id="dropdown-basic-"
-              style={{
-                width: '100%',
-              }}
+          <FormGroup controlId="formControlsSelect">
+            <ControlLabel>Cliente</ControlLabel>
+            <FormControl
+              componentClass="select"
+              placeholder="select"
+              name="category"
+              onChange={handleSelected}
             >
-              {client.map((item) => (
-                <MenuItem
-                  eventKey={item.id}
-                  onClick={() => handleSelected(item)}
-                >{`${item.firstName} ${item.lastName}`}</MenuItem>
+              <option value="">Seleccione</option>
+              {clients.map((item) => (
+                <option value={item._id}>{item.name}</option>
               ))}
-            </DropdownButton>
+            </FormControl>
           </FormGroup>
         </Col>
         <Col md={3}>
           <div>Nombre</div>
           <br />
-          <div>{fullName || '-'}</div>
+          <div>{client.name || '-'}</div>
         </Col>
         <Col md={3}>
           <div>Direccion</div>
           <br />
-          <div>{address || '-'}</div>
+          <div>{client.address || '-'}</div>
+        </Col>
+        <Col md={3}>
+          <div>Cuil</div>
+          <br />
+          <div>{client.cuil || '-'}</div>
         </Col>
         {/* {/* <Col md={3}>
           <FormGroup controlId="stockControl">
@@ -129,4 +126,4 @@ const Dropdown = ({ onAdd, clientId }) => {
   );
 };
 
-export default Dropdown;
+export default ClientSelect;

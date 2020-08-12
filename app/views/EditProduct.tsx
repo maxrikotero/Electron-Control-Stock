@@ -19,7 +19,6 @@ import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
 
 const EditProduct = ({ product, onEdit }) => {
   const { categories = [] } = useSelector(({ selects }) => selects);
-  debugger;
   return (
     <div className="content">
       <Grid fluid>

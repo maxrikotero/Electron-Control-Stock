@@ -122,7 +122,7 @@ const SearchProduct = ({ onAdd }) => {
                       <tr key={key}>
                         <td>{item.name}</td>
                         <td>{item.price}</td>
-                        <td>{item.countInStock}</td>
+                        <td>{item.stock}</td>
                         <td>
                           <Row>
                             <Col md={4}>

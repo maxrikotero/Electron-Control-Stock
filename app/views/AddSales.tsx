@@ -12,19 +12,16 @@ import {
   FormControl,
 } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-
 import Card from '../components/Card/Card';
 import Client from '../components/Dropdown/Dropdown';
 import SearchProduct from '../views/SearchProduct';
-import useApiUrl from '../hooks/useApiUrl';
-import { Debugger } from 'electron';
+import apiCall from '../utils/apiCall';
 
 const AddSales = ({ notification }) => {
   debugger;
   const [sale, setSales] = useState({
-    user: '',
     totalPrice: 0,
-    client: 0,
+    client: '',
     products: [],
   });
   const [total, setTotal] = useState(0);
@@ -32,8 +29,6 @@ const AddSales = ({ notification }) => {
   const [quality, setQuality] = useState(null);
 
   const { sessionData } = useSelector((state) => state.user);
-
-  const apiUrl = useApiUrl();
 
   const { totalPrice, client } = sale;
 
@@ -49,11 +44,12 @@ const AddSales = ({ notification }) => {
     }
   }, [products]);
 
-  const handleAddClientSale = (id) => {
+  const handleAddClientToSale = (id) => {
     setSales((prev) => ({ ...prev, client: id }));
   };
 
   const handleAddSale = async () => {
+    debugger;
     const saleProducts = products.map((item) => ({
       quality: item.quality,
       price: item.price,
@@ -62,29 +58,49 @@ const AddSales = ({ notification }) => {
 
     const data = { ...sale, products: saleProducts };
 
-    fetch(`${apiUrl}/sales`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        debugger;
-        notification('tc', 'Venta Generada', 1);
+    try {
+      const response = await apiCall({
+        url: 'sales',
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+
+      if (response.success) {
+        notification('tc', response.message, 1);
         setProducts([]);
         setSales({
-          user: '',
           totalPrice: 0,
-          client: 0,
+          client: '',
           products: [],
         });
-      })
-      .catch((err) => {
-        debugger;
-      });
+      } else {
+        let message = 'Venta  Error';
+        // if (response.error.indexOf('name') > -1)
+        //   message = 'Nombre Requerido';
+        // if (response.error.indexOf('cuil') > -1)
+        //   message = 'Cuil Existente';
+
+        notification('tc', message, 3);
+      }
+    } catch (error) {
+      notification('tc', 'Venta  Error', 3);
+    }
+
+    // fetch(`${apiUrl}/sales`, {
+    //   method: 'POST',
+    //   body: JSON.stringify(data),
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     debugger;
+    //   })
+    //   .catch((err) => {
+    //     debugger;
+    //   });
   };
 
   const handleAddProduct = (sale) => {
@@ -105,7 +121,6 @@ const AddSales = ({ notification }) => {
   };
 
   const handleRemove = (id) => {
-    debugger;
     const newArray = products.filter((product) => product._id !== id);
     setProducts(newArray);
   };
@@ -117,12 +132,12 @@ const AddSales = ({ notification }) => {
         <Row>
           <Col md={12}>
             <Card
-              title={`Nueva venta  Vendor:${sessionData.email}`}
+              title={`Nueva venta  Vendor: ${sessionData.email}`}
               ctTableFullWidth
               ctTableResponsive
               content={
                 <>
-                  <Client onAdd={handleAddClientSale} clientId={client} />
+                  <Client onAdd={handleAddClientToSale} clientId={client} />
                   <SearchProduct onAdd={handleAddProduct} />
 
                   <Table striped hover>

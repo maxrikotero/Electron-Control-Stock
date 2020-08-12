@@ -155,6 +155,26 @@ class Dashboard extends Component {
                 </NavLink>
               </div>
             </Col>
+            <Col lg={4} sm={4}>
+              <div className="wrimagecard wrimagecard-topimage">
+                <NavLink to="/admin/client" className="nav-link">
+                  <div
+                    className="wrimagecard-topimage_header"
+                    style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
+                  >
+                    <i className="fa fa-industry" style={{ color: '#3369e8' }}>
+                      {' '}
+                    </i>
+                  </div>
+                  <div className="wrimagecard-topimage_title">
+                    <h6>
+                      Nuevo Cliente
+                      <div className="pull-right badge" id="WrGridSystem"></div>
+                    </h6>
+                  </div>
+                </NavLink>
+              </div>
+            </Col>
           </Row>
         </Grid>
       </div>
