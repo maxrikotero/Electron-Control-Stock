@@ -90,7 +90,6 @@ const AddProduct = ({ notification }) => {
                     handleSubmit,
                     isSubmitting,
                   }) => {
-                    debugger;
                     return (
                       <form onSubmit={handleSubmit}>
                         <Row>

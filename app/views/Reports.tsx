@@ -1,84 +1,117 @@
-/*eslint-disable */
-import React, { Component } from 'react';
-import ChartistGraph from 'react-chartist';
-import { Grid, Row, Col } from 'react-bootstrap';
-import { Card } from '../components/Card/Card';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Bar } from 'react-chartjs-2';
 import {
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-} from 'variables/Variables';
+  Row,
+  Col,
+  FormGroup,
+  ControlLabel,
+  FormControl,
+} from 'react-bootstrap';
+import useApiCall from '../hooks/useApiCall';
 
-class Reports extends Component {
-  createLegend = (json) => {
-    var legend = [];
-    for (var i = 0; i < json['names'].length; i++) {
-      var type = 'fa fa-circle text-' + json['types'][i];
-      legend.push(<i className={type} key={i} />);
-      legend.push(' ');
-      legend.push(json['names'][i]);
-    }
-    return legend;
+const Reports = () => {
+  const [sales, setSales] = useState([]);
+  const [startDate, setStartDate] = useState(new Date().getFullYear());
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const getSales = async () => {
+      const data = await useApiCall({
+        url: 'sales',
+        loadingOn: true,
+        dispatch,
+      });
+      if (data) setSales(data.data);
+    };
+    getSales();
+  }, []);
+
+  const filterPorMes = (month, year = 2010) => {
+    const totalMonth = sales
+      .filter(
+        (sale) =>
+          new Date(sale.paidAt).getMonth() + 1 === month &&
+          new Date(sale.paidAt).getFullYear() === year
+      )
+      .reduce((acc, item) => acc + item.totalPrice, 0);
+    return totalMonth;
   };
-  render() {
-    return (
+
+  const data = {
+    labels: [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ],
+    datasets: [
+      {
+        label: 'Ventas Por Mes',
+        backgroundColor: 'rgba(255,99,132,0.2)',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: [
+          filterPorMes(1, startDate),
+          filterPorMes(2, startDate),
+          filterPorMes(3, startDate),
+          filterPorMes(4, startDate),
+          filterPorMes(5, startDate),
+          filterPorMes(6, startDate),
+          filterPorMes(7, startDate),
+          filterPorMes(8, startDate),
+          filterPorMes(9, startDate),
+          filterPorMes(10, startDate),
+          filterPorMes(11, startDate),
+          filterPorMes(12, startDate),
+        ],
+      },
+    ],
+  };
+
+  return (
+    <div className="App">
       <div className="content">
-        <Grid fluid>
-          <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
+        <Row>
+          <Col xs={12} md={4}>
+            <FormGroup controlId="yearControl">
+              <ControlLabel>Año</ControlLabel>
+              <input
+                type="number"
+                min="1900"
+                max="3000" // This is only for this year, we won't be here - we deaded
+                step="1"
+                value={startDate}
+                onChange={({ target: { value } }) =>
+                  setStartDate(parseInt(value))
                 }
-                legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
-            <Col md={6}>
-              <Card
-                statsIcon="fa fa-history"
-                id="chartHours"
-                title="Users Behavior"
-                category="24 Hours performance"
-                stats="Updated 3 minutes ago"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendSales)}</div>
-                }
-              />
-            </Col>
-          </Row>
-        </Grid>
+              ></input>
+            </FormGroup>
+          </Col>
+        </Row>
       </div>
-    );
-  }
-}
+      <div>
+        <h2>Ventas Por Mes</h2>
+        <Bar
+          data={data}
+          width={50}
+          height={50}
+          options={{
+            maintainAspectRatio: false,
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
 export default Reports;

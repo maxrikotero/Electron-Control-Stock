@@ -32,7 +32,7 @@ function searchCharacters(search) {
     });
 }
 
-const SearchProduct = ({ onAdd }) => {
+const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   // State and setter for search term
   const [searchTerm, setSearchTerm] = useState('');
   // State and setter for search results
@@ -40,7 +40,9 @@ const SearchProduct = ({ onAdd }) => {
   // State for search status (whether there is a pending API request)
   const [isSearching, setIsSearching] = useState(false);
 
-  const [quality, setQuality] = useState(0);
+  const [errors, setErrors] = useState({});
+
+  const [quality, setQuality] = useState();
 
   // Now we call our hook, passing in the current searchTerm value.
   // The hook will only return the latest value (what we passed in) ...
@@ -63,7 +65,14 @@ const SearchProduct = ({ onAdd }) => {
           // Set back to false since request finished
           setIsSearching(false);
           // Set results state
-          setResults(results);
+          if (
+            saleProducts.length >= 0 &&
+            saleProducts.filter((item) => item.code === results[0].code)
+              .length === 0
+          )
+            setResults(results);
+          else alertNotification('tc', 'Producto ya fue agregado', 3);
+          // }
         });
       } else {
         setResults([]);
@@ -81,7 +90,7 @@ const SearchProduct = ({ onAdd }) => {
   const handleSave = (data) => {
     const product = { ...data, quality, subTotal: data.price * quality };
     onAdd(product);
-    setQuality(0);
+    setQuality();
     setSearchTerm('');
     setResults([]);
   };
@@ -105,63 +114,83 @@ const SearchProduct = ({ onAdd }) => {
         </Row>
         {isSearching && <div>Searching ...</div>}
         {results.length > 0 && (
-          <Row>
-            <Col md={12}>
-              <Table striped hover>
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Stock</th>
-                    <th>Cantidad</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.map((item, key) => {
-                    return (
-                      <tr key={key}>
-                        <td>{item.name}</td>
-                        <td>{item.price}</td>
-                        <td>{item.stock}</td>
-                        <td>
-                          <Row>
-                            <Col md={4}>
-                              <FormGroup controlId="qualityControl">
-                                <FormControl
-                                  type="numeric"
-                                  name="quality"
-                                  onChange={(e) => {
-                                    const { value } = e.target;
-                                    setQuality(value);
-                                  }}
-                                  placeHolder="Cantidad"
-                                  bsClass="form-control"
-                                  value={quality}
-                                />
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        </td>
-                        <td>
-                          <Button
-                            bsStyle="success"
-                            onClick={() => handleSave(item)}
-                          >
-                            <i
-                              className="fa fa-check-circle-o"
-                              style={{ fontSize: '21px' }}
-                            >
-                              {' '}
-                            </i>
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
+          <>
+            <Row>
+              <Col md={12}>
+                <Table striped hover>
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Precio</th>
+                      <th>Stock</th>
+                      <th>Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((item, key) => {
+                      return (
+                        <tr key={key}>
+                          <td>{item.name}</td>
+                          <td>{item.price}</td>
+                          <td>{item.stock}</td>
+                          <td>
+                            <Row>
+                              <Col md={4}>
+                                <FormGroup controlId="qualityControl">
+                                  <FormControl
+                                    type="numeric"
+                                    name="quality"
+                                    maxLength={50}
+                                    onChange={(e) => {
+                                      const { value = 0 } = e.target;
+                                      setErrors({});
+                                      if (parseInt(value, 10) === 0) {
+                                        setErrors({
+                                          stock: 'Cantidad Requerida',
+                                        });
+                                      } else {
+                                        if (parseInt(value, 10) > item.stock)
+                                          setErrors({
+                                            stock: 'Cantidad Invalida',
+                                          });
+                                      }
+                                      setQuality(value);
+                                    }}
+                                    placeHolder="Cantidad"
+                                    bsClass="form-control"
+                                    value={quality}
+                                  />
+                                </FormGroup>
+                                <span style={{ color: 'red' }}>
+                                  {' '}
+                                  {errors.stock}
+                                </span>
+                              </Col>
+                            </Row>
+                          </td>
+                          <td>
+                            {!Boolean(errors.stock) && (
+                              <Button
+                                bsStyle="success"
+                                onClick={() => handleSave(item)}
+                              >
+                                <i
+                                  className="fa fa-check-circle-o"
+                                  style={{ fontSize: '21px' }}
+                                >
+                                  {' '}
+                                </i>
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+          </>
         )}
       </Grid>
     </div>

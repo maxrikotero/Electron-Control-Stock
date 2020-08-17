@@ -1,85 +1,83 @@
 /*eslint-disable */
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Nav } from 'react-bootstrap';
-
+import useRoute from '../../hooks/useRoutes';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
 
-import logo from '../../assets/img/reactlogo.png';
+// import logo from '../../assets/img/reactlogo.png';
 
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      width: window.innerWidth,
-    };
-  }
-  activeRoute(routeName) {
-    return this.props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
-  }
-  updateDimensions() {
-    this.setState({ width: window.innerWidth });
-  }
-  componentDidMount() {
-    this.updateDimensions();
-    window.addEventListener('resize', this.updateDimensions.bind(this));
-  }
-  render() {
-    const sidebarBackground = {
-      backgroundImage: 'url(' + this.props.image + ')',
-    };
-    return (
-      <div
-        id="sidebar"
-        className="sidebar"
-        data-color={this.props.color}
-        data-image={this.props.image}
-      >
-        {this.props.hasImage ? (
-          <div className="sidebar-background" style={sidebarBackground} />
-        ) : null}
+const Sidebar = (props) => {
+  const [state, setState] = useState({
+    width: window.innerWidth,
+  });
+  const { adminRoutes } = useRoute();
 
-        <div className="sidebar-wrapper">
-          <ul className="nav">
-            {this.state.width <= 991 ? <AdminNavbarLinks /> : null}
+  useEffect(() => {
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+  }, []);
 
-            {this.props.routes.map((prop, key) => {
-              if (!prop.redirect)
-                return (
-                  <li
-                    className={
-                      prop.upgrade
-                        ? 'active active-pro'
-                        : this.activeRoute(prop.layout + prop.path)
-                    }
-                    key={key}
+  const activeRoute = (routeName) => {
+    return props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
+  };
+  const updateDimensions = () => {
+    setState({ width: window.innerWidth });
+  };
+
+  const sidebarBackground = {
+    backgroundImage: 'url(' + props.image + ')',
+  };
+  return (
+    <div
+      id="sidebar"
+      className="sidebar"
+      data-color={props.color}
+      data-image={props.image}
+    >
+      {props.hasImage ? (
+        <div className="sidebar-background" style={sidebarBackground} />
+      ) : null}
+
+      <div className="sidebar-wrapper">
+        <ul className="nav">
+          {state.width <= 991 ? <AdminNavbarLinks /> : null}
+
+          {adminRoutes.map((prop, key) => {
+            if (!prop.redirect && prop.show)
+              return (
+                <li
+                  className={
+                    prop.upgrade
+                      ? 'active active-pro'
+                      : activeRoute(prop.layout + prop.path)
+                  }
+                  key={key}
+                >
+                  <NavLink
+                    to={prop.layout + prop.path}
+                    className="nav-link"
+                    activeClassName="active"
                   >
-                    <NavLink
-                      to={prop.layout + prop.path}
-                      className="nav-link"
-                      activeClassName="active"
-                    >
-                      <i className={prop.icon} />
-                      <p>{prop.name}</p>
-                    </NavLink>
-                  </li>
-                );
-              return null;
-            })}
-            <li>
-              <NavLink
-                to="/admin/logout"
-                className="nav-link"
-                activeClassName="active"
-              >
-                <p>Log out</p>
-              </NavLink>
-            </li>
-          </ul>
-        </div>
+                    <i className={prop.icon} />
+                    <p>{prop.name}</p>
+                  </NavLink>
+                </li>
+              );
+            return null;
+          })}
+          <li>
+            <NavLink
+              to="/admin/logout"
+              className="nav-link"
+              activeClassName="active"
+            >
+              <p>Log out</p>
+            </NavLink>
+          </li>
+        </ul>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default Sidebar;

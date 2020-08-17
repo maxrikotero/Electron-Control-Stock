@@ -5,6 +5,7 @@ import { History } from 'history';
 import counterReducer from './features/counter/counterSlice';
 import userReducer from './features/user/userSlice';
 import selectsReducer from './features/selects/selectsSlice';
+import apiCallStatusSlice from './features/apiCallStatus/apiCallStatusSlice';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -12,5 +13,6 @@ export default function createRootReducer(history: History) {
     counter: counterReducer,
     user: userReducer,
     selects: selectsReducer,
+    apiCallStatus: apiCallStatusSlice,
   });
 }

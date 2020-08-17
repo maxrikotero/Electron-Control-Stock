@@ -11,29 +11,28 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { saveAs } from 'file-saver';
+import { useSelector, useDispatch } from 'react-redux';
+import Loader from 'react-loader-spinner';
 import Card from '../components/Card/Card';
-import Client from '../components/Dropdown/Dropdown';
+import Client from '../components/ClientSelect/ClientSelect';
 import SearchProduct from '../views/SearchProduct';
-import apiCall from '../utils/apiCall';
+import useApiCall from '../hooks/useApiCall';
+import { set } from '../features/apiCallStatus/apiCallStatusSlice';
 
 const AddSales = ({ notification }) => {
-  debugger;
   const [sale, setSales] = useState({
     totalPrice: 0,
-    client: '',
+    client: null,
     products: [],
   });
-  const [total, setTotal] = useState(0);
   const [products, setProducts] = useState([]);
-  const [quality, setQuality] = useState(null);
-
-  const { sessionData } = useSelector((state) => state.user);
-
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+  const { sessionData } = useSelector(({ user }) => user);
   const { totalPrice, client } = sale;
 
   useEffect(() => {
-    debugger;
     if (products.length > 0)
       setSales((prev) => ({
         ...prev,
@@ -48,18 +47,37 @@ const AddSales = ({ notification }) => {
     setSales((prev) => ({ ...prev, client: id }));
   };
 
+  const fetchData = async (_id) => {
+    const res = await fetch(`${process.env.API_URL}/fetch-pdf/${_id}`);
+    const raw = await res.blob();
+    const fileURL = URL.createObjectURL(raw);
+    window.open(fileURL, '_blank');
+  };
+
   const handleAddSale = async () => {
-    debugger;
+    if (!sale.client) {
+      notification('tc', 'Agregar Cliente', 2);
+      return;
+    }
+
+    if (!products.length > 0) {
+      notification('tc', 'Agregar Producto', 2);
+      return;
+    }
+
     const saleProducts = products.map((item) => ({
       quality: item.quality,
       price: item.price,
       product: item._id,
+      description: item.description,
     }));
 
     const data = { ...sale, products: saleProducts };
 
     try {
-      const response = await apiCall({
+      const response = await useApiCall({
+        loadingOn: true,
+        dispatch,
         url: 'sales',
         method: 'POST',
         body: JSON.stringify(data),
@@ -73,34 +91,17 @@ const AddSales = ({ notification }) => {
           client: '',
           products: [],
         });
+        fetchData(response.data._id);
       } else {
         let message = 'Venta  Error';
-        // if (response.error.indexOf('name') > -1)
-        //   message = 'Nombre Requerido';
-        // if (response.error.indexOf('cuil') > -1)
-        //   message = 'Cuil Existente';
+        if (response.error.indexOf('client') > -1)
+          message = 'Cliente es requerido';
 
         notification('tc', message, 3);
       }
     } catch (error) {
       notification('tc', 'Venta  Error', 3);
     }
-
-    // fetch(`${apiUrl}/sales`, {
-    //   method: 'POST',
-    //   body: JSON.stringify(data),
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     debugger;
-    //   })
-    //   .catch((err) => {
-    //     debugger;
-    //   });
   };
 
   const handleAddProduct = (sale) => {
@@ -125,7 +126,6 @@ const AddSales = ({ notification }) => {
     setProducts(newArray);
   };
 
-  debugger;
   return (
     <div className="content">
       <Grid fluid>
@@ -137,12 +137,24 @@ const AddSales = ({ notification }) => {
               ctTableResponsive
               content={
                 <>
-                  <Client onAdd={handleAddClientToSale} clientId={client} />
-                  <SearchProduct onAdd={handleAddProduct} />
-
+                  <Client onAdd={handleAddClientToSale} clientSale={client} />
+                  <SearchProduct
+                    onAdd={handleAddProduct}
+                    saleProducts={products}
+                    alertNotification={notification}
+                  />
+                  <Row>
+                    <Col
+                      md={12}
+                      style={{ textAlign: 'center', marginBottom: '15px' }}
+                    >
+                      <h3>Venta</h3>
+                    </Col>
+                  </Row>
                   <Table striped hover>
                     <thead>
                       <tr>
+                        <th>Codigo</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Precio Venta</th>
@@ -153,42 +165,63 @@ const AddSales = ({ notification }) => {
                       {products.map((item, key) => {
                         return (
                           <tr key={key}>
+                            <td>{item.code}</td>
                             <td>{item.name}</td>
                             <td>
                               {(item.qualityEdit && (
-                                <FormGroup controlId="qualityControl">
-                                  <FormControl
-                                    type="numeric"
-                                    name="quality"
-                                    onChange={(e) => {
-                                      const { value } = e.target;
+                                <>
+                                  <Row>
+                                    <Col xs={6}>
+                                      <FormGroup controlId="qualityControl">
+                                        <FormControl
+                                          type="numeric"
+                                          name="quality"
+                                          onChange={(e) => {
+                                            const { value } = e.target;
 
-                                      debugger;
-                                      const newArray = products.map(
-                                        (product) =>
-                                          (product._id === item._id && {
-                                            ...product,
-                                            quality: value,
-                                            subTotal: item.price * value,
-                                          }) ||
-                                          product
-                                      );
+                                            setErrors({});
+                                            if (parseInt(value, 10) === 0) {
+                                              setErrors({
+                                                stock: 'Cantidad Requerida',
+                                              });
+                                            } else {
+                                              if (
+                                                parseInt(value, 10) > item.stock
+                                              )
+                                                setErrors({
+                                                  stock: 'Cantidad Invalida',
+                                                });
+                                              const newArray = products.map(
+                                                (product) =>
+                                                  (product._id === item._id && {
+                                                    ...product,
+                                                    quality: value,
+                                                    subTotal:
+                                                      item.price * value,
+                                                  }) ||
+                                                  product
+                                              );
 
-                                      setProducts(newArray);
-                                      // setProducts((prev) => {
-                                      //   return prev.map((product) => {
-                                      //     if (product._id === item._id) {
-                                      //       return { ...prev, quality: value };
-                                      //     }
-                                      //     return item;
-                                      //   });
-                                      // });
-                                    }}
-                                    placeHolder="Cantidad"
-                                    bsClass="form-control"
-                                    value={item.quality}
-                                  />
-                                </FormGroup>
+                                              setProducts(newArray);
+                                            }
+                                          }}
+                                          placeHolder="Cantidad"
+                                          bsClass="form-control"
+                                          value={item.quality}
+                                        />
+                                      </FormGroup>
+                                    </Col>
+                                  </Row>
+
+                                  {item.qualityEdit && errors.stock && (
+                                    <span style={{ color: 'red' }}>
+                                      {' '}
+                                      {errors.stock}
+                                      <br />
+                                      {`Stock Disponible : ${item.stock}`}
+                                    </span>
+                                  )}
+                                </>
                               )) ||
                                 item.quality}
                             </td>
@@ -236,35 +269,19 @@ const AddSales = ({ notification }) => {
         </Row>
         <Row>
           <Col xs={12} md={12}>
-            <Button
-              bsStyle="success"
-              className="pull-right"
-              fill
-              onClick={handleAddSale}
-            >
-              VENDER
-            </Button>
+            {!errors.stock && (
+              <Button
+                bsStyle="success"
+                className="pull-right"
+                fill
+                onClick={handleAddSale}
+              >
+                VENDER
+              </Button>
+            )}
           </Col>
         </Row>
       </Grid>
-      {/* <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <EditProduct
-            notification={() => {}}
-            product={editProduct}
-            onClose={handleClose}
-            {...{ handleClick, fetchProducts }}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </div>
   );
 };

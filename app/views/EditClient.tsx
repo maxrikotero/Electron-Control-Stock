@@ -15,7 +15,6 @@ import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
 const EditClient = ({ client, onEdit }) => {
-  debugger;
   const notificationSystem = useRef();
 
   return (

@@ -1,5 +1,9 @@
-const apiCall = async ({ url, ...res }) => {
+import { set } from '../features/apiCallStatus/apiCallStatusSlice';
+
+const useApiCall = async ({ url, loadingOn = false, dispatch, ...res }) => {
   try {
+    if (loadingOn) dispatch(set(true));
+
     const response = await fetch(`${process.env.API_URL}/${url}`, {
       ...res,
       headers: {
@@ -11,8 +15,10 @@ const apiCall = async ({ url, ...res }) => {
 
     let data = await response.json();
 
+    if (loadingOn) dispatch(set(false));
     return data;
   } catch (error) {
+    if (loadingOn) dispatch(set(false));
     return {
       success: false,
       error: error,
@@ -20,4 +26,4 @@ const apiCall = async ({ url, ...res }) => {
   }
 };
 
-export default apiCall;
+export default useApiCall;

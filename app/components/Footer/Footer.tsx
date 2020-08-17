@@ -15,8 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
-import { Grid } from "react-bootstrap";
+import React, { Component } from 'react';
+import { Grid } from 'react-bootstrap';
 
 class Footer extends Component {
   render() {
@@ -40,7 +40,7 @@ class Footer extends Component {
             </ul>
           </nav>
           <p className="copyright pull-right">
-            &copy; {new Date().getFullYear()}{" "}
+            &copy; {new Date().getFullYear()}{' '}
             <a href="http://www.creative-tim.com?ref=lbr-footer">
               Creative Tim
             </a>

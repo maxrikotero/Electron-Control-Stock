@@ -13,17 +13,21 @@ const App = (props: Props) => {
 
   useEffect(() => {
     const getUserData = async () => {
-      let [userData, categories] = await Promise.all([
-        apiCall({
-          url: 'users/userdata',
-        }),
-        apiCall({
-          url: 'categories',
-        }),
-      ]);
-      debugger;
-      dispatch(set(userData));
-      dispatch(setCategories(categories));
+      try {
+        let [userData, categories] = await Promise.all([
+          apiCall({
+            url: 'users/userdata',
+          }),
+          apiCall({
+            url: 'categories',
+          }),
+        ]);
+
+        dispatch(set(userData));
+        dispatch(setCategories(categories));
+      } catch (error) {
+        alert('Error Cargando Usuario');
+      }
     };
 
     getUserData();

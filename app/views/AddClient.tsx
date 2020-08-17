@@ -36,7 +36,7 @@ const AddClient = ({ notification }) => {
                     description: '',
                   }}
                   validate={(values) => {
-                    const errors = {};
+                    let errors = {};
                     if (!values.name) {
                       errors.name = 'Requerido';
                     }
@@ -44,7 +44,6 @@ const AddClient = ({ notification }) => {
                     return errors;
                   }}
                   onSubmit={async (values, { setSubmitting, resetForm }) => {
-                    debugger;
                     var response = await apiCall({
                       url: 'clients',
                       method: 'POST',

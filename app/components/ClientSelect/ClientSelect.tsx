@@ -1,13 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  DropdownButton,
-  MenuItem,
-  Grid,
   Row,
   Col,
-  Table,
-  Button,
-  Modal,
   FormGroup,
   ControlLabel,
   FormControl,
@@ -22,30 +16,31 @@ import apiCall from '../../utils/apiCall';
 //   options: Options[];
 // }
 
-const ClientSelect = ({ onAdd, clientId }) => {
-  debugger;
+const ClientSelect = ({ onAdd, clientSale }) => {
   const [clients, setClients] = useState([]);
   const [client, setClient] = useState({});
-
+  const inputSelect = useRef();
   const fetchClients = async () => {
-    const data = await apiCall({ url: 'clients' });
-    if (data) setClients(data);
+    try {
+      const data = await apiCall({ url: 'clients' });
+      if (data) setClients(data);
+    } catch (error) {
+      setClients([]);
+    }
   };
 
   useEffect(() => {
     fetchClients();
   }, []);
 
-  // useEffect(() => {
-  //   debugger;
-  //   if (clientId) {
-  //     setClient({});
-  //   }
-  // }, [clientId]);
+  useEffect(() => {
+    if (!clientSale) {
+      setClient({});
+      inputSelect.current.value = '';
+    }
+  }, [clientSale]);
 
-  debugger;
   const handleSelected = ({ target: { value } }) => {
-    debugger;
     if (value) {
       setClient(
         clients.reduce(
@@ -68,13 +63,15 @@ const ClientSelect = ({ onAdd, clientId }) => {
             <FormControl
               componentClass="select"
               placeholder="select"
-              name="category"
+              name="client"
+              inputRef={inputSelect}
               onChange={handleSelected}
             >
               <option value="">Seleccione</option>
-              {clients.map((item) => (
-                <option value={item._id}>{item.name}</option>
-              ))}
+              {clients.length > 0 &&
+                clients.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
             </FormControl>
           </FormGroup>
         </Col>

@@ -42,7 +42,6 @@ const Login = () => {
     }
   }, []);
   const addNotification = ({ position, message, color }) => {
-    debugger;
     var level;
     switch (color) {
       case 1:

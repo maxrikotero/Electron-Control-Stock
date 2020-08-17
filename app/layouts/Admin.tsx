@@ -17,18 +17,9 @@
 */
 /*eslint-disable */
 import React, { Component } from 'react';
-import { Route, Switch, Redirect, HashRouter } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
-
-import AdminNavbar from '../components/Navbars/AdminNavbar';
-import Footer from '../components/Footer/Footer';
 import Sidebar from '../components/Sidebar/Sidebar';
-import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
-import AddUser from '../views/AddUser';
-import AddProduct from '../views/AddProduct';
-import AddProvider from '../views/AddProvider';
-import AddSale from '../views/AddSales';
-import LogOut from '../views/LogOut';
+import AdminRoutes from '../components/AdminRoutes';
 
 import { style } from '../variables/Variables';
 
@@ -73,54 +64,7 @@ class Admin extends Component {
       autoDismiss: 15,
     });
   };
-  getRoutes = (routes) => {
-    return routes.map((prop, key) => {
-      if (prop.layout === '/admin') {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            render={(props) => (
-              <prop.component
-                {...props}
-                notification={this.handleNotificationClick}
-              />
-            )}
-            key={key}
-          />
-        );
-      } else {
-        return null;
-      }
-    });
-  };
-  getBrandText = (path) => {
-    for (let i = 0; i < routes.length; i++) {
-      if (
-        this.props.location.pathname.indexOf(
-          routes[i].layout + routes[i].path
-        ) !== -1
-      ) {
-        return routes[i].name;
-      }
-    }
-    return 'Brand';
-  };
-  handleImageClick = (image) => {
-    this.setState({ image: image });
-  };
-  handleColorClick = (color) => {
-    this.setState({ color: color });
-  };
-  handleHasImage = (hasImage) => {
-    this.setState({ hasImage: hasImage });
-  };
-  handleFixedClick = () => {
-    if (this.state.fixedClasses === 'dropdown') {
-      this.setState({ fixedClasses: 'dropdown show-dropdown open' });
-    } else {
-      this.setState({ fixedClasses: 'dropdown' });
-    }
-  };
+
   componentDidMount() {
     this.setState({ _notificationSystem: this.refs.notificationSystem });
   }
@@ -156,29 +100,7 @@ class Admin extends Component {
           ref="mainPanel"
           style={{ height: '100%' }}
         >
-          <Switch>
-            {this.getRoutes(routes)}
-
-            <Route
-              render={() => (
-                <AddProduct notification={this.handleNotificationClick} />
-              )}
-              path="/admin/product"
-            />
-            <Route
-              render={() => (
-                <AddProvider notification={this.handleNotificationClick} />
-              )}
-              path="/admin/provider"
-            />
-            <Route
-              render={() => (
-                <AddSale notification={this.handleNotificationClick} />
-              )}
-              path="/admin/sale"
-            />
-            <Route render={() => <LogOut />} path="/admin/logout" />
-          </Switch>
+          <AdminRoutes notification={this.handleNotificationClick} />
         </div>
       </div>
     );

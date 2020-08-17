@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import MaterialTable from 'material-table';
+import { useDispatch } from 'react-redux';
 import EditClient from './EditClient';
 import Card from '../components/Card/Card';
-import apiCall from '../utils/apiCall';
+import useApiCall from '../hooks/useApiCall';
 
 const ProductList = ({ notification }) => {
   const [clients, setClients] = useState([]);
@@ -13,9 +14,14 @@ const ProductList = ({ notification }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const dispatch = useDispatch();
   const fetchClients = async () => {
-    const data = await apiCall({ url: 'clients' });
+    const data = await useApiCall({
+      url: 'clients',
+      loadingOn: true,
+      dispatch,
+    });
+
     if (data) setClients(data);
   };
 
@@ -30,7 +36,7 @@ const ProductList = ({ notification }) => {
 
   const handleUpdate = async (data) => {
     try {
-      var response = await apiCall({
+      var response = await useApiCall({
         url: `clients/${data._id}`,
         method: 'PUT',
         body: JSON.stringify(data),

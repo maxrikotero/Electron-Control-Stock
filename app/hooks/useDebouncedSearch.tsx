@@ -5,7 +5,6 @@ import useConstant from 'use-constant';
 
 // Generic reusable hook
 const useDebouncedSearch = (searchFunction) => {
-  debugger;
   // Handle the input text state
   const [inputText, setInputText] = useState('');
 

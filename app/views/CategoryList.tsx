@@ -9,7 +9,6 @@ import { setCategories } from '../features/selects/selectsSlice';
 
 const CategoryList = ({ notification }) => {
   const { categories } = useSelector(({ selects }) => selects);
-  debugger;
   const dispatch = useDispatch();
   return (
     <div className="content">
@@ -88,7 +87,6 @@ const CategoryList = ({ notification }) => {
                               dispatch(setCategories(response.data));
                             }
                           } catch (error) {
-                            debugger;
                             notification('tc', 'Error Borrar', 3);
                           }
 
