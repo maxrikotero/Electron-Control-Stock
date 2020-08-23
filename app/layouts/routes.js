@@ -29,19 +29,35 @@ import Upgrade from '../views/Upgrade';
 import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
 import ClientList from '../views/ClientList';
+import AuditList from '../views/AuditList';
 import AddCategory from '../views/AddCategory';
 import ProvidertList from '../views/ProvidertList';
 import CategoryList from '../views/CategoryList';
+import UserList from '../views/UserList';
 import Reports from '../views/Reports';
 
 const dashboardRoutes = [
   {
     path: '/client',
     name: 'Agregar Client',
-    // icon: 'pe-7s-graph',
+    icon: 'pe-7s-graph',
     component: AddClient,
     layout: '/admin',
     redirect: true,
+  },
+  {
+    path: '/users',
+    name: 'Listado Usuario',
+    // icon: 'pe-7s-graph',
+    component: UserList,
+    layout: '/admin',
+  },
+  {
+    path: '/audits',
+    name: 'Listado Auditoria',
+    // icon: 'pe-7s-graph',
+    component: AuditList,
+    layout: '/admin',
   },
   {
     path: '/user',

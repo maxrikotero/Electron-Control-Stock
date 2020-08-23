@@ -31,6 +31,8 @@ import Reports from '../views/Reports';
 import AddProduct from '../views/AddProduct';
 import AddProvider from '../views/AddProvider';
 import AddSale from '../views/AddSales';
+import UserList from '../views/UserList';
+import AuditList from '../views/AuditList';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -45,7 +47,7 @@ const useRoutes = () => {
     {
       path: '/client',
       name: 'Agregar Client',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-graph',
       component: AddClient,
       layout: '/admin',
       show: isAdmin,
@@ -55,7 +57,7 @@ const useRoutes = () => {
     {
       path: '/sale',
       name: 'Agregar Venta',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-graph',
       component: AddSale,
       layout: '/admin',
       show: isAdmin || isSeller,
@@ -162,6 +164,22 @@ const useRoutes = () => {
       // icon: 'pe-7s-graph',
       component: ClientList,
       layout: '/admin',
+    },
+    {
+      path: '/users',
+      name: 'Listado Usuario',
+      // icon: 'pe-7s-graph',
+      component: UserList,
+      layout: '/admin',
+      show: isAdmin,
+    },
+    {
+      path: '/audits',
+      name: 'Listado Auditoria',
+      // icon: 'pe-7s-graph',
+      component: AuditList,
+      layout: '/admin',
+      show: isAdmin,
     },
   ];
 

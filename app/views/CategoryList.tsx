@@ -95,24 +95,6 @@ const CategoryList = ({ notification }) => {
                     }}
                   />
                 </div>
-                // <Table striped hover>
-                //   <thead>
-                //     <tr>
-                //       <th>Nombre</th>
-                //       <th>Descripción</th>
-                //     </tr>
-                //   </thead>
-                //   <tbody>
-                //     {categories.map((item, key) => {
-                //       return (
-                //         <tr key={key}>
-                //           <td>{item.name}</td>
-                //           <td>{item.description}</td>
-                //         </tr>
-                //       );
-                //     })}
-                //   </tbody>
-                // </Table>
               }
             />
           </Col>

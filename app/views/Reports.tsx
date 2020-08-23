@@ -80,27 +80,35 @@ const Reports = () => {
 
   return (
     <div className="App">
-      <div className="content">
-        <Row>
-          <Col xs={12} md={4}>
-            <FormGroup controlId="yearControl">
-              <ControlLabel>Año</ControlLabel>
-              <input
-                type="number"
-                min="1900"
-                max="3000" // This is only for this year, we won't be here - we deaded
-                step="1"
-                value={startDate}
-                onChange={({ target: { value } }) =>
-                  setStartDate(parseInt(value))
-                }
-              ></input>
-            </FormGroup>
-          </Col>
-        </Row>
-      </div>
-      <div>
-        <h2>Ventas Por Mes</h2>
+      <div style={{ padding: '20px' }}>
+        <div>
+          <h2>Ventas Por Mes</h2>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <FormGroup
+            controlId="yearControl"
+            style={{ display: 'grid', textAlign: 'center' }}
+          >
+            <ControlLabel>Año</ControlLabel>
+            <input
+              type="number"
+              min="1900"
+              max="3000" // This is only for this year, we won't be here - we deaded
+              step="1"
+              value={startDate}
+              onChange={({ target: { value } }) =>
+                setStartDate(parseInt(value))
+              }
+            ></input>
+          </FormGroup>
+        </div>
+
         <Bar
           data={data}
           width={50}

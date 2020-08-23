@@ -17,35 +17,43 @@ const DashboardCards = () => {
     <div className="content">
       <Grid fluid>
         <Row>
-          <Col lg={3} sm={6}>
-            <StatsCard
-              statsText="Total Productos en stock"
-              statsValue="105GB"
-            />
-          </Col>
-        </Row>
-        <Row>
           {[
-            { to: '/admin/client', title: 'Nuevo Cliente ', show: isAdmin },
+            {
+              to: '/admin/client',
+              title: 'Nuevo Cliente ',
+              show: isAdmin,
+              iconClass: 'fa fa-user',
+            },
             {
               to: '/admin/category',
               title: 'Nueva Categoria',
+              iconClass: 'fa fa-tasks',
+
               show: isAdmin || isControlStock,
             },
             {
               to: '/admin/sale',
               title: ' Nueva Venta',
+              iconClass: 'fa fa-sellsy',
               show: isAdmin || isSeller,
             },
-            { to: '/admin/user', title: 'Agregar Usuario', show: isAdmin },
+            {
+              to: '/admin/user',
+              title: 'Agregar Usuario',
+              show: isAdmin,
+              iconClass: 'fa fa-users',
+            },
             {
               to: '/admin/product',
               title: 'Agregar Producto',
+
+              iconClass: 'fa fa-product-hunt',
               show: isAdmin || isControlStock,
             },
             {
               to: '/admin/provider',
               title: 'Agregar Cliente',
+              iconClass: 'fa fa-user',
               show: isAdmin,
             },
           ].map((card) => {
@@ -64,7 +72,8 @@ const DashboardCards = () => {
                           style={{ backgroundColor: 'rgba(51, 105, 232, 0.1)' }}
                         >
                           <i
-                            className="fa fa-user"
+                            className={card.iconClass}
+                            aria-hidden="true"
                             style={{ color: '#3369e8' }}
                           >
                             {' '}
