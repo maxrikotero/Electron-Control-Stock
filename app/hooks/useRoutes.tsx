@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-
+import React from 'react';
 import Dashboard from '../views/Dashboard';
 import UserProfile from '../views/UserProfile';
 import ProductList from '../views/ProductList';
@@ -86,7 +86,7 @@ const useRoutes = () => {
     {
       path: '/user',
       name: 'Agregar Usuario',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-user',
       component: AddUser,
       show: isAdmin,
       layout: '/admin',
@@ -104,7 +104,7 @@ const useRoutes = () => {
     {
       path: '/principal',
       name: 'Principal',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-graph',
       component: Dashboard,
       show: true,
       layout: '/admin',
@@ -113,7 +113,7 @@ const useRoutes = () => {
       path: '/report',
       name: 'Reportes',
       show: isAdmin,
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-graph2',
       component: Reports,
       layout: '/admin',
     },
@@ -121,15 +121,23 @@ const useRoutes = () => {
       path: '/perfil',
       name: 'Perfil',
       show: true,
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-user',
       component: UserProfile,
       layout: '/admin',
     },
     {
       path: '/inventario',
-      name: 'Inventario General',
+      name: 'Listado Productos ',
       show: isAdmin || isControlStock,
-      // icon: 'pe-7s-user',
+      icon: 'pe-7s-news-paper',
+      component: ProductList,
+      layout: '/admin',
+    },
+    {
+      path: '/rawmaterial',
+      name: 'Listado Materia Prima ',
+      show: isAdmin || isControlStock,
+      icon: 'pe-7s-news-paper',
       component: ProductList,
       layout: '/admin',
     },
@@ -137,14 +145,14 @@ const useRoutes = () => {
       path: '/sales',
       name: 'Ventas',
       show: isAdmin || isSeller,
-      // icon: 'pe-7s-user',
+      icon: 'pe-7s-news-paper',
       component: Sales,
       layout: '/admin',
     },
     {
       path: '/providers',
       name: 'Proveedores',
-      // icon: 'pe-7s-user',
+      icon: 'pe-7s-news-paper',
       show: isAdmin || isControlStock,
       component: ProvidertList,
       layout: '/admin',
@@ -153,7 +161,7 @@ const useRoutes = () => {
       path: '/categories',
       name: 'Categorias',
       show: isAdmin || isControlStock,
-      // icon: 'pe-7s-user',
+      icon: 'pe-7s-news-paper',
       component: CategoryList,
       layout: '/admin',
     },
@@ -161,14 +169,14 @@ const useRoutes = () => {
       path: '/clients',
       name: 'Clientes',
       show: isAdmin,
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-news-paper',
       component: ClientList,
       layout: '/admin',
     },
     {
       path: '/users',
       name: 'Listado Usuario',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-users',
       component: UserList,
       layout: '/admin',
       show: isAdmin,
@@ -176,7 +184,7 @@ const useRoutes = () => {
     {
       path: '/audits',
       name: 'Listado Auditoria',
-      // icon: 'pe-7s-graph',
+      icon: 'pe-7s-news-paper',
       component: AuditList,
       layout: '/admin',
       show: isAdmin,

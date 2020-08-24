@@ -22,32 +22,32 @@ const DashboardCards = () => {
               to: '/admin/client',
               title: 'Nuevo Cliente ',
               show: isAdmin,
-              iconClass: 'fa fa-user',
+              iconClass: 'pe-7s-id',
             },
             {
               to: '/admin/category',
               title: 'Nueva Categoria',
-              iconClass: 'fa fa-tasks',
+              iconClass: 'pe-7s-note2',
 
               show: isAdmin || isControlStock,
             },
             {
               to: '/admin/sale',
-              title: ' Nueva Venta',
-              iconClass: 'fa fa-sellsy',
+              title: 'Nueva Venta',
+              iconClass: 'pe-7s-cash',
               show: isAdmin || isSeller,
             },
             {
               to: '/admin/user',
               title: 'Agregar Usuario',
               show: isAdmin,
-              iconClass: 'fa fa-users',
+              iconClass: 'pe-7s-add-user',
             },
             {
               to: '/admin/product',
               title: 'Agregar Producto',
 
-              iconClass: 'fa fa-product-hunt',
+              iconClass: 'pe-7s-cart',
               show: isAdmin || isControlStock,
             },
             {
@@ -74,7 +74,7 @@ const DashboardCards = () => {
                           <i
                             className={card.iconClass}
                             aria-hidden="true"
-                            style={{ color: '#3369e8' }}
+                            style={{ color: '#3369e8', fontSize: '70px' }}
                           >
                             {' '}
                           </i>

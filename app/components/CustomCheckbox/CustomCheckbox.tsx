@@ -15,13 +15,13 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class CustomCheckbox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      is_checked: props.isChecked ? true : false
+      is_checked: props.isChecked ? true : false,
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -29,16 +29,26 @@ class CustomCheckbox extends Component {
     this.setState({ is_checked: !this.state.is_checked });
   }
   render() {
-    const { isChecked, number, label, inline, ...rest } = this.props;
+    const {
+      isChecked,
+      number,
+      label,
+      inline,
+      onChange,
+      nameInput,
+      ...rest
+    } = this.props;
     const classes =
-      inline !== undefined ? "checkbox checkbox-inline" : "checkbox";
+      inline !== undefined ? 'checkbox checkbox-inline' : 'checkbox';
+    debugger;
     return (
       <div className={classes}>
         <input
           id={number}
           type="checkbox"
-          onChange={this.handleClick}
-          checked={this.state.is_checked}
+          onChange={onChange ? onChange : this.handleClick}
+          checked={isChecked ? isChecked : this.state.is_checked}
+          name={nameInput}
           {...rest}
         />
         <label htmlFor={number}>{label}</label>

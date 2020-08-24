@@ -28,16 +28,23 @@ const Sidebar = (props) => {
     backgroundImage: 'url(' + props.image + ')',
   };
   return (
-    <div
-      id="sidebar"
-      className="sidebar"
-      data-color={props.color}
-      data-image={props.image}
-    >
-      {props.hasImage ? (
-        <div className="sidebar-background" style={sidebarBackground} />
-      ) : null}
-
+    <div id="sidebar" className="sidebar">
+      <div className="logo">
+        <a
+          href="https://www.creative-tim.com?ref=lbd-sidebar"
+          className="simple-text logo-mini"
+        >
+          <div className="logo-img">
+            {/* <img src={logo} alt="logo_image" /> */}
+          </div>
+        </a>
+        <a
+          href="https://www.creative-tim.com?ref=lbd-sidebar"
+          className="simple-text logo-normal"
+        >
+          Marisa
+        </a>
+      </div>
       <div className="sidebar-wrapper">
         <ul className="nav">
           {state.width <= 991 ? <AdminNavbarLinks /> : null}

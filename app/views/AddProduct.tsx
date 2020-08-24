@@ -1,7 +1,7 @@
 /*eslint-disable */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Formik } from 'formik';
+import { Formik, Field } from 'formik';
 import {
   Grid,
   Row,
@@ -15,6 +15,7 @@ import { Card } from '../components/Card/Card';
 import apiCall from '../utils/apiCall';
 import Button from '../components/CustomButton/CustomButton';
 import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
+import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
 
 const AddProduct = ({ notification }) => {
   const { categories = [] } = useSelector(({ selects }) => selects);
@@ -36,6 +37,7 @@ const AddProduct = ({ notification }) => {
                     stock: 0,
                     minStock: 0,
                     description: '',
+                    isRawMaterial: [],
                     code: 0,
                     expire: Date.now,
                   }}
@@ -56,11 +58,15 @@ const AddProduct = ({ notification }) => {
                     return errors;
                   }}
                   onSubmit={async (values, { setSubmitting, resetForm }) => {
+                    const requestValues = {
+                      ...values,
+                      isRawMaterial: values.isRawMaterial.length > 0,
+                    };
                     try {
                       var response = await apiCall({
                         url: 'products',
                         method: 'POST',
-                        body: JSON.stringify(values),
+                        body: JSON.stringify(requestValues),
                       });
                     } catch (error) {
                       setSubmitting(false);
@@ -209,6 +215,21 @@ const AddProduct = ({ notification }) => {
                             </FormGroup>
                           </Col>
                         </Row>
+                        <Row>
+                          <Col xs={12} md={12}>
+                            <FormGroup controlId="isRawMaterialControl">
+                              <ControlLabel>Materia Prima</ControlLabel>
+                              {console.log('values ', values)}
+                              <Checkbox
+                                number={1}
+                                isChecked={values.isRawMaterial.length > 0}
+                                onChange={handleChange}
+                                nameInput="isRawMaterial"
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+
                         <Row>
                           <Col xs={12} md={12}>
                             <FormGroup controlId="descrControl">
