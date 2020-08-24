@@ -39,7 +39,6 @@ export default merge.smart(baseConfig, {
           }),
         ],
   },
-
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode:
@@ -61,6 +60,7 @@ export default merge.smart(baseConfig, {
       DEBUG_PROD: false,
       START_MINIMIZED: false,
       E2E_BUILD: false,
+      API_URL: 'http://192.168.0.17:3000/api',
     }),
   ],
 
