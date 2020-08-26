@@ -89,6 +89,7 @@ export default merge.smart(baseConfig, {
       NODE_ENV: 'production',
       DEBUG_PROD: false,
       E2E_BUILD: false,
+      API_URL: 'http://192.168.0.17:3000/api',
     }),
 
     new MiniCssExtractPlugin({

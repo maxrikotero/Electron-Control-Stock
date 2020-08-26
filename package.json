@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "electron-marisa",
   "productName": "MarisaControlStock",
   "version": "1.2.0",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
@@ -53,7 +53,7 @@
   },
   "build": {
     "productName": "MarisaControlDeStock",
-    "appId": "org.develar.ElectronReact",
+    "appId": "org.develar.MarisaControlDeStock",
     "files": [
       "dist/",
       "node_modules/",
