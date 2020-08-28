@@ -14,7 +14,7 @@ import { style } from '../variables/Variables';
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
-const AddProvider = ({ notification }) => {
+const AddProvider = ({ notification }: { notification: any }) => {
   const [redirect, setRedirect] = useState(false);
   const [state, setState] = useState({
     socialId: null,

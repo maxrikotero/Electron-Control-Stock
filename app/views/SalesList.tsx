@@ -43,7 +43,7 @@ const SalesList = ({ notification }) => {
     }
   };
 
-  const handleShowBill = (_id) => {
+  const handleShowBill = (_id: string) => {
     fetchBill(_id);
   };
 
@@ -67,7 +67,7 @@ const SalesList = ({ notification }) => {
                     { title: 'Precio Total', field: 'totalPrice' },
                     {
                       title: 'Fecha',
-                      render: (rowData) =>
+                      render: (rowData: any) =>
                         moment(rowData.paidAt).format('YYYY-MM-DD'),
                     },
                     {

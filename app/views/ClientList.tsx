@@ -34,7 +34,7 @@ const ProductList = ({ notification }) => {
     handleShow();
   };
 
-  const handleUpdate = async (data) => {
+  const handleUpdate = async (data: any) => {
     try {
       var response = await useApiCall({
         url: `clients/${data._id}`,

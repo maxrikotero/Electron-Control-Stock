@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  Fragment,
+  ReactElement,
+} from 'react';
 import { Redirect } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
 import {
@@ -12,36 +18,36 @@ import {
 import { Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import '../assets/css/login.css';
-import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 import { style } from '../variables/Variables';
 import useApiUrl from '../hooks/useApiUrl';
 import { set } from '../features/user/userSlice';
 import logo from '../assets/img/logo.jpg';
 
-const styleContainer = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '400px',
-  minHeight: '100vh',
-};
 const Login = () => {
   const dispatch = useDispatch();
 
-  const apiUrl = useApiUrl();
+  const apiUrl: string = useApiUrl();
 
-  const notificationSystem = useRef();
+  const notificationSystem = useRef<HTMLInputElement>(null);
 
-  const [redirection, setRedirection] = useState(false);
+  const [redirection, setRedirection] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token: string = localStorage.getItem('token')!;
     if (token) {
       setRedirection((prev) => !prev);
     }
   }, []);
-  const addNotification = ({ position, message, color }) => {
+  const addNotification = ({
+    position,
+    message,
+    color,
+  }: {
+    position: string;
+    message: ReactElement;
+    color: number;
+  }) => {
     var level;
     switch (color) {
       case 1:
@@ -59,7 +65,8 @@ const Login = () => {
       default:
         break;
     }
-    const notification = notificationSystem.current;
+    const notification: any = notificationSystem.current;
+
     notification.addNotification({
       title: <span data-notify="icon" className="pe-7s-gift" />,
       message: <div>{message}</div>,
@@ -70,7 +77,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <Fragment key="loginFragment">
       <NotificationSystem ref={notificationSystem} style={style} />
       {redirection && <Redirect to="/admin/principal" />}
 
@@ -90,7 +97,7 @@ const Login = () => {
               <Formik
                 initialValues={{ email: '', password: '' }}
                 validate={(values) => {
-                  const errors = {};
+                  const errors: any = {};
                   if (!values.password) {
                     errors.password = 'Requerido';
                   }
@@ -129,7 +136,7 @@ const Login = () => {
                         });
                       }
                     })
-                    .catch((err) => {
+                    .catch(() => {
                       setSubmitting(false);
 
                       addNotification({
@@ -219,8 +226,6 @@ const Login = () => {
                   </form>
                 )}
               </Formik>
-              {/* }
-            /> */}
             </div>
           </Col>
           <Col item xs={7} style={{ padding: '0', height: '100%' }}>
@@ -234,7 +239,7 @@ const Login = () => {
           </Col>
         </Row>
       </Grid>
-    </>
+    </Fragment>
   );
 };
 

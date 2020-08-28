@@ -1,5 +1,5 @@
 /*eslint-disable */
-import React, { useRef } from 'react';
+import React, { useRef, ReactElement } from 'react';
 import {
   Grid,
   Row,
@@ -15,8 +15,8 @@ import apiCall from '../utils/apiCall';
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
-const AddClient = ({ notification }) => {
-  const notificationSystem = useRef();
+const AddClient = ({ notification }: { notification: any }) => {
+  const notificationSystem = useRef<HTMLInputElement>();
 
   return (
     <div className="content">
@@ -36,7 +36,7 @@ const AddClient = ({ notification }) => {
                     description: '',
                   }}
                   validate={(values) => {
-                    let errors = {};
+                    let errors: any = {};
                     if (!values.name) {
                       errors.name = 'Requerido';
                     }

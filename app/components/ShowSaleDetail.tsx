@@ -3,10 +3,9 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 import moment from 'moment';
 import useApiCall from '../hooks/useApiCall';
-import Card from '../components/Card/Card';
 
-const ShowSaleDetail = ({ saleId }) => {
-  const [sale, setSale] = useState({});
+const ShowSaleDetail = ({ saleId }: { saleId: any }) => {
+  const [sale, setSale] = useState<any>({});
 
   const { client = {}, user = {}, paidAt = '' } = sale || {};
 
@@ -73,25 +72,20 @@ const ShowSaleDetail = ({ saleId }) => {
           <hr />
           <Row>
             <Col md={12}>
-              <Card
-                ctTableFullWidth
-                ctTableResponsive
-                content={
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    options={{
-                      actionsColumnIndex: -1,
-                    }}
-                    columns={[
-                      { title: 'Precio Total', field: 'price' },
-                      { title: 'Cantidad', field: 'quality' },
-                      { title: 'Producto', field: 'product.name' },
-                    ]}
-                    data={sale.products}
-                  />
-                }
+              <MaterialTable
+                title=""
+                components={{ Container: (props) => props.children }}
+                options={{
+                  actionsColumnIndex: -1,
+                }}
+                columns={[
+                  { title: 'Precio Total', field: 'price' },
+                  { title: 'Cantidad', field: 'quality' },
+                  { title: 'Producto', field: 'product.name' },
+                ]}
+                data={sale.products}
               />
+              }
             </Col>
           </Row>
         </Grid>

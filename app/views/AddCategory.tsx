@@ -17,8 +17,8 @@ import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 import { setCategories } from '../features/selects/selectsSlice';
 
-const AddCategory = ({ notification }) => {
-  const notificationSystem = useRef();
+const AddCategory = ({ notification }: { notification: any }) => {
+  const notificationSystem = useRef<HTMLInputElement>();
   const dispatch = useDispatch();
 
   return (
@@ -35,7 +35,7 @@ const AddCategory = ({ notification }) => {
                     description: '',
                   }}
                   validate={(values) => {
-                    const errors = {};
+                    const errors: any = {};
                     if (!values.name) {
                       errors.name = 'Requerido';
                     }

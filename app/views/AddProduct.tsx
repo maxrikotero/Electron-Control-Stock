@@ -17,7 +17,7 @@ import Button from '../components/CustomButton/CustomButton';
 import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
 import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
 
-const AddProduct = ({ notification }) => {
+const AddProduct = ({ notification }: { notification: any }) => {
   const { categories = [] } = useSelector(({ selects }) => selects);
 
   return (
@@ -42,7 +42,7 @@ const AddProduct = ({ notification }) => {
                     expire: Date.now,
                   }}
                   validate={(values) => {
-                    const errors = {};
+                    const errors: any = {};
 
                     if (!values.code) {
                       errors.code = 'Requerido';
