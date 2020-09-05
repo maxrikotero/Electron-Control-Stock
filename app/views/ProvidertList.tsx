@@ -14,7 +14,7 @@ const ProviderList = ({ handleClick }) => {
   const handleShow = () => setShow(true);
 
   const fetchProviders = () => {
-    fetch('http://192.168.0.13:3000/api/providers')
+    fetch('http://localhost:3000/api/providers')
       .then((res) => res.json())
       .then((data) => {
         setProviders(data);
@@ -33,7 +33,7 @@ const ProviderList = ({ handleClick }) => {
 
   const deleteProvider = (id) => {
     // if (confirm('Are you sure you want to delete it?')) {
-    fetch(`http://192.168.0.13:3000/api/providers/${id}`, {
+    fetch(`http://localhost:3000/api/providers/${id}`, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -47,7 +47,7 @@ const ProviderList = ({ handleClick }) => {
       });
     // }
   };
-
+  console.log(providers);
   return (
     <div className="content">
       <Grid fluid>
@@ -63,7 +63,8 @@ const ProviderList = ({ handleClick }) => {
                     <tr>
                       <th>Razón Social</th>
                       <th>DNI</th>
-                      <th>Marca</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
                       <th>Fijo</th>
                       <th>Celular</th>
                       <th>Email</th>
@@ -75,7 +76,8 @@ const ProviderList = ({ handleClick }) => {
                         <tr key={key}>
                           <td>{item.socialId}</td>
                           <td>{item.dni}</td>
-                          <td>{item.brand}</td>
+                          <td>{item.firstName}</td>
+                          <td>{item.lastName}</td>
                           <td>{item.phone}</td>
                           <td>{item.mobile}</td>
                           <td>{item.email}</td>

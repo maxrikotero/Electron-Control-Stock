@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+import { HashRouter } from 'react-router-dom';
 import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
 import { Store } from '../store';
@@ -13,9 +13,9 @@ type Props = {
 
 const Root = ({ store, history }: Props) => (
   <Provider store={store}>
-    <ConnectedRouter history={history}>
+    <HashRouter basename="/">
       <Routes />
-    </ConnectedRouter>
+    </HashRouter>
   </Provider>
 );
 

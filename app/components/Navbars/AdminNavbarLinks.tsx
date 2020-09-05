@@ -15,8 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
-import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
+import React, { Component } from 'react';
+import { NavItem, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
 class AdminNavbarLinks extends Component {
   render() {
@@ -70,7 +70,7 @@ class AdminNavbarLinks extends Component {
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
           <NavItem eventKey={3} href="#">
-            Log out
+            Cerrar seccion
           </NavItem>
         </Nav>
       </div>

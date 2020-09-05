@@ -65,85 +65,16 @@ export default merge.smart(baseConfig, {
         test: /\.(scss|less|css)$/,
         loaders: ['style-loader', 'css-loader', 'sass-loader'],
       },
-      // {
-      //   test: /\.(scss)$/,
-      //   use: [
-      //     'style-loader', // creates style nodes from JS strings
-      //     'css-loader', // translates CSS into CommonJS
-      //     'sass-loader', // compiles Sass to CSS, using Node Sass by default
-      //   ],
-      // },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      // {
-      //   test: /^((?!\.global).)*\.(scss|sass)$/,
-      //   use: [
-      //     {
-      //       loader: 'typings-for-css-modules-loader',
-      //     },
-      //     {
-      //       loader: 'typings-for-css-modules-loader',
-      //       options: {
-      //         modules: {
-      //           localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         },
-      //         sourceMap: true,
-      //         importLoaders: 1,
-      //       },
-      //     },
-      //     {
-      //       loader: 'sass-loader',
-      //     },
-      //   ],
-      // },
-      // WOFF Font
+
       {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff',
-          },
-        },
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?limit=10000&minetype=application/font-woff',
       },
-      // WOFF2 Font
       {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff',
-          },
-        },
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader',
       },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream',
-          },
-        },
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader',
-      },
-      // SVG Font
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-          },
-        },
-      },
+
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
@@ -185,6 +116,8 @@ export default merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
+      // API_URL: 'http://192.168.0.17:3000/api',
+      API_URL: 'http://localhost:3000/api',
     }),
 
     new webpack.LoaderOptionsPlugin({

@@ -38,7 +38,7 @@ const EditProvider = ({ handleClick, provider, onClose, fetchProviders }) => {
 
   const handleEdit = () => {
     console.log('lega');
-    fetch(`http://192.168.0.13:3000/api/providers/${_id}`, {
+    fetch(`http://localhost:3000/api/providers/${_id}`, {
       method: 'PUT',
       body: JSON.stringify(state),
       headers: {

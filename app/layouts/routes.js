@@ -15,30 +15,78 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+
 import Dashboard from '../views/Dashboard';
 import UserProfile from '../views/UserProfile';
 import ProductList from '../views/ProductList';
+import Sales from '../views/SalesList';
+import AddSale from '../views/AddSales';
 import Typography from '../views/Typography';
 import Icons from '../views/Icons';
 import Maps from '../views/Maps';
 import Notifications from '../views/Notifications';
 import Upgrade from '../views/Upgrade';
 import AddUser from '../views/AddUser';
+import AddClient from '../views/AddClient';
+import ClientList from '../views/ClientList';
+import AuditList from '../views/AuditList';
+import AddCategory from '../views/AddCategory';
 import ProvidertList from '../views/ProvidertList';
+import CategoryList from '../views/CategoryList';
+import UserList from '../views/UserList';
+import Reports from '../views/Reports';
 
 const dashboardRoutes = [
-  // {
-  //   path: '/user/add',
-  //   name: 'Agregar Usuario',
-  //   // icon: 'pe-7s-graph',
-  //   component: AddUser,
-  //   layout: '/admin',
-  // },
+  {
+    path: '/client',
+    name: 'Agregar Client',
+    icon: 'pe-7s-graph',
+    component: AddClient,
+    layout: '/admin',
+    redirect: true,
+  },
+  {
+    path: '/users',
+    name: 'Listado Usuario',
+    // icon: 'pe-7s-graph',
+    component: UserList,
+    layout: '/admin',
+  },
+  {
+    path: '/audits',
+    name: 'Listado Auditoria',
+    // icon: 'pe-7s-graph',
+    component: AuditList,
+    layout: '/admin',
+  },
+  {
+    path: '/user',
+    name: 'Agregar Usuario',
+    // icon: 'pe-7s-graph',
+    component: AddUser,
+    layout: '/admin',
+    redirect: true,
+  },
+  {
+    path: '/category',
+    name: 'Agregar Categoria',
+    // icon: 'pe-7s-graph',
+    component: AddCategory,
+    layout: '/admin',
+    redirect: true,
+  },
   {
     path: '/principal',
     name: 'Principal',
     // icon: 'pe-7s-graph',
     component: Dashboard,
+    layout: '/admin',
+  },
+  {
+    path: '/report',
+    name: 'Reportes',
+    // icon: 'pe-7s-graph',
+    component: Reports,
     layout: '/admin',
   },
   {
@@ -56,55 +104,33 @@ const dashboardRoutes = [
     layout: '/admin',
   },
   {
+    path: '/sales',
+    name: 'Ventas',
+    // icon: 'pe-7s-user',
+    component: Sales,
+    layout: '/admin',
+  },
+  {
     path: '/providers',
     name: 'Proveedores',
     // icon: 'pe-7s-user',
     component: ProvidertList,
     layout: '/admin',
   },
-  // {
-  //   path: '/table',
-  //   name: 'Table List',
-  //   icon: 'pe-7s-note2',
-  //   component: TableList,
-  //   layout: '/admin',
-  // },
-  // {
-  //   path: '/typography',
-  //   name: 'Typography',
-  //   icon: 'pe-7s-news-paper',
-  //   component: Typography,
-  //   layout: '/admin',
-  // },
-  // {
-  //   path: '/icons',
-  //   name: 'Icons',
-  //   icon: 'pe-7s-science',
-  //   component: Icons,
-  //   layout: '/admin',
-  // },
-  // {
-  //   path: '/maps',
-  //   name: 'Maps',
-  //   icon: 'pe-7s-map-marker',
-  //   component: Maps,
-  //   layout: '/admin',
-  // },
-  // {
-  //   path: '/notifications',
-  //   name: 'Notifications',
-  //   icon: 'pe-7s-bell',
-  //   component: Notifications,
-  //   layout: '/admin',
-  // },
-  // {
-  //   upgrade: true,
-  //   path: '/upgrade',
-  //   name: 'Upgrade to PRO',
-  //   icon: 'pe-7s-rocket',
-  //   component: Upgrade,
-  //   layout: '/admin',
-  // },
+  {
+    path: '/categories',
+    name: 'Categorias',
+    // icon: 'pe-7s-user',
+    component: CategoryList,
+    layout: '/admin',
+  },
+  {
+    path: '/clients',
+    name: 'Clientes',
+    // icon: 'pe-7s-graph',
+    component: ClientList,
+    layout: '/admin',
+  },
 ];
 
 export default dashboardRoutes;
