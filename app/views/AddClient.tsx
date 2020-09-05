@@ -75,7 +75,7 @@ const AddClient = ({ notification }: { notification: any }) => {
                       <Row>
                         <Col xs={12} md={4}>
                           <FormGroup controlId="nameControl">
-                            <ControlLabel>Nombre</ControlLabel>
+                            <ControlLabel>Nombre y Apellido</ControlLabel>
                             <FormControl
                               type="text"
                               name="name"

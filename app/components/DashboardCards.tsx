@@ -52,7 +52,7 @@ const DashboardCards = () => {
             },
             {
               to: '/admin/provider',
-              title: 'Agregar Cliente',
+              title: 'Agregar Proveedor',
               iconClass: 'fa fa-user',
               show: isAdmin,
             },

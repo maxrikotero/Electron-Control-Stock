@@ -40,7 +40,6 @@ class CustomCheckbox extends Component {
     } = this.props;
     const classes =
       inline !== undefined ? 'checkbox checkbox-inline' : 'checkbox';
-    debugger;
     return (
       <div className={classes}>
         <input

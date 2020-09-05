@@ -59,9 +59,10 @@ const ProductList = ({ notification }) => {
 
   const deleteClient = async (id) => {
     // if (confirm('Esta seguro de borrar?')) {
+
     const url = `clients/${id}`;
     try {
-      const response = await apiCall({ url, method: 'DELETE' });
+      const response = await useApiCall({ url, method: 'DELETE' });
 
       if (response.success) {
         setClients(response.data);

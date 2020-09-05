@@ -68,7 +68,7 @@ const Login = () => {
     const notification: any = notificationSystem.current;
 
     notification.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
+      title: <span data-notify="icon" className="pe-7s-bell" />,
       message: <div>{message}</div>,
       level: level,
       position: position,

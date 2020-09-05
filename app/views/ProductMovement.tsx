@@ -43,11 +43,9 @@ const ProductMovement = ({ id, onClose }) => {
                     {
                       title: 'Fecha',
                       render: (rowData) =>
-                        moment(rowData.dateAt).format(
-                          'YYYY-MM-DD HH, h:mm:ss a'
-                        ),
+                        moment(rowData.dateAt).format('YYYY-MM-DD, h:mm:ss a'),
                     },
-                    { title: 'Catidad', field: 'quality' },
+                    { title: 'Cantidad', field: 'quality' },
                     {
                       title: 'Entrada',
                       render: (rowData) =>

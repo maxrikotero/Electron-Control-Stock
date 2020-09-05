@@ -8,14 +8,11 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import { style } from '../variables/Variables';
 
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
 const AddProvider = ({ notification }: { notification: any }) => {
-  const [redirect, setRedirect] = useState(false);
   const [state, setState] = useState({
     socialId: null,
     dni: null,
@@ -23,11 +20,13 @@ const AddProvider = ({ notification }: { notification: any }) => {
     phone: '',
     mobile: '',
     email: '',
+    firstName: '',
+    lastName: '',
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch('http://192.168.0.13:3000/api/providers', {
+    fetch('http://localhost:3000/api/providers', {
       method: 'POST',
       body: JSON.stringify(state),
       headers: {
@@ -38,12 +37,30 @@ const AddProvider = ({ notification }: { notification: any }) => {
       .then((res) => res.json())
       .then(() => {
         notification('tc', 'Proveedor Agregado', 1);
-        setRedirect((prevState) => !prevState);
+        setState({
+          firstName: '',
+          lastName: '',
+          socialId: null,
+          dni: null,
+          brand: '',
+          phone: '',
+          mobile: '',
+          email: '',
+        });
       })
       .catch((err) => console.error(err));
   };
 
-  const { socialId, dni, brand, phone, mobile, email } = state;
+  const {
+    socialId,
+    dni,
+    brand,
+    phone,
+    mobile,
+    email,
+    firstName,
+    lastName,
+  } = state;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value }: { name: string; value: string } = event.target;
@@ -53,7 +70,6 @@ const AddProvider = ({ notification }: { notification: any }) => {
 
   return (
     <div className="content">
-      {redirect && <Redirect from="/" to="/admin/principal" />}
       <Grid fluid>
         <Row>
           <Col md={12}>
@@ -62,68 +78,77 @@ const AddProvider = ({ notification }: { notification: any }) => {
               content={
                 <form onSubmit={handleSubmit}>
                   <Row>
-                    <Col xs={12} md={4}>
-                      <FormGroup controlId="idControl">
-                        <ControlLabel>Razón Social</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="socialId"
-                          onChange={handleChange}
-                          placeHolder="Razón Social"
-                          bsClass="form-control"
-                          value={socialId}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={4}>
+                    <Col xs={12} md={6}>
                       <FormGroup controlId="firstNameControl">
-                        <ControlLabel>DNI</ControlLabel>
+                        <ControlLabel>Nombre</ControlLabel>
                         <FormControl
-                          type="number"
-                          name="dni"
+                          type="text"
+                          name="firstName"
                           onChange={handleChange}
-                          placeHolder="DNI"
                           bsClass="form-control"
-                          value={dni}
+                          value={firstName}
                         />
                       </FormGroup>
                     </Col>
-                    <Col xs={12} md={4}>
+                    <Col xs={12} md={6}>
                       <FormGroup controlId="lastNameControl">
-                        <ControlLabel>Marca</ControlLabel>
+                        <ControlLabel>Apellido</ControlLabel>
                         <FormControl
                           type="text"
-                          name="brand"
+                          name="lastName"
                           onChange={handleChange}
-                          placeHolder="Marca"
                           bsClass="form-control"
-                          value={brand}
+                          value={lastName}
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
                     <Col xs={12} md={6}>
-                      <FormGroup controlId="userControl">
+                      <FormGroup controlId="socialControl">
+                        <ControlLabel>Razón Social</ControlLabel>
+                        <FormControl
+                          type="text"
+                          name="socialId"
+                          onChange={handleChange}
+                          bsClass="form-control"
+                          value={socialId}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="dniControl">
+                        <ControlLabel>DNI</ControlLabel>
+                        <FormControl
+                          type="number"
+                          name="dni"
+                          onChange={handleChange}
+                          bsClass="form-control"
+                          value={dni}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} md={6}>
+                      <FormGroup controlId="fijoControl">
                         <ControlLabel>Fijo</ControlLabel>
                         <FormControl
                           type="number"
                           name="phone"
                           onChange={handleChange}
-                          placeHolder="Fijo"
                           bsClass="form-control"
                           value={phone}
                         />
                       </FormGroup>
                     </Col>
                     <Col xs={12} md={6}>
-                      <FormGroup controlId="emailControl">
+                      <FormGroup controlId="celularControl">
                         <ControlLabel>Celular</ControlLabel>
                         <FormControl
                           type="number"
                           name="mobile"
                           onChange={handleChange}
-                          placeHolder="Celular"
                           bsClass="form-control"
                           value={mobile}
                         />
@@ -132,13 +157,12 @@ const AddProvider = ({ notification }: { notification: any }) => {
                   </Row>
                   <Row>
                     <Col xs={12} md={6}>
-                      <FormGroup controlId="phoneControl">
+                      <FormGroup controlId="emailControl">
                         <ControlLabel>Email</ControlLabel>
                         <FormControl
                           type="email"
                           name="email"
                           onChange={handleChange}
-                          placeHolder="Email"
                           bsClass="form-control"
                           value={email}
                         />

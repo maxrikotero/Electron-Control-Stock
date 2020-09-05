@@ -1,5 +1,5 @@
 /*eslint-disable */
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Formik, Field } from 'formik';
 import {
@@ -9,17 +9,33 @@ import {
   FormGroup,
   ControlLabel,
   FormControl,
-  // option,
+  Table,
+  Tooltip,
+  OverlayTrigger,
 } from 'react-bootstrap';
-import { Card } from '../components/Card/Card';
 import apiCall from '../utils/apiCall';
+import Card from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
-import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
-import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
+import useModal from '../hooks/useModal';
+// import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
+import PriceType from '../components/PriceType';
+import CurrencyInput from './CurrencyInput/CurrencyInput';
 
 const AddProduct = ({ notification }: { notification: any }) => {
+  const [prices, setPrices] = useState([]);
   const { categories = [] } = useSelector(({ selects }) => selects);
+  const edit = <Tooltip id="edit_tooltip">Editar Precio</Tooltip>;
+  const remove = <Tooltip id="remove_tooltip">Remover</Tooltip>;
+  const { ModalComponent, setModal } = useModal();
 
+  const handleSavePriceType = (data) => {
+    if (prices.some((price) => price.id === data.id)) {
+      notification('tc', 'Precio Agregado', 3);
+    } else {
+      setModal(false);
+      setPrices(prices.concat(data));
+    }
+  };
   return (
     <div className="content">
       <Grid fluid>
@@ -61,6 +77,7 @@ const AddProduct = ({ notification }: { notification: any }) => {
                     const requestValues = {
                       ...values,
                       isRawMaterial: values.isRawMaterial.length > 0,
+                      prices,
                     };
                     try {
                       var response = await apiCall({
@@ -140,22 +157,6 @@ const AddProduct = ({ notification }: { notification: any }) => {
                         </Row>
                         <Row>
                           <Col xs={12} md={4}>
-                            <FormGroup controlId="priceControl">
-                              <ControlLabel>Precio</ControlLabel>
-                              <CurrencyInput
-                                placeholder="$0.00"
-                                type="text"
-                                name="price"
-                                onChange={handleChange}
-                                value={values.price}
-                              />
-                            </FormGroup>
-                            <span style={{ color: 'red' }}>
-                              {' '}
-                              {errors.price}
-                            </span>
-                          </Col>
-                          <Col xs={12} md={4}>
                             <FormGroup controlId="stockControl">
                               <ControlLabel>Stock</ControlLabel>
                               <FormControl
@@ -183,6 +184,124 @@ const AddProduct = ({ notification }: { notification: any }) => {
                               />
                             </FormGroup>
                           </Col>
+                          <Col xs={12} md={4}>
+                            <FormGroup controlId="expireControl">
+                              <ControlLabel>Fecha Vencimiento</ControlLabel>
+                              <FormControl
+                                type="date"
+                                name="expire"
+                                onChange={handleChange}
+                                bsClass="form-control"
+                                value={values.expire}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col xs={12} md={12}>
+                            <div style={{ display: 'flex' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                Agregar Precio
+                              </div>{' '}
+                              <div
+                                style={{
+                                  fontSize: '26px',
+                                  color: 'green',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  flexGrow: '0.5',
+                                  cursor: 'pointer',
+                                  alignItems: 'center',
+                                }}
+                                onClick={setModal}
+                              >
+                                <i className="pe-7s-plus"></i>
+                              </div>
+                            </div>
+                            <div>
+                              <Table striped hover>
+                                <thead>
+                                  <tr>
+                                    <th>Tipo</th>
+                                    <th>Precio</th>
+                                    <th>
+                                      <Tooltip id="edit_tooltip">
+                                        Edit Task
+                                      </Tooltip>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {prices.map((item) => (
+                                    <tr>
+                                      <td>{item.text}</td>
+                                      <td> {item.isEdit ? 
+                                      (
+                                        <Col xs={12} md={12}>
+                                        <FormGroup controlId="priceControl">
+                                          <ControlLabel></ControlLabel>
+                                          <CurrencyInput
+                                            placeholder="$0.00"
+                                            type="text"
+                                            name="price"
+                                            onChange={({ target: { value } }) => setPrice(value)}
+                                            value={price}
+                                          />
+                                        </FormGroup>
+                                      </Col>
+                                      )
+                                      
+                                      : <item.price}</td>
+                                      <td>
+                                        <Tooltip id="edit_tooltip">
+                                          Editar
+                                        </Tooltip>
+                                      </td>
+                                      <td>
+                                        <OverlayTrigger
+                                          placement="top"
+                                          overlay={edit}
+                                        >
+                                          <Button
+                                            bsStyle="info"
+                                            simple
+                                            type="button"
+                                          >
+                                            <i className="fa fa-edit" />
+                                          </Button>
+                                        </OverlayTrigger>
+                                      </td>
+                                      <td>
+                                        <OverlayTrigger
+                                          placement="top"
+                                          overlay={remove}
+                                        >
+                                          <Button
+                                            bsStyle="danger"
+                                            simple
+                                            type="button"
+                                            // bsSize="xs"
+                                          >
+                                            <i className="fa fa-times" />
+                                          </Button>
+                                        </OverlayTrigger>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </Table>
+                            </div>
+                            <span style={{ color: 'red' }}>
+                              {' '}
+                              {errors.price}
+                            </span>
+                          </Col>
                         </Row>
                         <Row>
                           <Col xs={12} md={4}>
@@ -201,25 +320,11 @@ const AddProduct = ({ notification }: { notification: any }) => {
                               </FormControl>
                             </FormGroup>
                           </Col>
-
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="expireControl">
-                              <ControlLabel>Fecha Vencimiento</ControlLabel>
-                              <FormControl
-                                type="date"
-                                name="expire"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.expire}
-                              />
-                            </FormGroup>
-                          </Col>
                         </Row>
-                        <Row>
+                        {/* <Row> TODO: REMOVE ALL THIS SECTION
                           <Col xs={12} md={12}>
                             <FormGroup controlId="isRawMaterialControl">
                               <ControlLabel>Materia Prima</ControlLabel>
-                              {console.log('values ', values)}
                               <Checkbox
                                 number={1}
                                 isChecked={values.isRawMaterial.length > 0}
@@ -228,7 +333,7 @@ const AddProduct = ({ notification }: { notification: any }) => {
                               />
                             </FormGroup>
                           </Col>
-                        </Row>
+                        </Row> */}
 
                         <Row>
                           <Col xs={12} md={12}>
@@ -264,6 +369,9 @@ const AddProduct = ({ notification }: { notification: any }) => {
           </Col>
         </Row>
       </Grid>
+      <ModalComponent title="Tipo de precio">
+        <PriceType onSave={handleSavePriceType} />
+      </ModalComponent>
     </div>
   );
 };

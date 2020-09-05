@@ -116,7 +116,8 @@ export default merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      API_URL: 'http://192.168.0.17:3000/api',
+      // API_URL: 'http://192.168.0.17:3000/api',
+      API_URL: 'http://localhost:3000/api',
     }),
 
     new webpack.LoaderOptionsPlugin({

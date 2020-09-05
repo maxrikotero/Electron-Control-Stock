@@ -78,7 +78,7 @@ const Sidebar = (props) => {
               className="nav-link"
               activeClassName="active"
             >
-              <p>Log out</p>
+              <p>Cerrar Session</p>
             </NavLink>
           </li>
         </ul>

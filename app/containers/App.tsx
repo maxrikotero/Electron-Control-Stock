@@ -1,5 +1,6 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import apiCall from '../utils/apiCall';
 import { set } from '../features/user/userSlice';
 import { setCategories } from '../features/selects/selectsSlice';
@@ -10,6 +11,7 @@ type Props = {
 
 const App = (props: Props) => {
   const dispatch = useDispatch();
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -22,18 +24,29 @@ const App = (props: Props) => {
             url: 'categories',
           }),
         ]);
-
-        dispatch(set(userData));
-        dispatch(setCategories(categories));
+        if (userData.error) {
+          alert('Error ');
+        } else {
+          dispatch(set(userData));
+          dispatch(setCategories(categories));
+        }
       } catch (error) {
         alert('Error Cargando Usuario');
       }
     };
 
-    getUserData();
+    if (localStorage.getItem('token')) getUserData();
+    else {
+      setRedirect(true);
+    }
   }, []);
   const { children } = props;
-  return <>{children}</>;
+  return (
+    <>
+      {redirect && <Redirect to="/" />}
+      {children}
+    </>
+  );
 };
 
 export default App;
