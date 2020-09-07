@@ -17,9 +17,9 @@ import apiCall from '../utils/apiCall';
 import Card from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 import useModal from '../hooks/useModal';
+import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
 // import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
 import PriceType from '../components/PriceType';
-import CurrencyInput from './CurrencyInput/CurrencyInput';
 
 const AddProduct = ({ notification }: { notification: any }) => {
   const [prices, setPrices] = useState([]);
@@ -29,7 +29,7 @@ const AddProduct = ({ notification }: { notification: any }) => {
   const { ModalComponent, setModal } = useModal();
 
   const handleSavePriceType = (data) => {
-    if (prices.some((price) => price.id === data.id)) {
+    if (prices.some((price) => price._id === data._id)) {
       notification('tc', 'Precio Agregado', 3);
     } else {
       setModal(false);
@@ -47,13 +47,11 @@ const AddProduct = ({ notification }: { notification: any }) => {
                 <Formik
                   initialValues={{
                     name: '',
-                    price: 0,
                     category: '',
                     brand: '',
                     stock: 0,
                     minStock: 0,
                     description: '',
-                    isRawMaterial: [],
                     code: 0,
                     expire: Date.now,
                   }}
@@ -74,35 +72,44 @@ const AddProduct = ({ notification }: { notification: any }) => {
                     return errors;
                   }}
                   onSubmit={async (values, { setSubmitting, resetForm }) => {
+                    debugger;
                     const requestValues = {
                       ...values,
-                      isRawMaterial: values.isRawMaterial.length > 0,
-                      prices,
+                      prices: prices.map((price) => ({
+                        priceType: price._id,
+                        price: price.price,
+                      })),
                     };
-                    try {
-                      var response = await apiCall({
-                        url: 'products',
-                        method: 'POST',
-                        body: JSON.stringify(requestValues),
-                      });
-                    } catch (error) {
-                      setSubmitting(false);
-                      notification('tc', 'Error al guardar', 3);
-                    }
 
-                    if (response.success) {
-                      setSubmitting(false);
-                      notification('tc', 'Producto Agregado', 1);
-                      resetForm();
+                    if (prices.length > 0) {
+                      try {
+                        var response = await apiCall({
+                          url: 'products',
+                          method: 'POST',
+                          body: JSON.stringify(requestValues),
+                        });
+                      } catch (error) {
+                        setSubmitting(false);
+                        notification('tc', 'Error al guardar', 3);
+                      }
+
+                      if (response.success) {
+                        setSubmitting(false);
+                        notification('tc', 'Producto Agregado', 1);
+                        resetForm();
+                        setPrices([]);
+                      } else {
+                        let message = 'Agregar Producto Error';
+                        if (response.error.indexOf('name') > -1)
+                          message = 'Producto Existente';
+                        if (response.error.indexOf('code') > -1)
+                          message = 'Codigo Existente';
+
+                        setSubmitting(false);
+                        notification('tc', message, 3);
+                      }
                     } else {
-                      let message = 'Agregar Producto Error';
-                      if (response.error.indexOf('name') > -1)
-                        message = 'Producto Existente';
-                      if (response.error.indexOf('code') > -1)
-                        message = 'Codigo Existente';
-
-                      setSubmitting(false);
-                      notification('tc', message, 3);
+                      notification('tc', 'Tipo de precio requerido', 2);
                     }
                   }}
                 >
@@ -232,7 +239,7 @@ const AddProduct = ({ notification }: { notification: any }) => {
                                     <th>Precio</th>
                                     <th>
                                       <Tooltip id="edit_tooltip">
-                                        Edit Task
+                                        Editar
                                       </Tooltip>
                                     </th>
                                   </tr>
@@ -240,24 +247,40 @@ const AddProduct = ({ notification }: { notification: any }) => {
                                 <tbody>
                                   {prices.map((item) => (
                                     <tr>
-                                      <td>{item.text}</td>
-                                      <td> {item.isEdit ? 
-                                      (
-                                        <Col xs={12} md={12}>
-                                        <FormGroup controlId="priceControl">
-                                          <ControlLabel></ControlLabel>
-                                          <CurrencyInput
-                                            placeholder="$0.00"
-                                            type="text"
-                                            name="price"
-                                            onChange={({ target: { value } }) => setPrice(value)}
-                                            value={price}
-                                          />
-                                        </FormGroup>
-                                      </Col>
-                                      )
-                                      
-                                      : <item.price}</td>
+                                      <td>{item.name}</td>
+                                      <td>
+                                        {item.isEdit ? (
+                                          <Row>
+                                            <Col xs={12} md={4}>
+                                              <FormGroup controlId="priceControl">
+                                                <ControlLabel></ControlLabel>
+                                                <CurrencyInput
+                                                  placeholder="$0.00"
+                                                  type="text"
+                                                  name="price"
+                                                  onChange={({
+                                                    target: { value },
+                                                  }) => {
+                                                    const newData = prices.map(
+                                                      (price) =>
+                                                        price._id === item._id
+                                                          ? {
+                                                              ...item,
+                                                              price: value,
+                                                            }
+                                                          : price
+                                                    );
+                                                    setPrices(newData);
+                                                  }}
+                                                  value={item.price}
+                                                />
+                                              </FormGroup>
+                                            </Col>
+                                          </Row>
+                                        ) : (
+                                          item.price
+                                        )}
+                                      </td>
                                       <td>
                                         <Tooltip id="edit_tooltip">
                                           Editar
@@ -271,9 +294,29 @@ const AddProduct = ({ notification }: { notification: any }) => {
                                           <Button
                                             bsStyle="info"
                                             simple
+                                            onClick={() => {
+                                              const newData = prices.map(
+                                                (price) =>
+                                                  price._id === item._id
+                                                    ? {
+                                                        ...item,
+                                                        isEdit: item.isEdit
+                                                          ? false
+                                                          : true,
+                                                      }
+                                                    : price
+                                              );
+                                              setPrices(newData);
+                                            }}
                                             type="button"
                                           >
-                                            <i className="fa fa-edit" />
+                                            <i
+                                              className={`${
+                                                item.isEdit
+                                                  ? 'fa fa-check'
+                                                  : 'fa fa-edit'
+                                              }`}
+                                            />
                                           </Button>
                                         </OverlayTrigger>
                                       </td>
@@ -286,7 +329,13 @@ const AddProduct = ({ notification }: { notification: any }) => {
                                             bsStyle="danger"
                                             simple
                                             type="button"
-                                            // bsSize="xs"
+                                            onClick={() => {
+                                              const newData = prices.filter(
+                                                (price) =>
+                                                  price._id !== item._id
+                                              );
+                                              setPrices(newData);
+                                            }}
                                           >
                                             <i className="fa fa-times" />
                                           </Button>
@@ -370,7 +419,7 @@ const AddProduct = ({ notification }: { notification: any }) => {
         </Row>
       </Grid>
       <ModalComponent title="Tipo de precio">
-        <PriceType onSave={handleSavePriceType} />
+        <PriceType onSave={handleSavePriceType} notification={notification} />
       </ModalComponent>
     </div>
   );

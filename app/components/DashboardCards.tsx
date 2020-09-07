@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
-import { StatsCard } from '../components/StatsCard/StatsCard';
 import { NavLink } from 'react-router-dom';
 
 const DashboardCards = () => {
@@ -53,6 +52,18 @@ const DashboardCards = () => {
             {
               to: '/admin/provider',
               title: 'Agregar Proveedor',
+              iconClass: 'fa fa-user',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/payments',
+              title: 'Agregar Forma de pago',
+              iconClass: 'fa fa-user',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/pricetypes',
+              title: 'Agregar Tipo de precio',
               iconClass: 'fa fa-user',
               show: isAdmin,
             },

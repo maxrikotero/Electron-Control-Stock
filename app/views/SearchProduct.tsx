@@ -35,6 +35,7 @@ function searchCharacters(search) {
 const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   // State and setter for search term
   const [searchTerm, setSearchTerm] = useState('');
+  const [priceSelected, setPriceSelected] = useState({});
   // State and setter for search results
   const [results, setResults] = useState([]);
   // State for search status (whether there is a pending API request)
@@ -88,12 +89,33 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   // Pretty standard UI with search input and results
 
   const handleSave = (data) => {
-    const product = { ...data, quality, subTotal: data.price * quality };
+    const price = priceSelected.price;
+    const product = {
+      code: data.code,
+      name: data.name,
+      description: data.description,
+      _id: data._id,
+      quality,
+      price,
+      subTotal: price * quality,
+    };
     onAdd(product);
     setQuality();
     setSearchTerm('');
     setResults([]);
+    setPriceSelected({});
   };
+
+  const handleChange = ({ target: { value } }) => {
+    debugger;
+    if (value !== 'select')
+      setPriceSelected(
+        results[0].prices.filter((item) => item._id === value)[0]
+      );
+    else setPriceSelected({});
+  };
+
+  debugger;
   return (
     <div className="content">
       <Grid fluid>
@@ -121,6 +143,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                   <thead>
                     <tr>
                       <th>Nombre</th>
+                      <th>Tipo Precio</th>
                       <th>Precio</th>
                       <th>Stock</th>
                       <th>Cantidad</th>
@@ -131,7 +154,29 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                       return (
                         <tr key={key}>
                           <td>{item.name}</td>
-                          <td>{item.price}</td>
+                          <td>
+                            <Row>
+                              <Col xs={12} md={6}>
+                                <FormGroup controlId="formControlsSelect">
+                                  {/* <ControlLabel>Tipo de precio</ControlLabel> */}
+                                  <FormControl
+                                    componentClass="select"
+                                    placeholder="select"
+                                    name="price"
+                                    onChange={handleChange}
+                                  >
+                                    <option value="select">seleccione</option>
+                                    {item.prices.map((item) => (
+                                      <option value={item._id}>
+                                        {item.priceType.name}
+                                      </option>
+                                    ))}
+                                  </FormControl>
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          </td>
+                          <td> {priceSelected.price}</td>
                           <td>{item.stock}</td>
                           <td>
                             <Row>
@@ -169,7 +214,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                             </Row>
                           </td>
                           <td>
-                            {!Boolean(errors.stock) && (
+                            {!Boolean(errors.stock) && priceSelected.price && (
                               <Button
                                 bsStyle="success"
                                 onClick={() => handleSave(item)}

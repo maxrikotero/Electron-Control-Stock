@@ -72,6 +72,7 @@ const AddSales = ({ notification }) => {
       description: item.description,
     }));
 
+    debugger;
     const data = { ...sale, products: saleProducts };
 
     try {

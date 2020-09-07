@@ -33,6 +33,8 @@ import AddProvider from '../views/AddProvider';
 import AddSale from '../views/AddSales';
 import UserList from '../views/UserList';
 import AuditList from '../views/AuditList';
+import AddPayment from '../views/AddPayment';
+import PriceType from '../views/PriceType';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -188,6 +190,28 @@ const useRoutes = () => {
       component: AuditList,
       layout: '/admin',
       show: isAdmin,
+    },
+    {
+      path: '/payments',
+      name: 'Tipo del pagos',
+      icon: 'pe-7s-news-paper',
+      component: AddPayment,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/pricetypes',
+      name: 'Tipo de precios',
+      icon: 'pe-7s-news-paper',
+      type: 'Agregar ´Precio',
+      method: 'POST',
+      title: ' Agregar tipo de pago',
+      successMessage: 'Tipo de pago precio agregado',
+      component: PriceType,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
     },
   ];
 

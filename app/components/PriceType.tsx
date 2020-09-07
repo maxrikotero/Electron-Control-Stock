@@ -9,37 +9,31 @@ import {
   Button,
 } from 'react-bootstrap';
 import CurrencyInput from './CurrencyInput/CurrencyInput';
+import useApiCall from '../hooks/useApiCall';
 
-const typesData = [
-  {
-    id: 1,
-    text: 'Comercio',
-  },
-  {
-    id: 2,
-    text: 'Final',
-  },
-  {
-    id: 3,
-    text: 'La Rotonda',
-  },
-];
-
-const PriceType = ({ onSave, priceType }) => {
+const PriceType = ({ onSave, notification }) => {
   const [types, setTypes] = useState([]);
+
   const [typeSelected, setTypeSelected] = useState(0);
   const [price, setPrice] = useState(null);
 
   useEffect(() => {
-    if (priceType) setTypeSelected(priceType);
-    setTypes(typesData);
+    const fetchClients = async () => {
+      const data = await useApiCall({
+        url: 'pricetype',
+      });
+      if (data) setTypes(data);
+    };
+    fetchClients();
   }, []);
 
   const handleSave = () => {
-    const selected = types.filter(
-      (type) => type.id === parseInt(typeSelected, 0)
-    )[0];
-    onSave({ ...selected, price });
+    if (typeSelected) {
+      const selected = types.filter((type) => type._id === typeSelected)[0];
+      onSave({ ...selected, price });
+    } else {
+      notification('tc', 'Agregue un tipo de precio', 2);
+    }
   };
   return (
     <div className="content">
@@ -57,7 +51,7 @@ const PriceType = ({ onSave, priceType }) => {
               >
                 <option value={0}>Seleccione</option>
                 {types.map((item) => (
-                  <option value={item.id}>{item.text}</option>
+                  <option value={item._id}>{item.name}</option>
                 ))}
               </FormControl>
             </FormGroup>
