@@ -83,7 +83,7 @@ const ProductList = ({ notification }) => {
               ctTableFullWidth
               ctTableResponsive
               content={
-                <div className="content">
+                <div>
                   <MaterialTable
                     title=""
                     components={{ Container: (props) => props.children }}

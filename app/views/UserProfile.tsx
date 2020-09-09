@@ -53,7 +53,7 @@ const UserProfile = ({ notification, _id, onSave }) => {
         <Row>
           <Col md={12}>
             <Card
-              title="Editar Usuario"
+              title=""
               content={
                 <Formik
                   initialValues={{

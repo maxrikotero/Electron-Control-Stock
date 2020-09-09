@@ -12,7 +12,16 @@ import {
 import { Card } from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 
-const AddSimpleForm = ({ title, onSave }: { title: String }) => {
+const AddSimpleForm = ({
+  title,
+  onSave,
+  data = {
+    name: '',
+    description: '',
+  },
+}: {
+  title: String;
+}) => {
   return (
     <div>
       <Grid fluid>
@@ -22,10 +31,7 @@ const AddSimpleForm = ({ title, onSave }: { title: String }) => {
               title={title}
               content={
                 <Formik
-                  initialValues={{
-                    name: '',
-                    description: '',
-                  }}
+                  initialValues={data}
                   validate={(values) => {
                     const errors: any = {};
                     if (!values.name) {

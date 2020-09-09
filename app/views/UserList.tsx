@@ -1,8 +1,7 @@
 /*eslint-disable */
-import React, { useEffect, useState, Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import MaterialTable from 'material-table';
-import moment from 'moment';
 import UserProfile from './UserProfile';
 import Card from '../components/Card/Card';
 import apiCall from '../utils/apiCall';
@@ -61,7 +60,7 @@ const UserList = ({ notification }) => {
   };
 
   return (
-    <div className="content">
+    <div>
       <Grid fluid>
         <Row>
           <Col md={12}>

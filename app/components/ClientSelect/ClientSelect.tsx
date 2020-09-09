@@ -8,14 +8,6 @@ import {
 } from 'react-bootstrap';
 import apiCall from '../../utils/apiCall';
 
-// interface Options {
-//   id: number;
-//   text: string;
-// }
-// interface DropdownProps {
-//   options: Options[];
-// }
-
 const ClientSelect = ({ onAdd, clientSale }) => {
   const [clients, setClients] = useState([]);
   const [client, setClient] = useState({});

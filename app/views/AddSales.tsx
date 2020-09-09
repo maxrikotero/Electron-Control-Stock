@@ -11,26 +11,39 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-import { saveAs } from 'file-saver';
 import { useSelector, useDispatch } from 'react-redux';
-import Loader from 'react-loader-spinner';
 import Card from '../components/Card/Card';
 import Client from '../components/ClientSelect/ClientSelect';
 import SearchProduct from '../views/SearchProduct';
 import useApiCall from '../hooks/useApiCall';
-import { set } from '../features/apiCallStatus/apiCallStatusSlice';
+import apiCall from '../utils/apiCall';
 
 const AddSales = ({ notification }) => {
   const [sale, setSales] = useState({
     totalPrice: 0,
     client: null,
     products: [],
+    paymentType: '',
+    billType: '',
   });
   const [products, setProducts] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const { sessionData } = useSelector(({ user }) => user);
   const { totalPrice, client } = sale;
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const data = await apiCall({ url: 'payments' });
+        if (data) setPayments(data);
+      } catch (error) {
+        setPayments([]);
+      }
+    };
+    fetchPayments();
+  }, []);
 
   useEffect(() => {
     if (products.length > 0)
@@ -72,7 +85,6 @@ const AddSales = ({ notification }) => {
       description: item.description,
     }));
 
-    debugger;
     const data = { ...sale, products: saleProducts };
 
     try {
@@ -127,13 +139,19 @@ const AddSales = ({ notification }) => {
     setProducts(newArray);
   };
 
+  const handlePayment = ({ target: { value } }) => {
+    if (value !== 'select')
+      setSales((prev) => ({ ...prev, paymentType: value }));
+    else setSales((prev) => ({ ...prev, paymentType: '' }));
+  };
+
   return (
     <div className="content">
       <Grid fluid>
         <Row>
           <Col md={12}>
             <Card
-              title={`Nueva venta  Vendor: ${sessionData.email}`}
+              title={`Nueva venta | Vendor: ${sessionData.email}`}
               ctTableFullWidth
               ctTableResponsive
               content={
@@ -144,6 +162,56 @@ const AddSales = ({ notification }) => {
                     saleProducts={products}
                     alertNotification={notification}
                   />
+                  <div className="content">
+                    <Row>
+                      <Col md={4}>
+                        <FormGroup controlId="formControlsSelect">
+                          <ControlLabel>Forma de pago</ControlLabel>
+                          <FormControl
+                            componentClass="select"
+                            placeholder="select"
+                            name="payment"
+                            onChange={handlePayment}
+                          >
+                            <option value="">Seleccione</option>
+                            {payments.length > 0 &&
+                              payments.map((item) => (
+                                <option value={item._id}>{item.name}</option>
+                              ))}
+                          </FormControl>
+                        </FormGroup>
+                      </Col>
+                      <Col md={4}>
+                        <FormGroup controlId="formControlsSelect">
+                          <ControlLabel>Tipo de factura</ControlLabel>
+                          <FormControl
+                            componentClass="select"
+                            placeholder="select"
+                            name="billType"
+                            onChange={({ target: { value } }) => {
+                              if (value !== 'select')
+                                setSales((prev) => ({
+                                  ...prev,
+                                  billType: value,
+                                }));
+                              else
+                                setSales((prev) => ({ ...prev, billType: '' }));
+                            }}
+                          >
+                            <option value="">Seleccione</option>
+                            {[
+                              { id: 1, name: 'Factura A' },
+                              { id: 2, name: 'Factura B' },
+                              { id: 3, name: 'Consumidor Final' },
+                            ].map((item) => (
+                              <option value={item.id}>{item.name}</option>
+                            ))}
+                          </FormControl>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  </div>
+
                   <Row>
                     <Col
                       md={12}

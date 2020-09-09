@@ -52,19 +52,19 @@ const DashboardCards = () => {
             {
               to: '/admin/provider',
               title: 'Agregar Proveedor',
-              iconClass: 'fa fa-user',
+              iconClass: 'pe-7s-add-user',
               show: isAdmin,
             },
             {
-              to: '/admin/payments',
+              to: '/admin/payment',
               title: 'Agregar Forma de pago',
-              iconClass: 'fa fa-user',
+              iconClass: 'pe-7s-credit',
               show: isAdmin,
             },
             {
-              to: '/admin/pricetypes',
+              to: '/admin/pricetype',
               title: 'Agregar Tipo de precio',
-              iconClass: 'fa fa-user',
+              iconClass: 'pe-7s-wallet',
               show: isAdmin,
             },
           ].map((card) => {

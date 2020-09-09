@@ -14,7 +14,6 @@ const PriceType = ({
 }) => {
   const notificationSystem = useRef<HTMLInputElement>();
   const handleSubmit = async (values: any) => {
-    debugger;
     var response = await apiCall({
       url,
       method: method ? method : 'GET',

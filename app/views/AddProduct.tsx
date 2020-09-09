@@ -72,7 +72,6 @@ const AddProduct = ({ notification }: { notification: any }) => {
                     return errors;
                   }}
                   onSubmit={async (values, { setSubmitting, resetForm }) => {
-                    debugger;
                     const requestValues = {
                       ...values,
                       prices: prices.map((price) => ({

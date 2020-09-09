@@ -8,26 +8,26 @@ import ConfirmModal from '../components/Confirm/Confirm';
 import useModal from '../hooks/useModal';
 import AddSimpleForm from '../components/AddSimpleForm';
 
-const PaymentsList = ({ notification }) => {
-  const [payments, setPayments] = useState([]);
+const PriceTypeList = ({ notification }) => {
+  const [priceTypes, setPriceTypes] = useState([]);
   const [showConfirm, setShowConfirm] = useState({
     show: false,
     id: null,
   });
-  const [editPayment, setEditPayment] = useState({});
+  const [editPriceType, setEditPriceType] = useState({});
   const { ModalComponent, setModal } = useModal('large');
 
-  const fetchPayments = async () => {
-    const data = await apiCall({ url: 'payments' });
-    if (data) setPayments(data);
+  const fetchPriceTypes = async () => {
+    const data = await apiCall({ url: 'pricetype' });
+    if (data) setPriceTypes(data);
   };
 
   useEffect(() => {
-    fetchPayments();
+    fetchPriceTypes();
   }, []);
 
   const handleEdit = (id) => {
-    setEditPayment(payments.filter((user) => user._id === id)[0]);
+    setEditPriceType(priceTypes.filter((priceType) => priceType._id === id)[0]);
     setModal((prev) => !prev);
   };
 
@@ -44,9 +44,9 @@ const PaymentsList = ({ notification }) => {
       body: JSON.stringify({ name: data.name, description: data.description }),
     });
     if (response.success) {
-      notification('tc', 'Tipo de pago Actualizado', 1);
-      setPayments(response.data);
-      setEditPayment({});
+      notification('tc', 'Tipo de precio Actualizado', 1);
+      setPriceTypes(response.data);
+      setEditPriceType({});
     } else {
       let message = 'Actualizar Error';
       notification('tc', message, 3);
@@ -54,7 +54,7 @@ const PaymentsList = ({ notification }) => {
   };
 
   const deleteUser = async () => {
-    const url = `payments/${showConfirm.id}`;
+    const url = `pricetype/${showConfirm.id}`;
     try {
       const response = await apiCall({ url, method: 'DELETE' });
 
@@ -63,8 +63,8 @@ const PaymentsList = ({ notification }) => {
           show: false,
           id: null,
         }),
-          notification('tc', 'Tipo de pago Borrado', 1);
-        fetchPayments();
+          notification('tc', 'Tipo de precio Borrado', 1);
+        fetchPriceTypes();
       }
     } catch (error) {
       alert('error');
@@ -94,8 +94,8 @@ const PaymentsList = ({ notification }) => {
                       actionsColumnIndex: -1,
                     }}
                     data={
-                      payments.length > 0
-                        ? payments.reduce(
+                      priceTypes.length > 0
+                        ? priceTypes.reduce(
                             (acc, item) => [
                               ...acc,
                               {
@@ -127,19 +127,19 @@ const PaymentsList = ({ notification }) => {
           </Col>
         </Row>
       </Grid>
-      <ModalComponent title="Tipo de Pago">
+      <ModalComponent title="Tipo de precio">
         <AddSimpleForm
-          title="Editar tipo de pago"
+          title="Editar tipo de precio"
           onSave={handleSave}
-          data={editPayment}
+          data={editPriceType}
         />
       </ModalComponent>
       <ConfirmModal
         {...{
           closeText: 'Cancelar',
           confirmText: 'Borrar',
-          title: 'Borrar Tipo de pago',
-          body: 'Esta seguro de borrar este tipo de pago.',
+          title: 'Borrar Tipo de precio',
+          body: 'Esta seguro de borrar este tipo de precio.',
           show: showConfirm.show,
           onAction: deleteUser,
           onClose: () =>
@@ -153,4 +153,4 @@ const PaymentsList = ({ notification }) => {
   );
 };
 
-export default PaymentsList;
+export default PriceTypeList;

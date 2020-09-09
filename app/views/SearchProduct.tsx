@@ -115,129 +115,126 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
     else setPriceSelected({});
   };
 
-  debugger;
   return (
     <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={4}>
-            <FormGroup controlId="queryControl">
-              <ControlLabel>Buscar Producto</ControlLabel>
-              <FormControl
-                type="text"
-                name="query"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeHolder="Buscar Producto"
-                bsClass="form-control"
-                value={searchTerm}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        {isSearching && <div>Searching ...</div>}
-        {results.length > 0 && (
-          <>
-            <Row>
-              <Col md={12}>
-                <Table striped hover>
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Tipo Precio</th>
-                      <th>Precio</th>
-                      <th>Stock</th>
-                      <th>Cantidad</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((item, key) => {
-                      return (
-                        <tr key={key}>
-                          <td>{item.name}</td>
-                          <td>
-                            <Row>
-                              <Col xs={12} md={6}>
-                                <FormGroup controlId="formControlsSelect">
-                                  {/* <ControlLabel>Tipo de precio</ControlLabel> */}
-                                  <FormControl
-                                    componentClass="select"
-                                    placeholder="select"
-                                    name="price"
-                                    onChange={handleChange}
-                                  >
-                                    <option value="select">seleccione</option>
-                                    {item.prices.map((item) => (
-                                      <option value={item._id}>
-                                        {item.priceType.name}
-                                      </option>
-                                    ))}
-                                  </FormControl>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                          </td>
-                          <td> {priceSelected.price}</td>
-                          <td>{item.stock}</td>
-                          <td>
-                            <Row>
-                              <Col md={4}>
-                                <FormGroup controlId="qualityControl">
-                                  <FormControl
-                                    type="numeric"
-                                    name="quality"
-                                    maxLength={50}
-                                    onChange={(e) => {
-                                      const { value = 0 } = e.target;
-                                      setErrors({});
-                                      if (parseInt(value, 10) === 0) {
-                                        setErrors({
-                                          stock: 'Cantidad Requerida',
-                                        });
-                                      } else {
-                                        if (parseInt(value, 10) > item.stock)
-                                          setErrors({
-                                            stock: 'Cantidad Invalida',
-                                          });
-                                      }
-                                      setQuality(value);
-                                    }}
-                                    placeHolder="Cantidad"
-                                    bsClass="form-control"
-                                    value={quality}
-                                  />
-                                </FormGroup>
-                                <span style={{ color: 'red' }}>
-                                  {' '}
-                                  {errors.stock}
-                                </span>
-                              </Col>
-                            </Row>
-                          </td>
-                          <td>
-                            {!Boolean(errors.stock) && priceSelected.price && (
-                              <Button
-                                bsStyle="success"
-                                onClick={() => handleSave(item)}
-                              >
-                                <i
-                                  className="fa fa-check-circle-o"
-                                  style={{ fontSize: '21px' }}
+      <Row>
+        <Col md={4}>
+          <FormGroup controlId="queryControl">
+            <ControlLabel>Buscar Producto</ControlLabel>
+            <FormControl
+              type="text"
+              name="query"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeHolder="Buscar Producto"
+              bsClass="form-control"
+              value={searchTerm}
+            />
+          </FormGroup>
+        </Col>
+      </Row>
+      {isSearching && <div>Searching ...</div>}
+      {results.length > 0 && (
+        <>
+          <Row>
+            <Col md={12}>
+              <Table striped hover>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Tipo Precio</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Cantidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {results.map((item, key) => {
+                    return (
+                      <tr key={key}>
+                        <td>{item.name}</td>
+                        <td>
+                          <Row>
+                            <Col xs={12} md={8}>
+                              <FormGroup controlId="formControlsSelect">
+                                {/* <ControlLabel>Tipo de precio</ControlLabel> */}
+                                <FormControl
+                                  componentClass="select"
+                                  placeholder="select"
+                                  name="price"
+                                  onChange={handleChange}
                                 >
-                                  {' '}
-                                </i>
-                              </Button>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </Col>
-            </Row>
-          </>
-        )}
-      </Grid>
+                                  <option value="select">seleccione</option>
+                                  {item.prices.map((item) => (
+                                    <option value={item._id}>
+                                      {item.priceType.name}
+                                    </option>
+                                  ))}
+                                </FormControl>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+                        </td>
+                        <td> {priceSelected.price}</td>
+                        <td>{item.stock}</td>
+                        <td>
+                          <Row>
+                            <Col md={4}>
+                              <FormGroup controlId="qualityControl">
+                                <FormControl
+                                  type="numeric"
+                                  name="quality"
+                                  maxLength={50}
+                                  onChange={(e) => {
+                                    const { value = 0 } = e.target;
+                                    setErrors({});
+                                    if (parseInt(value, 10) === 0) {
+                                      setErrors({
+                                        stock: 'Cantidad Requerida',
+                                      });
+                                    } else {
+                                      if (parseInt(value, 10) > item.stock)
+                                        setErrors({
+                                          stock: 'Cantidad Invalida',
+                                        });
+                                    }
+                                    setQuality(value);
+                                  }}
+                                  placeHolder="Cantidad"
+                                  bsClass="form-control"
+                                  value={quality}
+                                />
+                              </FormGroup>
+                              <span style={{ color: 'red' }}>
+                                {' '}
+                                {errors.stock}
+                              </span>
+                            </Col>
+                          </Row>
+                        </td>
+                        <td>
+                          {!Boolean(errors.stock) && priceSelected.price && (
+                            <Button
+                              bsStyle="success"
+                              onClick={() => handleSave(item)}
+                            >
+                              <i
+                                className="fa fa-check-circle-o"
+                                style={{ fontSize: '21px' }}
+                              >
+                                {' '}
+                              </i>
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+        </>
+      )}
     </div>
   );
 };

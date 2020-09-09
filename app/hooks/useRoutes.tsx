@@ -35,6 +35,8 @@ import UserList from '../views/UserList';
 import AuditList from '../views/AuditList';
 import AddPayment from '../views/AddPayment';
 import PriceType from '../views/PriceType';
+import PaymentsList from '../views/PaymentsList';
+import PriceTypeList from '../views/PriceTypeList';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -192,7 +194,7 @@ const useRoutes = () => {
       show: isAdmin,
     },
     {
-      path: '/payments',
+      path: '/payment',
       name: 'Tipo del pagos',
       icon: 'pe-7s-news-paper',
       component: AddPayment,
@@ -201,7 +203,7 @@ const useRoutes = () => {
       redirect: true,
     },
     {
-      path: '/pricetypes',
+      path: '/pricetype',
       name: 'Tipo de precios',
       icon: 'pe-7s-news-paper',
       type: 'Agregar ´Precio',
@@ -212,6 +214,22 @@ const useRoutes = () => {
       layout: '/admin',
       show: isAdmin,
       redirect: true,
+    },
+    {
+      path: '/pricetypes',
+      name: 'Listado Precios',
+      icon: 'pe-7s-news-paper',
+      component: PriceTypeList,
+      layout: '/admin',
+      show: isAdmin,
+    },
+    {
+      path: '/payments',
+      name: 'Listado Pagos',
+      icon: 'pe-7s-news-paper',
+      component: PaymentsList,
+      layout: '/admin',
+      show: isAdmin,
     },
   ];
 
