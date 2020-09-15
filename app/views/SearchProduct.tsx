@@ -10,9 +10,9 @@ import {
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-
+import useModal from '../hooks/useModal';
 import useApiUrl from '../hooks/useApiUrl';
-
+import ProductList from '../views/ProductList';
 import useDebounce from '../hooks/useDebounce';
 
 // API search function
@@ -53,6 +53,8 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   // ... so that we aren't hitting our API rapidly.
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const { ModalComponent, setModal } = useModal('large');
+
   // Here's where the API call happens
   // We use useEffect since this is an asynchronous action
   useEffect(
@@ -89,47 +91,68 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   // Pretty standard UI with search input and results
 
   const handleSave = (data) => {
-    const price = priceSelected.price;
     const product = {
       code: data.code,
       name: data.name,
       description: data.description,
       _id: data._id,
-      quality,
-      price,
-      subTotal: price * quality,
+      quality: data.quality,
+      price: data.price,
+      subTotal: data.price * data.quality,
+      stock: data.stock,
     };
     onAdd(product);
-    setQuality();
     setSearchTerm('');
     setResults([]);
-    setPriceSelected({});
   };
 
-  const handleChange = ({ target: { value } }) => {
-    debugger;
-    if (value !== 'select')
-      setPriceSelected(
-        results[0].prices.filter((item) => item._id === value)[0]
-      );
-    else setPriceSelected({});
+  const handleSelectProduct = (data) => {
+    if (!results.some((item) => item._id === data._id)) {
+      if (
+        saleProducts.length > 0 &&
+        saleProducts.some((item) => item._id === data._id)
+      ) {
+        alertNotification('tc', 'Producto ya fue agregado a la venta', 3);
+      } else {
+        setResults((prev) => prev.concat(data));
+        setModal(false);
+      }
+    } else {
+      alertNotification('tc', 'Producto ya fue agregado', 3);
+    }
   };
-
   return (
     <div className="content">
       <Row>
-        <Col md={4}>
-          <FormGroup controlId="queryControl">
-            <ControlLabel>Buscar Producto</ControlLabel>
-            <FormControl
-              type="text"
-              name="query"
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeHolder="Buscar Producto"
-              bsClass="form-control"
-              value={searchTerm}
-            />
-          </FormGroup>
+        <Col md={8}>
+          <Row
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-end',
+            }}
+          >
+            <Col md={6}>
+              <FormGroup controlId="queryControl">
+                <ControlLabel>Buscar Producto</ControlLabel>
+                <FormControl
+                  type="text"
+                  name="query"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeHolder="Buscar Producto"
+                  bsClass="form-control"
+                  value={searchTerm}
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup controlId="queryControl">
+                <Button bsStyle="primary" onClick={() => setModal(true)}>
+                  Ver listado de productos
+                </Button>
+              </FormGroup>
+            </Col>
+          </Row>
         </Col>
       </Row>
       {isSearching && <div>Searching ...</div>}
@@ -140,28 +163,44 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
               <Table striped hover>
                 <thead>
                   <tr>
+                    <th>Codigo</th>
                     <th>Nombre</th>
                     <th>Tipo Precio</th>
                     <th>Precio</th>
                     <th>Stock</th>
                     <th>Cantidad</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.map((item, key) => {
                     return (
                       <tr key={key}>
+                        <td>{item.code}</td>
                         <td>{item.name}</td>
                         <td>
                           <Row>
-                            <Col xs={12} md={8}>
+                            <Col xs={12} md={10}>
                               <FormGroup controlId="formControlsSelect">
-                                {/* <ControlLabel>Tipo de precio</ControlLabel> */}
                                 <FormControl
                                   componentClass="select"
                                   placeholder="select"
                                   name="price"
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    debugger;
+                                    setResults((prev) =>
+                                      prev.map((prod) =>
+                                        prod._id === item._id
+                                          ? {
+                                              ...prod,
+                                              price: item.prices.filter(
+                                                (p) => p._id === e.target.value
+                                              )[0].price,
+                                            }
+                                          : prod
+                                      )
+                                    );
+                                  }}
                                 >
                                   <option value="select">seleccione</option>
                                   {item.prices.map((item) => (
@@ -174,11 +213,11 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                             </Col>
                           </Row>
                         </td>
-                        <td> {priceSelected.price}</td>
+                        <td> {item.price}</td>
                         <td>{item.stock}</td>
                         <td>
                           <Row>
-                            <Col md={4}>
+                            <Col md={6}>
                               <FormGroup controlId="qualityControl">
                                 <FormControl
                                   type="numeric"
@@ -196,12 +235,20 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                         setErrors({
                                           stock: 'Cantidad Invalida',
                                         });
+                                      else {
+                                        setResults((prev) =>
+                                          prev.map((prod) =>
+                                            prod._id === item._id
+                                              ? { ...prod, quality: value }
+                                              : prod
+                                          )
+                                        );
+                                      }
                                     }
-                                    setQuality(value);
                                   }}
                                   placeHolder="Cantidad"
                                   bsClass="form-control"
-                                  value={quality}
+                                  value={item.quality}
                                 />
                               </FormGroup>
                               <span style={{ color: 'red' }}>
@@ -212,19 +259,40 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                           </Row>
                         </td>
                         <td>
-                          {!Boolean(errors.stock) && priceSelected.price && (
+                          {!Boolean(errors.stock) &&
+                            item.price &&
+                            item.quality && (
+                              <Button
+                                bsStyle="success"
+                                onClick={() => handleSave(item)}
+                              >
+                                <i
+                                  className="fa fa-check-circle-o"
+                                  style={{ fontSize: '21px' }}
+                                >
+                                  {' '}
+                                </i>
+                              </Button>
+                            )}
+                        </td>
+                        <td>
+                          {
                             <Button
-                              bsStyle="success"
-                              onClick={() => handleSave(item)}
+                              bsStyle="danger"
+                              onClick={() =>
+                                setResults((prev) =>
+                                  prev.filter((prod) => prod._id !== item._id)
+                                )
+                              }
                             >
                               <i
-                                className="fa fa-check-circle-o"
+                                className="fa fa-times"
                                 style={{ fontSize: '21px' }}
                               >
                                 {' '}
                               </i>
                             </Button>
-                          )}
+                          }
                         </td>
                       </tr>
                     );
@@ -235,6 +303,11 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
           </Row>
         </>
       )}
+      <ModalComponent title="Lista de productos">
+        <ProductList
+          {...{ actions: false, onlyCode: true, onSelect: handleSelectProduct }}
+        />
+      </ModalComponent>
     </div>
   );
 };

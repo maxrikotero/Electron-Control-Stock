@@ -5,12 +5,16 @@ import { useLocation } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import moment from 'moment';
 import EditProduct from './EditProduct';
-import Card from '../components/Card/Card';
 import Movement from '../views/ProductMovement';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
 
-const ProductList = ({ notification }) => {
+const ProductList = ({
+  notification,
+  onlyCode = false,
+  actions = true,
+  onSelect,
+}) => {
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState({});
   const [show, setShow] = useState(false);
@@ -103,88 +107,100 @@ const ProductList = ({ notification }) => {
       alert('error');
     }
   };
+  const materialConfig = {
+    actions: actions
+      ? [
+          {
+            icon: () => {
+              return <Button bsStyle="info">Edit</Button>;
+            },
+            onClick: (event, rowData) => handleEdit(rowData._id),
+          },
+          {
+            icon: () => <Button bsStyle="danger">Borrar</Button>,
+            onClick: (event, rowData) => handleDelete(rowData._id),
+          },
+        ]
+      : [],
+
+    columns: !onlyCode
+      ? [
+          { title: 'Codigo', field: 'code' },
+          { title: 'Nombre', field: 'name' },
+
+          {
+            title: 'Precio',
+            field: 'price',
+          },
+          {
+            title: 'Stock',
+            field: 'stock',
+            cellStyle: (cellValue, rowData) => {
+              return rowData.minStock >= cellValue
+                ? {
+                    backgroundColor: 'red',
+                    color: '#FFF',
+                  }
+                : '';
+            },
+          },
+
+          {
+            title: 'Min Stock',
+            field: 'minStock',
+          },
+          {
+            title: 'Vencimiento',
+            render: (rowData) => moment(rowData.expire).format('YYYY-MM-DD'),
+          },
+          {
+            title: 'Movimientos',
+
+            render: (rowData) => (
+              <Button
+                bsStyle="info"
+                onClick={() => handleShowMovement(rowData._id)}
+              >
+                Ver
+              </Button>
+            ),
+          },
+        ]
+      : [
+          { title: 'Codigo', field: 'code' },
+          { title: 'Nombre', field: 'name' },
+
+          {
+            title: 'Precio',
+            field: 'price',
+          },
+          {
+            render: (rowData) => (
+              <Button bsStyle="info" onClick={() => onSelect(rowData)}>
+                Agregar
+              </Button>
+            ),
+          },
+        ],
+  };
 
   return (
     <div className="content">
       <Grid fluid>
         <Row>
           <Col md={12}>
-            <Card
-              title={
-                fromRawMaterial
-                  ? 'Lista de Materia Prima'
-                  : 'Lista de Productos'
-              }
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div>
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    options={{
-                      actionsColumnIndex: -1,
-                    }}
-                    columns={[
-                      { title: 'Codigo', field: 'code' },
-                      { title: 'Nombre', field: 'name' },
-
-                      {
-                        title: 'Precio',
-                        field: 'price',
-                      },
-                      {
-                        title: 'Stock',
-                        field: 'stock',
-                        cellStyle: (cellValue, rowData) => {
-                          return rowData.minStock >= cellValue
-                            ? {
-                                backgroundColor: 'red',
-                                color: '#FFF',
-                              }
-                            : '';
-                        },
-                      },
-
-                      {
-                        title: 'Min Stock',
-                        field: 'minStock',
-                      },
-                      {
-                        title: 'Vencimiento',
-                        render: (rowData) =>
-                          moment(rowData.expire).format('YYYY-MM-DD'),
-                      },
-                      {
-                        title: 'Movimientos',
-
-                        render: (rowData) => (
-                          <Button
-                            bsStyle="info"
-                            onClick={() => handleShowMovement(rowData._id)}
-                          >
-                            Ver
-                          </Button>
-                        ),
-                      },
-                    ]}
-                    data={products}
-                    actions={[
-                      {
-                        icon: () => {
-                          return <Button bsStyle="info">Edit</Button>;
-                        },
-                        onClick: (event, rowData) => handleEdit(rowData._id),
-                      },
-                      {
-                        icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => handleDelete(rowData._id),
-                      },
-                    ]}
-                  />
-                </div>
-              }
-            />
+            <div>
+              <MaterialTable
+                title=""
+                components={{ Container: (props) => props.children }}
+                options={{
+                  actionsColumnIndex: -1,
+                }}
+                columns={materialConfig.columns}
+                data={products}
+                actions={materialConfig.actions}
+              />
+            </div>
           </Col>
         </Row>
       </Grid>

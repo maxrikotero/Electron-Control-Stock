@@ -33,12 +33,7 @@ const Login = () => {
 
   const [redirection, setRedirection] = useState<boolean>(false);
 
-  useEffect(() => {
-    const token: string = localStorage.getItem('token')!;
-    if (token) {
-      setRedirection((prev) => !prev);
-    }
-  }, []);
+  useEffect(() => {}, []);
   const addNotification = ({
     position,
     message,

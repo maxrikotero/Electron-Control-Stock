@@ -240,7 +240,7 @@ const AddSales = ({ notification }) => {
                               {(item.qualityEdit && (
                                 <>
                                   <Row>
-                                    <Col xs={6}>
+                                    <Col xs={3}>
                                       <FormGroup controlId="qualityControl">
                                         <FormControl
                                           type="numeric"
@@ -280,6 +280,32 @@ const AddSales = ({ notification }) => {
                                         />
                                       </FormGroup>
                                     </Col>
+                                    {item.quality <= item.stock && (
+                                      <Col xs={3}>
+                                        <Button
+                                          bsStyle="success"
+                                          onClick={() => {
+                                            const newArray = products.map(
+                                              (product) =>
+                                                (product._id === item._id && {
+                                                  ...product,
+                                                  qualityEdit: false,
+                                                }) ||
+                                                product
+                                            );
+
+                                            setProducts(newArray);
+                                          }}
+                                        >
+                                          <i
+                                            className="fa fa-check-circle-o"
+                                            style={{ fontSize: '21px' }}
+                                          >
+                                            {' '}
+                                          </i>
+                                        </Button>
+                                      </Col>
+                                    )}
                                   </Row>
 
                                   {item.qualityEdit && errors.stock && (
