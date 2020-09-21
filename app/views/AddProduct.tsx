@@ -1,7 +1,7 @@
 /*eslint-disable */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Formik, Field } from 'formik';
+import { Formik } from 'formik';
 import {
   Grid,
   Row,
@@ -13,27 +13,58 @@ import {
   Tooltip,
   OverlayTrigger,
 } from 'react-bootstrap';
+import moment from 'moment';
 import apiCall from '../utils/apiCall';
 import Card from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 import useModal from '../hooks/useModal';
 import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
-// import Checkbox from '../components/CustomCheckbox/CustomCheckbox';
 import PriceType from '../components/PriceType';
 
-const AddProduct = ({ notification }: { notification: any }) => {
+const AddProduct = ({ notification, product, onEdit, isEdit }) => {
   const [prices, setPrices] = useState([]);
+  useEffect(() => {
+    if (product) {
+      setPrices(
+        product.prices.map((p) => ({
+          ...p,
+          name: p.priceType.name,
+          priceTypeId: p.priceType._id,
+        }))
+      );
+    }
+  }, []);
   const { categories = [] } = useSelector(({ selects }) => selects);
   const edit = <Tooltip id="edit_tooltip">Editar Precio</Tooltip>;
   const remove = <Tooltip id="remove_tooltip">Remover</Tooltip>;
   const { ModalComponent, setModal } = useModal();
+  const newProduct = {
+    name: '',
+    category: '',
+    brand: '',
+    stock: 0,
+    minStock: 0,
+    description: '',
+    code: 0,
+    expire: Date.now,
+  };
 
+  const data = product ? product : newProduct;
   const handleSavePriceType = (data) => {
-    if (prices.some((price) => price._id === data._id)) {
-      notification('tc', 'Precio Agregado', 3);
+    if (isEdit) {
+      if (prices.some((price) => price.priceType._id === data._id)) {
+        notification('tc', 'Precio Agregado', 3);
+      } else {
+        setPrices(prices.concat(data));
+        setModal(false);
+      }
     } else {
-      setModal(false);
-      setPrices(prices.concat(data));
+      if (prices.some((price) => price._id === data._id)) {
+        notification('tc', 'Precio Agregado', 3);
+      } else {
+        setModal(false);
+        setPrices(prices.concat(data));
+      }
     }
   };
   return (
@@ -42,18 +73,11 @@ const AddProduct = ({ notification }: { notification: any }) => {
         <Row>
           <Col md={12}>
             <Card
-              title="Agregar Producto"
+              title={isEdit ? '' : 'Agregar Producto'}
               content={
                 <Formik
                   initialValues={{
-                    name: '',
-                    category: '',
-                    brand: '',
-                    stock: 0,
-                    minStock: 0,
-                    description: '',
-                    code: 0,
-                    expire: Date.now,
+                    ...data,
                   }}
                   validate={(values) => {
                     const errors: any = {};
@@ -72,43 +96,55 @@ const AddProduct = ({ notification }: { notification: any }) => {
                     return errors;
                   }}
                   onSubmit={async (values, { setSubmitting, resetForm }) => {
-                    const requestValues = {
-                      ...values,
-                      prices: prices.map((price) => ({
-                        priceType: price._id,
-                        price: price.price,
-                      })),
-                    };
-
-                    if (prices.length > 0) {
-                      try {
-                        var response = await apiCall({
-                          url: 'products',
-                          method: 'POST',
-                          body: JSON.stringify(requestValues),
-                        });
-                      } catch (error) {
-                        setSubmitting(false);
-                        notification('tc', 'Error al guardar', 3);
-                      }
-
-                      if (response.success) {
-                        setSubmitting(false);
-                        notification('tc', 'Producto Agregado', 1);
-                        resetForm();
-                        setPrices([]);
-                      } else {
-                        let message = 'Agregar Producto Error';
-                        if (response.error.indexOf('name') > -1)
-                          message = 'Producto Existente';
-                        if (response.error.indexOf('code') > -1)
-                          message = 'Codigo Existente';
-
-                        setSubmitting(false);
-                        notification('tc', message, 3);
-                      }
+                    if (onEdit) {
+                      onEdit({
+                        ...values,
+                        prices: prices.map((price) => ({
+                          priceType: !price.priceTypeId
+                            ? price._id
+                            : price.priceTypeId,
+                          price: price.price,
+                        })),
+                      });
                     } else {
-                      notification('tc', 'Tipo de precio requerido', 2);
+                      const requestValues = {
+                        ...values,
+                        prices: prices.map((price) => ({
+                          priceType: price._id,
+                          price: price.price,
+                        })),
+                      };
+
+                      if (prices.length > 0) {
+                        try {
+                          var response = await apiCall({
+                            url: 'products',
+                            method: 'POST',
+                            body: JSON.stringify(requestValues),
+                          });
+                        } catch (error) {
+                          setSubmitting(false);
+                          notification('tc', 'Error al guardar', 3);
+                        }
+
+                        if (response.success) {
+                          setSubmitting(false);
+                          notification('tc', 'Producto Agregado', 1);
+                          resetForm();
+                          setPrices([]);
+                        } else {
+                          let message = 'Agregar Producto Error';
+                          if (response.error.indexOf('name') > -1)
+                            message = 'Producto Existente';
+                          if (response.error.indexOf('code') > -1)
+                            message = 'Codigo Existente';
+
+                          setSubmitting(false);
+                          notification('tc', message, 3);
+                        }
+                      } else {
+                        notification('tc', 'Tipo de precio requerido', 2);
+                      }
                     }
                   }}
                 >
@@ -198,7 +234,9 @@ const AddProduct = ({ notification }: { notification: any }) => {
                                 name="expire"
                                 onChange={handleChange}
                                 bsClass="form-control"
-                                value={values.expire}
+                                value={moment(values.expire)
+                                  .utc()
+                                  .format('YYYY-MM-DD')}
                               />
                             </FormGroup>
                           </Col>
@@ -369,20 +407,6 @@ const AddProduct = ({ notification }: { notification: any }) => {
                             </FormGroup>
                           </Col>
                         </Row>
-                        {/* <Row> TODO: REMOVE ALL THIS SECTION
-                          <Col xs={12} md={12}>
-                            <FormGroup controlId="isRawMaterialControl">
-                              <ControlLabel>Materia Prima</ControlLabel>
-                              <Checkbox
-                                number={1}
-                                isChecked={values.isRawMaterial.length > 0}
-                                onChange={handleChange}
-                                nameInput="isRawMaterial"
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row> */}
-
                         <Row>
                           <Col xs={12} md={12}>
                             <FormGroup controlId="descrControl">

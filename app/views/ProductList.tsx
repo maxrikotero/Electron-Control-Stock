@@ -8,6 +8,7 @@ import EditProduct from './EditProduct';
 import Movement from '../views/ProductMovement';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
+import AddProduct from './AddProduct';
 
 const ProductList = ({
   notification,
@@ -27,9 +28,6 @@ const ProductList = ({
     id: null,
   });
 
-  const locationRoute = useLocation();
-  const fromRawMaterial = locationRoute.pathname.indexOf('rawmaterial') > -1;
-
   const { showMovement, movementId } = movement;
 
   const handleClose = () => setShow(false);
@@ -37,7 +35,7 @@ const ProductList = ({
 
   const fetchProducts = async () => {
     const data = await apiCall({
-      url: `${!fromRawMaterial ? 'products' : 'products/rawmaterial'}`,
+      url: 'products',
     });
     if (data) setProducts(data);
   };
@@ -63,6 +61,7 @@ const ProductList = ({
   };
 
   const handleUpdate = async (data) => {
+    debugger;
     try {
       var response = await apiCall({
         url: `products/${data._id}`,
@@ -209,7 +208,12 @@ const ProductList = ({
           <Modal.Title>Editar Producto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <EditProduct product={editProduct} onEdit={handleUpdate} />
+          <AddProduct
+            product={editProduct}
+            onEdit={handleUpdate}
+            isEdit={!0}
+            notification={notification}
+          />
         </Modal.Body>
       </Modal>
       {showMovement && (
