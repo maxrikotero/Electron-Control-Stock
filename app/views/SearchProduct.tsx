@@ -187,14 +187,14 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                   placeholder="select"
                                   name="price"
                                   onChange={(e) => {
-                                    debugger;
+                                    const value = e.target.value;
                                     setResults((prev) =>
                                       prev.map((prod) =>
                                         prod._id === item._id
                                           ? {
                                               ...prod,
                                               price: item.prices.filter(
-                                                (p) => p._id === e.target.value
+                                                (p) => p._id === value
                                               )[0].price,
                                             }
                                           : prod

@@ -398,6 +398,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                                 placeholder="select"
                                 name="category"
                                 onChange={handleChange}
+                                value={values.category.id}
                               >
                                 <option value="select">select</option>
                                 {categories.map((item) => (

@@ -1,6 +1,16 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import {
+  Grid,
+  Row,
+  Col,
+  Button,
+  Modal,
+  FormControl,
+  ControlLabel,
+  FormGroup,
+} from 'react-bootstrap';
+
 import { useLocation } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import moment from 'moment';
@@ -37,6 +47,7 @@ const ProductList = ({
     const data = await apiCall({
       url: 'products',
     });
+
     if (data) setProducts(data);
   };
 
@@ -61,7 +72,6 @@ const ProductList = ({
   };
 
   const handleUpdate = async (data) => {
-    debugger;
     try {
       var response = await apiCall({
         url: `products/${data._id}`,
@@ -129,7 +139,25 @@ const ProductList = ({
 
           {
             title: 'Precio',
-            field: 'price',
+            render: (rowData) => {
+              return (
+                <div style={{ width: '100px' }}>
+                  <FormGroup controlId="formControlsSelect">
+                    <FormControl
+                      componentClass="select"
+                      placeholder="select"
+                      name="category"
+                    >
+                      {rowData.prices.map((item) => (
+                        <option
+                          value={item._id}
+                        >{`${item.priceType.name} $${item.price}`}</option>
+                      ))}
+                    </FormControl>
+                  </FormGroup>
+                </div>
+              );
+            },
           },
           {
             title: 'Stock',
