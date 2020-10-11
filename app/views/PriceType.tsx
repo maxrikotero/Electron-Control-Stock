@@ -31,7 +31,7 @@ const PriceType = ({
       notification('tc', message, 3);
     }
   };
-
+  console.log('title ', title);
   return (
     <div className="content">
       <AddSimpleForm title={title} onSave={handleSubmit} />

@@ -148,11 +148,14 @@ const ProductList = ({
                       placeholder="select"
                       name="category"
                     >
-                      {rowData.prices.map((item) => (
-                        <option
-                          value={item._id}
-                        >{`${item.priceType.name} $${item.price}`}</option>
-                      ))}
+                      {rowData.prices.map(
+                        (item) =>
+                          item.priceType && (
+                            <option
+                              value={item._id}
+                            >{`${item.priceType.name} $${item.price}`}</option>
+                          )
+                      )}
                     </FormControl>
                   </FormGroup>
                 </div>

@@ -12,6 +12,7 @@ import {
   FormControl,
 } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
+import { StatsCard } from '../components/StatsCard/StatsCard';
 import Card from '../components/Card/Card';
 import Client from '../components/ClientSelect/ClientSelect';
 import SearchProduct from '../views/SearchProduct';
@@ -24,7 +25,7 @@ const AddSales = ({ notification }) => {
     client: null,
     products: [],
     paymentType: '',
-    billType: '',
+    billType: '1',
   });
   const [products, setProducts] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -78,9 +79,15 @@ const AddSales = ({ notification }) => {
       return;
     }
 
+    if (sale.paymentType === '') {
+      notification('tc', 'Agregar Tipo de pago', 2);
+      return;
+    }
+
     const saleProducts = products.map((item) => ({
       quality: item.quality,
       price: item.price,
+      name: item.name,
       product: item._id,
       description: item.description,
     }));
@@ -117,8 +124,8 @@ const AddSales = ({ notification }) => {
     }
   };
 
-  const handleAddProduct = (sale) => {
-    setProducts((prev) => [...prev, sale]);
+  const handleAddProduct = (product) => {
+    setProducts((prev) => [...prev, product]);
   };
 
   const handleEdit = (id) => {
@@ -144,6 +151,10 @@ const AddSales = ({ notification }) => {
       setSales((prev) => ({ ...prev, paymentType: value }));
     else setSales((prev) => ({ ...prev, paymentType: '' }));
   };
+
+  const totalIva = totalPrice * 0.21;
+
+  const totalPriceIva = totalPrice + totalIva;
 
   return (
     <div className="content">
@@ -188,6 +199,7 @@ const AddSales = ({ notification }) => {
                             componentClass="select"
                             placeholder="select"
                             name="billType"
+                            value={sale.billType}
                             onChange={({ target: { value } }) => {
                               if (value !== 'select')
                                 setSales((prev) => ({
@@ -247,12 +259,23 @@ const AddSales = ({ notification }) => {
                                           name="quality"
                                           onChange={(e) => {
                                             const { value } = e.target;
-
                                             setErrors({});
                                             if (parseInt(value, 10) === 0) {
                                               setErrors({
                                                 stock: 'Cantidad Requerida',
                                               });
+                                              const newArray = products.map(
+                                                (product) =>
+                                                  (product._id === item._id && {
+                                                    ...product,
+                                                    quality: '',
+                                                    subTotal:
+                                                      item.price * value,
+                                                  }) ||
+                                                  product
+                                              );
+
+                                              setProducts(newArray);
                                             } else {
                                               if (
                                                 parseInt(value, 10) > item.stock
@@ -264,17 +287,15 @@ const AddSales = ({ notification }) => {
                                                 (product) =>
                                                   (product._id === item._id && {
                                                     ...product,
-                                                    quality: value,
+                                                    quality: value ? value : 0,
                                                     subTotal:
                                                       item.price * value,
                                                   }) ||
                                                   product
                                               );
-
                                               setProducts(newArray);
                                             }
                                           }}
-                                          placeHolder="Cantidad"
                                           bsClass="form-control"
                                           value={item.quality}
                                         />
@@ -350,10 +371,39 @@ const AddSales = ({ notification }) => {
                       })}
                     </tbody>
                   </Table>
-                  <div className="content">
+                  <div className="content" style={{ marginTop: '50px' }}>
                     <Row>
-                      <Col xs={12} md={12}>
-                        <div>{`Total a pagar ${totalPrice}`}</div>
+                      <Col lg={3} sm={6}>
+                        <StatsCard
+                          bigIcon={<i className="pe-7s-wallet text-success" />}
+                          statsText="Total a pagar:"
+                          statsValue={'$' + totalPrice}
+                          statsIcon={<i className="fa fa-refresh" />}
+                        />
+                      </Col>
+                      <Col lg={3} sm={6}>
+                        <StatsCard
+                          bigIcon={<i className="pe-7s-server text-warning" />}
+                          statsText="Iva %:"
+                          statsValue={
+                            sale.billType ? (sale.billType !== '1' ? 21 : 0) : 0
+                          }
+                          statsIcon={<i className="fa fa-refresh" />}
+                        />
+                      </Col>
+                      <Col lg={3} sm={6}>
+                        <StatsCard
+                          bigIcon={<i className="pe-7s-server text-warning" />}
+                          statsText="Total a pagar + iva :"
+                          statsValue={
+                            sale.billType
+                              ? sale.billType !== '1'
+                                ? '$ ' + totalPriceIva
+                                : '$ ' + totalPrice
+                              : 0
+                          }
+                          statsIcon={<i className="fa fa-refresh" />}
+                        />
                       </Col>
                     </Row>
                   </div>

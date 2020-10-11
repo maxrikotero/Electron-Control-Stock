@@ -71,6 +71,8 @@ const Login = () => {
     });
   };
 
+  const isMarisa = true;
+
   return (
     <Fragment key="loginFragment">
       <NotificationSystem ref={notificationSystem} style={style} />
@@ -225,11 +227,13 @@ const Login = () => {
           </Col>
           <Col item xs={7} style={{ padding: '0', height: '100%' }}>
             <div style={{ width: '100%', height: '100%' }}>
-              <img
-                style={{ width: '100%', height: '100%' }}
-                src={logo}
-                alt="..."
-              />
+              {isMarisa && (
+                <img
+                  style={{ width: '100%', height: '100%' }}
+                  src={logo}
+                  alt="..."
+                />
+              )}
             </div>
           </Col>
         </Row>

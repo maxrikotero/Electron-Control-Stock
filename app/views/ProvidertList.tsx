@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Row, Col, Table, Button, Modal } from 'react-bootstrap';
 import EditProvider from './EditProvider';
-
+import apiCall from '../utils/apiCall';
 import Card from '../components/Card/Card';
 
-const ProviderList = ({ handleClick }) => {
+const ProviderList = ({ notification }) => {
   const [providers, setProviders] = useState([]);
   const [editProvider, setEditProvider] = useState({});
   const [show, setShow] = useState(false);
@@ -13,13 +13,13 @@ const ProviderList = ({ handleClick }) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const fetchProviders = () => {
-    fetch('http://localhost:3000/api/providers')
-      .then((res) => res.json())
-      .then((data) => {
-        setProviders(data);
-      })
-      .catch((error) => console.log(error));
+  const fetchProviders = async () => {
+    var response = await apiCall({
+      url: 'providers',
+      method: 'GET',
+    });
+    if (response.success) setProviders(response.data);
+    else notification('tc', 'Error', 3);
   };
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const ProviderList = ({ handleClick }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        handleClick('tc', 'Proveedor Borrado', 1);
+        notification('tc', 'Proveedor Borrado', 1);
         fetchProviders();
       });
     // }
@@ -61,12 +61,10 @@ const ProviderList = ({ handleClick }) => {
                 <Table striped hover>
                   <thead>
                     <tr>
-                      <th>Razón Social</th>
-                      <th>DNI</th>
                       <th>Nombre</th>
-                      <th>Apellido</th>
+                      <th>Razón Social</th>
+                      <th>Dni</th>
                       <th>Fijo</th>
-                      <th>Celular</th>
                       <th>Email</th>
                     </tr>
                   </thead>
@@ -74,12 +72,11 @@ const ProviderList = ({ handleClick }) => {
                     {providers.map((item, key) => {
                       return (
                         <tr key={key}>
+                          <td>{item.name}</td>
                           <td>{item.socialId}</td>
                           <td>{item.dni}</td>
-                          <td>{item.firstName}</td>
-                          <td>{item.lastName}</td>
                           <td>{item.phone}</td>
-                          <td>{item.mobile}</td>
+                          <td>{item.phone}</td>
                           <td>{item.email}</td>
                           <td>
                             <Row>
@@ -117,10 +114,9 @@ const ProviderList = ({ handleClick }) => {
         </Modal.Header>
         <Modal.Body>
           <EditProvider
-            notification={() => {}}
             provider={editProvider}
             onClose={handleClose}
-            {...{ handleClick, fetchProviders }}
+            {...{ notification, fetchProviders }}
           />
         </Modal.Body>
         <Modal.Footer>

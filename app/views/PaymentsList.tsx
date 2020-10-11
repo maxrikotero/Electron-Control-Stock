@@ -37,7 +37,6 @@ const PaymentsList = ({ notification }) => {
 
   const handleSave = async (data) => {
     setModal((prev) => !prev);
-    debugger;
     var response = await apiCall({
       url: `payments/${data._id}`,
       method: 'PUT',

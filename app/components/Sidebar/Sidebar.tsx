@@ -42,7 +42,7 @@ const Sidebar = (props) => {
           href="https://www.creative-tim.com?ref=lbd-sidebar"
           className="simple-text logo-normal"
         >
-          Marisa
+          {!props.isMarisa && 'Marisa'}
         </a>
       </div>
       <div className="sidebar-wrapper">

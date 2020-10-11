@@ -121,6 +121,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
       alertNotification('tc', 'Producto ya fue agregado', 3);
     }
   };
+
   return (
     <div className="content">
       <Row>
@@ -193,9 +194,12 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                         prod._id === item._id
                                           ? {
                                               ...prod,
-                                              price: item.prices.filter(
-                                                (p) => p._id === value
-                                              )[0].price,
+                                              price:
+                                                value !== 'select'
+                                                  ? item.prices.filter(
+                                                      (p) => p._id === value
+                                                    )[0].price
+                                                  : null,
                                             }
                                           : prod
                                       )
@@ -205,7 +209,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                   <option value="select">seleccione</option>
                                   {item.prices.map((item) => (
                                     <option value={item._id}>
-                                      {item.priceType.name}
+                                      {item.priceType && item.priceType.name}
                                     </option>
                                   ))}
                                 </FormControl>
@@ -225,11 +229,19 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                   maxLength={50}
                                   onChange={(e) => {
                                     const { value = 0 } = e.target;
+
                                     setErrors({});
                                     if (parseInt(value, 10) === 0) {
                                       setErrors({
                                         stock: 'Cantidad Requerida',
                                       });
+                                      setResults((prev) =>
+                                        prev.map((prod) =>
+                                          prod._id === item._id
+                                            ? { ...prod, quality: '' }
+                                            : prod
+                                        )
+                                      );
                                     } else {
                                       if (parseInt(value, 10) > item.stock)
                                         setErrors({

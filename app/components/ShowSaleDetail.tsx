@@ -83,9 +83,11 @@ const ShowSaleDetail = ({ saleId }: { saleId: any }) => {
                   { title: 'Cantidad', field: 'quality' },
                   { title: 'Producto', field: 'product.name' },
                 ]}
+                options={{
+                  exportButton: true,
+                }}
                 data={sale.products}
               />
-              }
             </Col>
           </Row>
         </Grid>
