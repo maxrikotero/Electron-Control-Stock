@@ -52,7 +52,7 @@ const PaymentsList = ({ notification }) => {
     }
   };
 
-  const deleteUser = async () => {
+  const deletePayment = async () => {
     const url = `payments/${showConfirm.id}`;
     try {
       const response = await apiCall({ url, method: 'DELETE' });
@@ -64,9 +64,11 @@ const PaymentsList = ({ notification }) => {
         }),
           notification('tc', 'Tipo de pago Borrado', 1);
         fetchPayments();
+      } else {
+        notification('tc', 'Error', 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Error', 3);
     }
   };
 
@@ -107,6 +109,37 @@ const PaymentsList = ({ notification }) => {
                           )
                         : []
                     }
+                    localization={{
+                      body: {
+                        emptyDataSourceMessage: 'No hay registros',
+                        addTooltip: 'Agregar',
+                        deleteTooltip: 'Eliminar',
+                        editTooltip: 'Editar',
+                        filterRow: {
+                          filterTooltip: 'Filtrar',
+                        },
+                        editRow: {
+                          deleteText: 'Esta seguro de borrar esta categoria?',
+                          cancelTooltip: 'Cancelar',
+                        },
+                      },
+                      header: {
+                        actions: 'Acciones',
+                      },
+                      pagination: {
+                        labelDisplayedRows: '{from}-{to} de {count}',
+                        labelRowsSelect: 'Filas',
+                        labelRowsPerPage: 'Filas por pagina:',
+                      },
+                      toolbar: {
+                        nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                        exportTitle: 'Exportar',
+                        exportAriaLabel: 'Exportar',
+                        exportName: 'Exportar en CSV',
+                        searchTooltip: 'Buscar',
+                        searchPlaceholder: 'Buscar',
+                      },
+                    }}
                     actions={[
                       {
                         icon: () => {
@@ -126,9 +159,9 @@ const PaymentsList = ({ notification }) => {
           </Col>
         </Row>
       </Grid>
-      <ModalComponent title="Tipo de Pago">
+      <ModalComponent title="Editar tipo de pago">
         <AddSimpleForm
-          title="Editar tipo de pago"
+          // title="Editar tipo de pago"
           onSave={handleSave}
           data={editPayment}
         />
@@ -136,11 +169,11 @@ const PaymentsList = ({ notification }) => {
       <ConfirmModal
         {...{
           closeText: 'Cancelar',
-          confirmText: 'Borrar',
+          confirmText: 'Si',
           title: 'Borrar Tipo de pago',
           body: 'Esta seguro de borrar este tipo de pago.',
           show: showConfirm.show,
-          onAction: deleteUser,
+          onAction: deletePayment,
           onClose: () =>
             setShowConfirm({
               show: false,

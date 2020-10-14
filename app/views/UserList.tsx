@@ -53,14 +53,16 @@ const UserList = ({ notification }) => {
         }),
           notification('tc', 'Usuario Borrado', 1);
         fetchUsers();
+      } else {
+        notification('tc', 'Error', 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Error', 3);
     }
   };
 
   return (
-    <div>
+    <div className="content">
       <Grid fluid>
         <Row>
           <Col md={12}>
@@ -104,6 +106,37 @@ const UserList = ({ notification }) => {
                       },
                     ]}
                     data={users}
+                    localization={{
+                      body: {
+                        emptyDataSourceMessage: 'No hay registros',
+                        addTooltip: 'Agregar',
+                        deleteTooltip: 'Eliminar',
+                        editTooltip: 'Editar',
+                        filterRow: {
+                          filterTooltip: 'Filtrar',
+                        },
+                        editRow: {
+                          deleteText: 'Esta seguro de borrar?',
+                          cancelTooltip: 'Cancelar',
+                        },
+                      },
+                      header: {
+                        actions: 'Acciones',
+                      },
+                      pagination: {
+                        labelDisplayedRows: '{from}-{to} de {count}',
+                        labelRowsSelect: 'Filas',
+                        labelRowsPerPage: 'Filas por pagina:',
+                      },
+                      toolbar: {
+                        nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                        exportTitle: 'Exportar',
+                        exportAriaLabel: 'Exportar',
+                        exportName: 'Exportar en CSV',
+                        searchTooltip: 'Buscar',
+                        searchPlaceholder: 'Buscar',
+                      },
+                    }}
                     actions={[
                       {
                         icon: () => {
@@ -138,7 +171,7 @@ const UserList = ({ notification }) => {
       <ConfirmModal
         {...{
           closeText: 'Cancelar',
-          confirmText: 'Borrar',
+          confirmText: 'Si',
           title: 'Borrar Usuario',
           body: 'Esta seguro de borrar este usuaria.',
           show: showConfirm.show,

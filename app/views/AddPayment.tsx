@@ -17,7 +17,7 @@ const AddPayment = ({ notification }: { notification: any }) => {
     if (response.success) {
       notification('tc', 'Tipo de pago Agregado', 1);
     } else {
-      let message = 'Agregar Tipo de pago Error';
+      let message = 'Agregar Forma de pago Error';
       if (response.error.indexOf('name') > -1)
         message = 'Tipo de pago Existente';
 
@@ -27,7 +27,7 @@ const AddPayment = ({ notification }: { notification: any }) => {
 
   return (
     <div className="content">
-      <AddSimpleForm title="Agregar tipo de pago" onSave={handleSubmit} />
+      <AddSimpleForm title="Agregar Forma de pago" onSave={handleSubmit} />
 
       <NotificationSystem ref={notificationSystem} style={style} />
     </div>

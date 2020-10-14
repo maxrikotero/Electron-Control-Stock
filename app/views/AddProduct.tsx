@@ -22,6 +22,7 @@ import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
 import PriceType from '../components/PriceType';
 
 const AddProduct = ({ notification, product, onEdit, isEdit }) => {
+  debugger;
   const [prices, setPrices] = useState([]);
   useEffect(() => {
     if (product) {
@@ -398,7 +399,9 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                                 placeholder="select"
                                 name="category"
                                 onChange={handleChange}
-                                value={values.category.id}
+                                value={
+                                  isEdit ? values.category : values.category.id
+                                }
                               >
                                 <option value="select">select</option>
                                 {categories.map((item) => (

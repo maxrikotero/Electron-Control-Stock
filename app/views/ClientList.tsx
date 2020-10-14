@@ -6,9 +6,14 @@ import { useDispatch } from 'react-redux';
 import EditClient from './EditClient';
 import Card from '../components/Card/Card';
 import useApiCall from '../hooks/useApiCall';
+import ConfirmModal from '../components/Confirm/Confirm';
 
 const ProductList = ({ notification }) => {
   const [clients, setClients] = useState([]);
+  const [showConfirm, setShowConfirm] = useState({
+    show: false,
+    id: null,
+  });
   const [editClient, setEditClient] = useState({});
   const [show, setShow] = useState(false);
 
@@ -57,20 +62,28 @@ const ProductList = ({ notification }) => {
     }
   };
 
-  const deleteClient = async (id) => {
-    // if (confirm('Esta seguro de borrar?')) {
-
-    const url = `clients/${id}`;
+  const deleteClient = async () => {
+    const url = `clients/${showConfirm.id}`;
     try {
       const response = await useApiCall({ url, method: 'DELETE' });
 
       if (response.success) {
-        setClients(response.data);
+        setShowConfirm({
+          show: false,
+          id: null,
+        }),
+          setClients(response.data);
+        notification('tc', 'Cliente Borrado', 1);
+      } else {
+        notification('tc', 'Error', 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Error', 3);
     }
-    // }
+  };
+
+  const handleDelete = (_id) => {
+    setShowConfirm({ show: true, id: _id });
   };
 
   return (
@@ -122,9 +135,40 @@ const ProductList = ({ notification }) => {
                       },
                       {
                         icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => deleteClient(rowData._id),
+                        onClick: (event, rowData) => handleDelete(rowData._id),
                       },
                     ]}
+                    localization={{
+                      body: {
+                        emptyDataSourceMessage: 'No hay registros',
+                        addTooltip: 'Agregar',
+                        deleteTooltip: 'Eliminar',
+                        editTooltip: 'Editar',
+                        filterRow: {
+                          filterTooltip: 'Filtrar',
+                        },
+                        editRow: {
+                          deleteText: 'Esta seguro de borrar?',
+                          cancelTooltip: 'Cancelar',
+                        },
+                      },
+                      header: {
+                        actions: 'Acciones',
+                      },
+                      pagination: {
+                        labelDisplayedRows: '{from}-{to} de {count}',
+                        labelRowsSelect: 'Filas',
+                        labelRowsPerPage: 'Filas por pagina:',
+                      },
+                      toolbar: {
+                        nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                        exportTitle: 'Exportar',
+                        exportAriaLabel: 'Exportar',
+                        exportName: 'Exportar en CSV',
+                        searchTooltip: 'Buscar',
+                        searchPlaceholder: 'Buscar',
+                      },
+                    }}
                   />
                 </div>
               }
@@ -140,6 +184,21 @@ const ProductList = ({ notification }) => {
           <EditClient client={editClient} onEdit={handleUpdate} />
         </Modal.Body>
       </Modal>
+      <ConfirmModal
+        {...{
+          closeText: 'Cancelar',
+          confirmText: 'Si',
+          title: 'Borrar Cliente',
+          body: 'Esta seguro de borrar este Cliente.',
+          show: showConfirm.show,
+          onAction: deleteClient,
+          onClose: () =>
+            setShowConfirm({
+              show: false,
+              id: null,
+            }),
+        }}
+      />
     </div>
   );
 };

@@ -181,7 +181,17 @@ const ProductList = ({
           },
           {
             title: 'Vencimiento',
-            render: (rowData) => moment(rowData.expire).format('YYYY-MM-DD'),
+            render: (rowData) =>
+              moment.utc(rowData.expire).format('YYYY-MM-DD'),
+            cellStyle: (cellValue, rowData) => {
+              return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
+                moment(new Date()).format('YYYY-MM-DD')
+                ? {
+                    backgroundColor: 'red',
+                    color: '#FFF',
+                  }
+                : '';
+            },
           },
           {
             title: 'Movimientos',
@@ -225,6 +235,37 @@ const ProductList = ({
                 components={{ Container: (props) => props.children }}
                 options={{
                   actionsColumnIndex: -1,
+                }}
+                localization={{
+                  body: {
+                    emptyDataSourceMessage: 'No hay registros',
+                    addTooltip: 'Agregar',
+                    deleteTooltip: 'Eliminar',
+                    editTooltip: 'Editar',
+                    filterRow: {
+                      filterTooltip: 'Filtrar',
+                    },
+                    editRow: {
+                      deleteText: 'Esta seguro de borrar?',
+                      cancelTooltip: 'Cancelar',
+                    },
+                  },
+                  header: {
+                    actions: 'Acciones',
+                  },
+                  pagination: {
+                    labelDisplayedRows: '{from}-{to} de {count}',
+                    labelRowsSelect: 'Filas',
+                    labelRowsPerPage: 'Filas por pagina:',
+                  },
+                  toolbar: {
+                    nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                    exportTitle: 'Exportar',
+                    exportAriaLabel: 'Exportar',
+                    exportName: 'Exportar en CSV',
+                    searchTooltip: 'Buscar',
+                    searchPlaceholder: 'Buscar',
+                  },
                 }}
                 columns={materialConfig.columns}
                 data={products}

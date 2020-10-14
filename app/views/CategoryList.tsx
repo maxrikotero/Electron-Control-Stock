@@ -47,8 +47,39 @@ const CategoryList = ({ notification }) => {
                           )
                         : []
                     }
+                    localization={{
+                      body: {
+                        emptyDataSourceMessage: 'No hay registros',
+                        addTooltip: 'Agregar',
+                        deleteTooltip: 'Eliminar',
+                        editTooltip: 'Editar',
+                        filterRow: {
+                          filterTooltip: 'Filtrar',
+                        },
+                        editRow: {
+                          deleteText: 'Esta seguro de borrar esta categoria?',
+                          cancelTooltip: 'Cancelar',
+                        },
+                      },
+                      header: {
+                        actions: 'Acciones',
+                      },
+                      pagination: {
+                        labelDisplayedRows: '{from}-{to} de {count}',
+                        labelRowsSelect: 'Filas',
+                        labelRowsPerPage: 'Filas por pagina:',
+                      },
+                      toolbar: {
+                        nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                        exportTitle: 'Exportar',
+                        exportAriaLabel: 'Exportar',
+                        exportName: 'Exportar en CSV',
+                        searchTooltip: 'Buscar',
+                        searchPlaceholder: 'Buscar',
+                      },
+                    }}
                     editable={{
-                      onRowUpdate: (newData, oldData) =>
+                      onRowUpdate: (newData) =>
                         new Promise(async (resolve, reject) => {
                           if (!newData.name) {
                             notification(
@@ -66,10 +97,10 @@ const CategoryList = ({ notification }) => {
                               });
                               notification('tc', 'Categoria Actualizada', 1);
                               dispatch(setCategories(response.data));
+                              resolve();
                             } catch (error) {
                               notification('tc', 'Error Acualizar', 3);
                             }
-                            resolve();
                           }
                         }),
                       onRowDelete: (oldData) =>
@@ -79,18 +110,18 @@ const CategoryList = ({ notification }) => {
                               url: `categories/${oldData._id}`,
                               method: 'DELETE',
                             });
-
-                            if (!response.succes) {
+                            if (!response.success) {
                               notification('tc', 'Error Borrar', 3);
+                              reject();
                             } else {
                               notification('tc', 'Categoria Borrada', 1);
                               dispatch(setCategories(response.data));
+                              resolve();
                             }
                           } catch (error) {
                             notification('tc', 'Error Borrar', 3);
+                            reject();
                           }
-
-                          resolve();
                         }),
                     }}
                   />

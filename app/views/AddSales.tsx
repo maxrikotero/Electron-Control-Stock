@@ -80,7 +80,7 @@ const AddSales = ({ notification }) => {
     }
 
     if (sale.paymentType === '') {
-      notification('tc', 'Agregar Tipo de pago', 2);
+      notification('tc', 'Agregar Forma de pago', 2);
       return;
     }
 

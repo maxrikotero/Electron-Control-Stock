@@ -27,7 +27,7 @@ const ProductMovement = ({ id, onClose }) => {
     <div className="content">
       <Modal show={show} onHide={handleClose} bsSize="large">
         <Modal.Header closeButton>
-          <Modal.Title>Lista de movimiento del Producto</Modal.Title>
+          <Modal.Title>Lista de movimiento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Grid fluid>
@@ -38,6 +38,37 @@ const ProductMovement = ({ id, onClose }) => {
                   components={{ Container: (props) => props.children }}
                   options={{
                     actionsColumnIndex: -1,
+                  }}
+                  localization={{
+                    body: {
+                      emptyDataSourceMessage: 'No hay registros',
+                      addTooltip: 'Agregar',
+                      deleteTooltip: 'Eliminar',
+                      editTooltip: 'Editar',
+                      filterRow: {
+                        filterTooltip: 'Filtrar',
+                      },
+                      editRow: {
+                        deleteText: 'Esta seguro de borrar?',
+                        cancelTooltip: 'Cancelar',
+                      },
+                    },
+                    header: {
+                      actions: 'Acciones',
+                    },
+                    pagination: {
+                      labelDisplayedRows: '{from}-{to} de {count}',
+                      labelRowsSelect: 'Filas',
+                      labelRowsPerPage: 'Filas por pagina:',
+                    },
+                    toolbar: {
+                      nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                      exportTitle: 'Exportar',
+                      exportAriaLabel: 'Exportar',
+                      exportName: 'Exportar en CSV',
+                      searchTooltip: 'Buscar',
+                      searchPlaceholder: 'Buscar',
+                    },
                   }}
                   columns={[
                     {
