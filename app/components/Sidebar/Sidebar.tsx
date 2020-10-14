@@ -78,7 +78,8 @@ const Sidebar = (props) => {
               className="nav-link"
               activeClassName="active"
             >
-              <p>Cerrar Session</p>
+              <i className="pe-7s-power" />
+              <p>Cerrar Sesión</p>
             </NavLink>
           </li>
         </ul>
