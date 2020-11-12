@@ -1,65 +1,93 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Grid, Row, Col, Button, Well, Modal } from 'react-bootstrap';
+import {
+  Grid,
+  Row,
+  Col,
+  Button,
+  Modal,
+  FormControl,
+  Well,
+  FormGroup,
+} from 'react-bootstrap';
 import MaterialTable from 'material-table';
+import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import Movement from '../views/ProductMovement';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
 import HeaderTitle from '../components/HeaderTitle';
+import AddRawMaterial from './AddRawMaterial';
 import useRedirect from '../hooks/useRedirect';
 import useApiCall from '../hooks/useApiCall';
 import ModalForm from '../components/ModalForm';
-import AddProvider from '../views/AddProvider';
 
-const ProviderList = ({ notification }) => {
+const RawMaterialList = ({ notification, actions = true, onSelect }) => {
   const { redirect, setRedirect } = useRedirect();
   const dispatch = useDispatch();
-  const [providers, setProviders] = useState([]);
-  const [editProvider, setEditProvider] = useState({});
+  const [rawMaterials, setRawMaterials] = useState([]);
+  const [editRawMaterial, setEditRawMaterial] = useState({});
   const [show, setShow] = useState(false);
+  const [movement, setMovementId] = useState({
+    showMovement: false,
+    movementId: 0,
+  });
   const [showConfirm, setShowConfirm] = useState({
     show: false,
     id: null,
   });
+
+  const { showMovement, movementId } = movement;
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const fetchProviders = async () => {
+  const fetchRawMaterials = async () => {
     const response = await useApiCall({
       loadingOn: true,
       dispatch,
-      url: 'providers',
+      url: 'rawmaterial',
     });
-    if (response) setProviders(response.data);
+    if (response) setRawMaterials(response);
   };
-
   useEffect(() => {
-    fetchProviders();
+    fetchRawMaterials();
   }, []);
 
   const handleEdit = (id) => {
-    setEditProvider(providers.filter((provider) => provider._id === id)[0]);
+    setEditRawMaterial(
+      rawMaterials.filter((rawMaterial) => rawMaterial._id === id)[0]
+    );
     handleShow();
+  };
+
+  const handleShowMovement = (id) => {
+    setMovementId({
+      showMovement: true,
+      movementId: id,
+    });
+  };
+
+  const handleCloseMovement = () => {
+    setMovementId(0);
   };
 
   const handleUpdate = async (data) => {
     try {
       var response = await apiCall({
-        url: `products/${data._id}`,
+        url: `rawmaterial/${data._id}`,
         method: 'PUT',
         body: JSON.stringify(data),
       });
-
       if (response.success) {
-        notification('tc', 'Producto Actualizado', 1);
+        notification('tc', 'Materia Prima Actualizado', 1);
         handleClose();
-
-        fetchProviders();
+        fetchRawMaterials();
       } else {
         let message = 'Error Actualizar';
-        if (response.error.indexOf('name') > -1) message = 'Producto Existente';
+        if (response.error.indexOf('name') > -1)
+          message = 'Materia Prima Existente';
         if (response.error.indexOf('code') > -1) message = 'Codigo Existente';
-
         notification('tc', message, 3);
       }
     } catch (error) {
@@ -71,54 +99,115 @@ const ProviderList = ({ notification }) => {
     setShowConfirm({ show: true, id: _id });
   };
 
-  const deleteProvider = async () => {
-    const url = `providers/${showConfirm.id}`;
+  const deleteRawMaterial = async () => {
+    const url = `rawmaterial/${showConfirm.id}`;
     try {
       const response = await apiCall({ url, method: 'DELETE' });
 
       if (response.success) {
-        notification('tc', 'Proveedor Borrado', 1);
         setShowConfirm({
           show: false,
           id: null,
         }),
-          fetchProviders();
+          notification('tc', 'Materia Prima Borrada', 1);
+        fetchRawMaterials();
       }
     } catch (error) {
-      notification('tc', 'Error', 1);
+      notification('tc', 'Error', 3);
     }
   };
-
-  const handleSave = () => {
-    handleClose((prev) => !prev);
-    fetchProviders();
-  };
-
   const materialConfig = {
-    actions: [
-      {
-        icon: () => {
-          return <Button bsStyle="info">Edit</Button>;
-        },
-        onClick: (event, rowData) => handleEdit(rowData._id),
-      },
-      {
-        icon: () => <Button bsStyle="danger">Borrar</Button>,
-        onClick: (event, rowData) => handleDelete(rowData._id),
-      },
-    ],
+    actions: actions
+      ? [
+          {
+            icon: () => {
+              return <Button bsStyle="info">Edit</Button>;
+            },
+            onClick: (event, rowData) => handleEdit(rowData._id),
+          },
+          {
+            icon: () => <Button bsStyle="danger">Borrar</Button>,
+            onClick: (event, rowData) => handleDelete(rowData._id),
+          },
+        ]
+      : [],
+
     columns: [
       { title: 'Nombre', field: 'name' },
-      { title: 'Razón Social', field: 'razonSocial' },
-      { title: 'Dni', field: 'dni' },
-      { title: 'Telefono', field: 'phone' },
-      { title: 'Email', field: 'email' },
+      {
+        title: 'Proveedores',
+        render: (rowData) => {
+          return (
+            <div style={{ width: '100px' }}>
+              <FormGroup controlId="formControlsSelect">
+                <FormControl
+                  componentClass="select"
+                  placeholder="select"
+                  name="category"
+                >
+                  {rowData.providers.map(
+                    (item) =>
+                      item.provider &&
+                      item.provider.name && (
+                        <option
+                          value={item._id}
+                        >{`${item.provider.name} $${item.price}`}</option>
+                      )
+                  )}
+                </FormControl>
+              </FormGroup>
+            </div>
+          );
+        },
+      },
+      {
+        title: 'Stock',
+        field: 'stock',
+        cellStyle: (cellValue, rowData) => {
+          return rowData.minStock >= cellValue
+            ? {
+                backgroundColor: 'red',
+                color: '#FFF',
+              }
+            : '';
+        },
+      },
+
+      {
+        title: 'Min Stock',
+        field: 'minStock',
+      },
+      {
+        title: 'Vencimiento',
+        render: (rowData) => moment.utc(rowData.expire).format('YYYY-MM-DD'),
+        cellStyle: (cellValue, rowData) => {
+          return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
+            moment(new Date()).format('YYYY-MM-DD')
+            ? {
+                backgroundColor: 'red',
+                color: '#FFF',
+              }
+            : '';
+        },
+      },
+      {
+        title: 'Movimientos',
+
+        render: (rowData) => (
+          <Button
+            bsStyle="info"
+            onClick={() => handleShowMovement(rowData._id)}
+          >
+            Ver
+          </Button>
+        ),
+      },
     ],
   };
   return (
     <div className="content">
       <HeaderTitle
-        title="PROVEEDORES"
+        title="Materia Prima"
         redirect={redirect}
         onRedirect={() => setRedirect((prev) => !prev)}
       />
@@ -170,7 +259,7 @@ const ProviderList = ({ notification }) => {
                     },
                   }}
                   columns={materialConfig.columns}
-                  data={providers}
+                  data={rawMaterials}
                   actions={materialConfig.actions}
                 />
               </div>
@@ -178,24 +267,30 @@ const ProviderList = ({ notification }) => {
           </Well>
         </Row>
       </Grid>
-      <ModalForm {...{ show, handleClose, title: 'Editar Proveedor' }}>
-        <AddProvider
-          provider={editProvider}
+      <ModalForm {...{ show, handleClose, title: 'Editar Materia Prima' }}>
+        <AddRawMaterial
+          rawMaterial={editRawMaterial}
           onEdit={handleUpdate}
           isEdit={!0}
           notification={notification}
-          onSave={handleSave}
         />
       </ModalForm>
 
+      {showMovement && (
+        <Movement
+          id={movementId}
+          onClose={handleCloseMovement}
+          url="rawMaterial"
+        />
+      )}
       <ConfirmModal
         {...{
           closeText: 'Cancelar',
           confirmText: 'Borrar',
-          title: 'Borrar Proveedor',
-          body: 'Esta seguro de borrar este Proveedor.',
+          title: 'Borrar Materia Prima',
+          body: 'Esta seguro de borrar esta Materia Prima.',
           show: showConfirm.show,
-          onAction: deleteProvider,
+          onAction: deleteRawMaterial,
           onClose: () =>
             setShowConfirm({
               show: false,
@@ -207,4 +302,4 @@ const ProviderList = ({ notification }) => {
   );
 };
 
-export default ProviderList;
+export default RawMaterialList;

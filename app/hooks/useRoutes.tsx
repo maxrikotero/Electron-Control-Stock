@@ -17,9 +17,11 @@ import { useSelector } from 'react-redux';
 
 */
 import React from 'react';
-import Dashboard from '../views/Dashboard';
+import Dashboard from '../components/DashboardCards';
+import DashboardListCards from '../components/DashboardListCards';
 import UserProfile from '../views/UserProfile';
 import ProductList from '../views/ProductList';
+import RawMaterialList from '../views/RawMaterialList';
 import Sales from '../views/SalesList';
 import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
@@ -37,6 +39,7 @@ import AddPayment from '../views/AddPayment';
 import PriceType from '../views/PriceType';
 import PaymentsList from '../views/PaymentsList';
 import PriceTypeList from '../views/PriceTypeList';
+import AddRawMaterial from '../views/AddRawMaterial';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -77,12 +80,20 @@ const useRoutes = () => {
       show: isAdmin || isControlStock,
       redirect: true,
     },
-
     {
       path: '/product',
       name: 'Agregar Producto',
       // icon: 'pe-7s-graph',
       component: AddProduct,
+      layout: '/admin',
+      show: isAdmin || isControlStock,
+      redirect: true,
+    },
+    {
+      path: '/rawmaterial',
+      name: 'Agregar Materia Prima',
+      // icon: 'pe-7s-graph',
+      component: AddRawMaterial,
       layout: '/admin',
       show: isAdmin || isControlStock,
       redirect: true,
@@ -114,6 +125,14 @@ const useRoutes = () => {
       layout: '/admin',
     },
     {
+      path: '/list',
+      name: 'Listados',
+      icon: 'pe-7s-news-paper',
+      component: DashboardListCards,
+      show: true,
+      layout: '/admin',
+    },
+    {
       path: '/report',
       name: 'Reportes',
       show: isAdmin,
@@ -131,20 +150,24 @@ const useRoutes = () => {
     },
     {
       path: '/inventario',
-      name: 'Listado Productos ',
+      name: 'Productos ',
       show: isAdmin || isControlStock,
       icon: 'pe-7s-news-paper',
       component: ProductList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
-    // {
-    //   path: '/rawmaterial',
-    //   name: 'Listado Materia Prima ',
-    //   show: isAdmin || isControlStock,
-    //   icon: 'pe-7s-news-paper',
-    //   component: ProductList,
-    //   layout: '/admin',
-    // },
+    {
+      path: '/rawmaterials',
+      name: 'Materia Primas',
+      show: isAdmin || isControlStock,
+      icon: 'pe-7s-news-paper',
+      component: RawMaterialList,
+      layout: '/admin',
+      isList: true,
+      redirect: true,
+    },
     {
       path: '/sales',
       name: 'Ventas',
@@ -152,6 +175,8 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: Sales,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/providers',
@@ -160,6 +185,8 @@ const useRoutes = () => {
       show: isAdmin || isControlStock,
       component: ProvidertList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/categories',
@@ -168,6 +195,8 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: CategoryList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/clients',
@@ -176,6 +205,8 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: ClientList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/users',
@@ -184,6 +215,8 @@ const useRoutes = () => {
       component: UserList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
     },
     {
       path: '/audits',
@@ -192,6 +225,8 @@ const useRoutes = () => {
       component: AuditList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
     },
     {
       path: '/payment',
@@ -222,6 +257,8 @@ const useRoutes = () => {
       component: PriceTypeList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
     },
     {
       path: '/payments',
@@ -230,6 +267,8 @@ const useRoutes = () => {
       component: PaymentsList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
     },
   ];
 

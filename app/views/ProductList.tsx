@@ -7,18 +7,19 @@ import {
   Button,
   Modal,
   FormControl,
-  ControlLabel,
+  Well,
   FormGroup,
 } from 'react-bootstrap';
-
-import { useLocation } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import moment from 'moment';
-import EditProduct from './EditProduct';
+import { useDispatch } from 'react-redux';
 import Movement from '../views/ProductMovement';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
+import HeaderTitle from '../components/HeaderTitle';
 import AddProduct from './AddProduct';
+import useRedirect from '../hooks/useRedirect';
+import useApiCall from '../hooks/useApiCall';
 
 const ProductList = ({
   notification,
@@ -26,6 +27,8 @@ const ProductList = ({
   actions = true,
   onSelect,
 }) => {
+  const { redirect, setRedirect } = useRedirect();
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState({});
   const [show, setShow] = useState(false);
@@ -43,15 +46,15 @@ const ProductList = ({
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const fetchProducts = async () => {
-    const data = await apiCall({
-      url: 'products',
-    });
-
-    if (data) setProducts(data);
-  };
-
   useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await useApiCall({
+        loadingOn: true,
+        dispatch,
+        url: 'products',
+      });
+      if (response) setProducts(response);
+    };
     fetchProducts();
   }, []);
 
@@ -223,56 +226,67 @@ const ProductList = ({
           },
         ],
   };
-
   return (
     <div className="content">
+      <HeaderTitle
+        title="PRODUCTOS"
+        redirect={redirect}
+        onRedirect={() => setRedirect((prev) => !prev)}
+      />
       <Grid fluid>
         <Row>
-          <Col md={12}>
-            <div>
-              <MaterialTable
-                title=""
-                components={{ Container: (props) => props.children }}
-                options={{
-                  actionsColumnIndex: -1,
-                }}
-                localization={{
-                  body: {
-                    emptyDataSourceMessage: 'No hay registros',
-                    addTooltip: 'Agregar',
-                    deleteTooltip: 'Eliminar',
-                    editTooltip: 'Editar',
-                    filterRow: {
-                      filterTooltip: 'Filtrar',
+          <Well
+            style={{
+              background: '#fff',
+            }}
+          >
+            <Col>
+              <div>
+                <MaterialTable
+                  title=""
+                  components={{ Container: (props) => props.children }}
+                  options={{
+                    actionsColumnIndex: -1,
+                    exportButton: true,
+                  }}
+                  localization={{
+                    body: {
+                      emptyDataSourceMessage: 'No hay registros',
+                      addTooltip: 'Agregar',
+                      deleteTooltip: 'Eliminar',
+                      editTooltip: 'Editar',
+                      filterRow: {
+                        filterTooltip: 'Filtrar',
+                      },
+                      editRow: {
+                        deleteText: 'Esta seguro de borrar?',
+                        cancelTooltip: 'Cancelar',
+                      },
                     },
-                    editRow: {
-                      deleteText: 'Esta seguro de borrar?',
-                      cancelTooltip: 'Cancelar',
+                    header: {
+                      actions: 'Acciones',
                     },
-                  },
-                  header: {
-                    actions: 'Acciones',
-                  },
-                  pagination: {
-                    labelDisplayedRows: '{from}-{to} de {count}',
-                    labelRowsSelect: 'Filas',
-                    labelRowsPerPage: 'Filas por pagina:',
-                  },
-                  toolbar: {
-                    nRowsSelected: '{0} Filas(s) seleccionadas(s)',
-                    exportTitle: 'Exportar',
-                    exportAriaLabel: 'Exportar',
-                    exportName: 'Exportar en CSV',
-                    searchTooltip: 'Buscar',
-                    searchPlaceholder: 'Buscar',
-                  },
-                }}
-                columns={materialConfig.columns}
-                data={products}
-                actions={materialConfig.actions}
-              />
-            </div>
-          </Col>
+                    pagination: {
+                      labelDisplayedRows: '{from}-{to} de {count}',
+                      labelRowsSelect: 'Filas',
+                      labelRowsPerPage: 'Filas por pagina:',
+                    },
+                    toolbar: {
+                      nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                      exportTitle: 'Exportar',
+                      exportAriaLabel: 'Exportar',
+                      exportName: 'Exportar en CSV',
+                      searchTooltip: 'Buscar',
+                      searchPlaceholder: 'Buscar',
+                    },
+                  }}
+                  columns={materialConfig.columns}
+                  data={products}
+                  actions={materialConfig.actions}
+                />
+              </div>
+            </Col>
+          </Well>
         </Row>
       </Grid>
       <Modal show={show} onHide={handleClose} bsSize="large">

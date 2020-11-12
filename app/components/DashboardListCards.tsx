@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
-const DashboardCards = () => {
+const DashboardListCards = () => {
   const { sessionData } = useSelector(({ user }) => user);
 
   const {
@@ -18,61 +18,61 @@ const DashboardCards = () => {
         <Row>
           {[
             {
-              to: '/admin/client',
-              title: 'Nuevo Cliente ',
+              to: '/admin/inventario',
+              title: 'Productos',
               show: isAdmin,
               iconClass: 'pe-7s-id',
             },
             {
-              to: '/admin/category',
-              title: 'Nueva Categoria',
+              to: '/admin/rawmaterials',
+              title: 'Materia Prima',
+              show: isAdmin,
+              iconClass: 'pe-7s-id',
+            },
+            {
+              to: '/admin/sales',
+              title: 'Ventas',
               iconClass: 'pe-7s-note2',
 
               show: isAdmin || isControlStock,
             },
-            {
-              to: '/admin/sale',
-              title: 'Nueva Venta',
-              iconClass: 'pe-7s-cash',
-              show: isAdmin || isSeller,
-            },
-            {
-              to: '/admin/user',
-              title: 'Agregar Usuario',
-              show: isAdmin,
-              iconClass: 'pe-7s-add-user',
-            },
-            {
-              to: '/admin/product',
-              title: 'Agregar Producto',
+            // {
+            //   to: '/admin/sale',
+            //   title: 'Nueva Venta',
+            //   iconClass: 'pe-7s-cash',
+            //   show: isAdmin || isSeller,
+            // },
+            // {
+            //   to: '/admin/user',
+            //   title: 'Agregar Usuario',
+            //   show: isAdmin,
+            //   iconClass: 'pe-7s-add-user',
+            // },
+            // {
+            //   to: '/admin/product',
+            //   title: 'Agregar Producto',
 
-              iconClass: 'pe-7s-cart',
+            //   iconClass: 'pe-7s-cart',
+            //   show: isAdmin || isControlStock,
+            // },
+            {
+              to: '/admin/providers',
+              title: 'Proveedores',
+              iconClass: 'pe-7s-add-user',
               show: isAdmin || isControlStock,
             },
-            {
-              to: '/admin/provider',
-              title: 'Agregar Proveedor',
-              iconClass: 'pe-7s-add-user',
-              show: isAdmin,
-            },
-            {
-              to: '/admin/rawmaterial',
-              title: 'Agregar Materia Prima',
-              iconClass: 'pe-7s-add-user',
-              show: isAdmin,
-            },
-            {
-              to: '/admin/payment',
-              title: 'Agregar Forma de pago',
-              iconClass: 'pe-7s-credit',
-              show: isAdmin,
-            },
-            {
-              to: '/admin/pricetype',
-              title: 'Agregar Tipo de precio',
-              iconClass: 'pe-7s-wallet',
-              show: isAdmin,
-            },
+            // {
+            //   to: '/admin/payment',
+            //   title: 'Agregar Forma de pago',
+            //   iconClass: 'pe-7s-credit',
+            //   show: isAdmin,
+            // },
+            // {
+            //   to: '/admin/pricetype',
+            //   title: 'Agregar Tipo de precio',
+            //   iconClass: 'pe-7s-wallet',
+            //   show: isAdmin,
+            // },
           ].map((card) => {
             return (
               <>
@@ -118,4 +118,4 @@ const DashboardCards = () => {
   );
 };
 
-export default DashboardCards;
+export default DashboardListCards;

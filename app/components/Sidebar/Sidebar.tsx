@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import useRoute from '../../hooks/useRoutes';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
-
-// import logo from '../../assets/img/reactlogo.png';
+import logo from '../../assets/img/logo.jpeg';
 
 const Sidebar = (props) => {
+  const [showList, setShowList] = useState(false);
   const [state, setState] = useState({
     width: window.innerWidth,
   });
@@ -24,9 +24,6 @@ const Sidebar = (props) => {
     setState({ width: window.innerWidth });
   };
 
-  const sidebarBackground = {
-    backgroundImage: 'url(' + props.image + ')',
-  };
   return (
     <div id="sidebar" className="sidebar">
       <div className="logo">
@@ -35,7 +32,7 @@ const Sidebar = (props) => {
           className="simple-text logo-mini"
         >
           <div className="logo-img">
-            {/* <img src={logo} alt="logo_image" /> */}
+            <img src={logo} alt="logo_image" />
           </div>
         </a>
         <a
@@ -49,29 +46,79 @@ const Sidebar = (props) => {
         <ul className="nav">
           {state.width <= 991 ? <AdminNavbarLinks /> : null}
 
-          {adminRoutes.map((prop, key) => {
-            if (!prop.redirect && prop.show)
-              return (
-                <li
-                  className={
-                    prop.upgrade
-                      ? 'active active-pro'
-                      : activeRoute(prop.layout + prop.path)
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.layout + prop.path}
-                    className="nav-link"
-                    activeClassName="active"
+          {adminRoutes
+            .filter((item) => !item.isList)
+            .map((prop, key) => {
+              if (!prop.redirect && prop.show && !prop.isList)
+                return (
+                  <li
+                    className={
+                      prop.upgrade
+                        ? 'active active-pro'
+                        : activeRoute(prop.layout + prop.path)
+                    }
+                    key={key}
                   >
-                    <i className={prop.icon} />
-                    <p>{prop.name}</p>
-                  </NavLink>
-                </li>
-              );
-            return null;
-          })}
+                    <NavLink
+                      to={prop.layout + prop.path}
+                      className="nav-link"
+                      activeClassName="active"
+                    >
+                      <i className={prop.icon} />
+                      <p>{prop.name}</p>
+                    </NavLink>
+                  </li>
+                );
+              return null;
+            })}
+          {/* <li>
+            <a
+              className="nav-link"
+              onClick={() => setShowList((prev) => !prev)}
+              style={{ display: 'flex' }}
+            >
+              <i className="pe-7s-graph2"></i>
+              <p>Listados</p>
+              <i
+                className={`${
+                  showList ? 'pe-7s-angle-down' : 'pe-7s-angle-up'
+                }`}
+                style={{ marginLeft: '10%' }}
+              ></i>
+            </a>
+            <Collapse in={showList}>
+              <div>
+                <ul className="nav">
+                  {adminRoutes
+                    .filter((item) => item.isList)
+                    .map((prop, key) => {
+                      console.log(prop);
+                      if (!prop.redirect && prop.show)
+                        return (
+                          <li
+                            className={
+                              prop.upgrade
+                                ? 'active active-pro'
+                                : activeRoute(prop.layout + prop.path)
+                            }
+                            key={key}
+                          >
+                            <NavLink
+                              to={prop.layout + prop.path}
+                              className="nav-link"
+                              activeClassName="active"
+                            >
+                              <i className={prop.icon} />
+                              <p>{prop.name}</p>
+                            </NavLink>
+                          </li>
+                        );
+                      return null;
+                    })}
+                </ul>
+              </div>
+            </Collapse>
+          </li> */}
           <li>
             <NavLink
               to="/admin/logout"

@@ -22,7 +22,7 @@ import Button from '../components/CustomButton/CustomButton';
 import { style } from '../variables/Variables';
 import useApiUrl from '../hooks/useApiUrl';
 import { set } from '../features/user/userSlice';
-import logo from '../assets/img/logo.jpg';
+import logo from '../assets/img/logo.jpeg';
 
 const Login = () => {
   const dispatch = useDispatch();

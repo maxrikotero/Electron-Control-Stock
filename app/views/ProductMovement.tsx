@@ -5,17 +5,17 @@ import MaterialTable from 'material-table';
 import moment from 'moment';
 import apiCall from '../utils/apiCall';
 
-const ProductMovement = ({ id, onClose }) => {
+const MovementList = ({ id, onClose, url = 'products' }) => {
   const [movements, setMovements] = useState([]);
   const [show, setShow] = useState(true);
 
-  const fetchProductMovement = async () => {
-    const response = await apiCall({ url: `products/movement/${id}` });
+  const fetchMovement = async () => {
+    const response = await apiCall({ url: `${url}/movement/${id}` });
     setMovements(response);
   };
 
   useEffect(() => {
-    fetchProductMovement();
+    fetchMovement();
   }, []);
 
   const handleClose = () => {
@@ -114,4 +114,4 @@ const ProductMovement = ({ id, onClose }) => {
   );
 };
 
-export default ProductMovement;
+export default MovementList;
