@@ -19,7 +19,7 @@ const DashboardCards = () => {
           {[
             {
               to: '/admin/client',
-              title: 'Nuevo Cliente ',
+              title: 'Nuevo Cliente',
               show: isAdmin,
               iconClass: 'pe-7s-id',
             },
@@ -38,39 +38,45 @@ const DashboardCards = () => {
             },
             {
               to: '/admin/user',
-              title: 'Agregar Usuario',
+              title: 'Nuevo Usuario',
               show: isAdmin,
               iconClass: 'pe-7s-add-user',
             },
             {
               to: '/admin/product',
-              title: 'Agregar Producto',
+              title: 'Nuevo Producto',
 
-              iconClass: 'pe-7s-cart',
+              iconClass: 'pe-7s-cloud-upload',
               show: isAdmin || isControlStock,
             },
             {
               to: '/admin/provider',
-              title: 'Agregar Proveedor',
+              title: 'Nuevo Proveedor',
               iconClass: 'pe-7s-add-user',
               show: isAdmin,
             },
             {
               to: '/admin/rawmaterial',
-              title: 'Agregar Materia Prima',
-              iconClass: 'pe-7s-add-user',
+              title: 'Nueva Materia Prima',
+              iconClass: 'pe-7s-cloud-upload',
               show: isAdmin,
             },
             {
               to: '/admin/payment',
-              title: 'Agregar Forma de pago',
+              title: 'Nueva Forma de pago',
               iconClass: 'pe-7s-credit',
               show: isAdmin,
             },
             {
               to: '/admin/pricetype',
-              title: 'Agregar Tipo de precio',
+              title: 'Nuevo Tipo de precio',
               iconClass: 'pe-7s-wallet',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/orderprovider',
+              title: 'Nuevo pedido a proveedores',
+              iconClass: 'pe-7s-note',
               show: isAdmin,
             },
           ].map((card) => {

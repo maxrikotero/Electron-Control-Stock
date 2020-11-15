@@ -7,6 +7,7 @@ const HeaderTitle = ({
   redirect,
   onRedirect,
   toLink = '/admin/list',
+  link = true,
 }) => {
   return (
     <div>
@@ -21,18 +22,21 @@ const HeaderTitle = ({
         }}
         className="animate__backInDown"
       >
-        <span
-          className="pe-7s-angle-left-circle"
-          onClick={onRedirect}
-          style={{
-            fontSize: '45px',
-            display: 'table',
-            top: '20px',
-            marginLeft: '21px',
-            position: 'absolute',
-            cursor: 'pointer',
-          }}
-        ></span>
+        {link && (
+          <span
+            className="pe-7s-angle-left-circle"
+            onClick={onRedirect}
+            style={{
+              fontSize: '45px',
+              display: 'table',
+              top: '20px',
+              marginLeft: '21px',
+              position: 'absolute',
+              cursor: 'pointer',
+            }}
+          ></span>
+        )}
+
         <h2>{title}</h2>
       </Well>
     </div>

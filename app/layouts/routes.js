@@ -28,6 +28,7 @@ import Notifications from '../views/Notifications';
 import Upgrade from '../views/Upgrade';
 import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
+import OrderProvider from '../views/forms/OrderProvider';
 import ClientList from '../views/ClientList';
 import AuditList from '../views/AuditList';
 import AddCategory from '../views/AddCategory';
@@ -42,6 +43,14 @@ const dashboardRoutes = [
     name: 'Agregar Client',
     icon: 'pe-7s-graph',
     component: AddClient,
+    layout: '/admin',
+    redirect: true,
+  },
+  {
+    path: '/orderprovider',
+    name: 'Nuevo pedido a proveedores',
+    icon: 'pe-7s-graph',
+    component: OrderProvider,
     layout: '/admin',
     redirect: true,
   },
@@ -61,7 +70,7 @@ const dashboardRoutes = [
   },
   {
     path: '/user',
-    name: 'Agregar Usuario',
+    name: 'Nuevo Usuario',
     // icon: 'pe-7s-graph',
     component: AddUser,
     layout: '/admin',

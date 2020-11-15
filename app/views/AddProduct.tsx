@@ -20,9 +20,9 @@ import Button from '../components/CustomButton/CustomButton';
 import useModal from '../hooks/useModal';
 import CurrencyInput from '../components/CurrencyInput/CurrencyInput';
 import PriceType from '../components/PriceType';
+import CustomWell from '../components/CustomWell';
 
 const AddProduct = ({ notification, product, onEdit, isEdit }) => {
-  debugger;
   const [prices, setPrices] = useState([]);
   useEffect(() => {
     if (product) {
@@ -69,386 +69,343 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
     }
   };
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title={isEdit ? '' : 'Agregar Producto'}
-              content={
-                <Formik
-                  initialValues={{
-                    ...data,
-                  }}
-                  validate={(values) => {
-                    const errors: any = {};
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nuevo Producto`}
+      isEdit={isEdit}
+    >
+      <Formik
+        initialValues={{
+          ...data,
+        }}
+        validate={(values) => {
+          const errors: any = {};
 
-                    if (!values.code) {
-                      errors.code = 'Requerido';
-                    }
-                    if (!values.name) {
-                      errors.name = 'Requerido';
-                    }
+          if (!values.code) {
+            errors.code = 'Requerido';
+          }
+          if (!values.name) {
+            errors.name = 'Requerido';
+          }
 
-                    if (!values.stock || values.stock === 0) {
-                      errors.stock = 'Requerido';
-                    }
+          if (!values.stock || values.stock === 0) {
+            errors.stock = 'Requerido';
+          }
 
-                    return errors;
-                  }}
-                  onSubmit={async (values, { setSubmitting, resetForm }) => {
-                    if (onEdit) {
-                      onEdit({
-                        ...values,
-                        prices: prices.map((price) => ({
-                          priceType: !price.priceTypeId
-                            ? price._id
-                            : price.priceTypeId,
-                          price: price.price,
-                        })),
-                      });
-                    } else {
-                      const requestValues = {
-                        ...values,
-                        prices: prices.map((price) => ({
-                          priceType: price._id,
-                          price: price.price,
-                        })),
-                      };
+          return errors;
+        }}
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          if (onEdit) {
+            onEdit({
+              ...values,
+              prices: prices.map((price) => ({
+                priceType: !price.priceTypeId ? price._id : price.priceTypeId,
+                price: price.price,
+              })),
+            });
+          } else {
+            const requestValues = {
+              ...values,
+              prices: prices.map((price) => ({
+                priceType: price._id,
+                price: price.price,
+              })),
+            };
 
-                      if (prices.length > 0) {
-                        try {
-                          var response = await apiCall({
-                            url: 'products',
-                            method: 'POST',
-                            body: JSON.stringify(requestValues),
-                          });
-                        } catch (error) {
-                          setSubmitting(false);
-                          notification('tc', 'Error al guardar', 3);
-                        }
-
-                        if (response.success) {
-                          setSubmitting(false);
-                          notification('tc', 'Producto Agregado', 1);
-                          resetForm();
-                          setPrices([]);
-                        } else {
-                          let message = 'Agregar Producto Error';
-                          if (response.error.indexOf('name') > -1)
-                            message = 'Producto Existente';
-                          if (response.error.indexOf('code') > -1)
-                            message = 'Codigo Existente';
-
-                          setSubmitting(false);
-                          notification('tc', message, 3);
-                        }
-                      } else {
-                        notification('tc', 'Tipo de precio requerido', 2);
-                      }
-                    }
-                  }}
-                >
-                  {({
-                    values,
-                    errors,
-                    handleChange,
-                    handleSubmit,
-                    isSubmitting,
-                  }) => {
-                    return (
-                      <form onSubmit={handleSubmit}>
-                        <Row>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="codeControl">
-                              <ControlLabel>Codigo</ControlLabel>
-                              <FormControl
-                                type="number"
-                                name="code"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.code}
-                              />
-                            </FormGroup>
-                            <span style={{ color: 'red' }}> {errors.code}</span>
-                          </Col>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="nameControl">
-                              <ControlLabel>Nombre</ControlLabel>
-                              <FormControl
-                                type="text"
-                                name="name"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.name}
-                              />
-                            </FormGroup>
-                            <span style={{ color: 'red' }}> {errors.name}</span>
-                          </Col>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="brandControl">
-                              <ControlLabel>Marca</ControlLabel>
-                              <FormControl
-                                type="text"
-                                name="brand"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.brand}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="stockControl">
-                              <ControlLabel>Stock</ControlLabel>
-                              <FormControl
-                                type="number"
-                                name="stock"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.stock}
-                              />
-                            </FormGroup>
-                            <span style={{ color: 'red' }}>
-                              {' '}
-                              {errors.stock}
-                            </span>
-                          </Col>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="minStockControl">
-                              <ControlLabel>Stock Minimo</ControlLabel>
-                              <FormControl
-                                type="number"
-                                name="minStock"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.minStock}
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="expireControl">
-                              <ControlLabel>Fecha Vencimiento</ControlLabel>
-                              <FormControl
-                                type="date"
-                                name="expire"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={moment(values.expire)
-                                  .utc()
-                                  .format('YYYY-MM-DD')}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col xs={12} md={12}>
-                            <div style={{ display: 'flex' }}>
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                }}
-                              >
-                                Agregar Precio
-                              </div>{' '}
-                              <div
-                                style={{
-                                  fontSize: '26px',
-                                  color: 'green',
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  flexGrow: '0.5',
-                                  cursor: 'pointer',
-                                  alignItems: 'center',
-                                }}
-                                onClick={setModal}
-                              >
-                                <i className="pe-7s-plus"></i>
-                              </div>
-                            </div>
-                            <div>
-                              <Table striped hover>
-                                <thead>
-                                  <tr>
-                                    <th>Tipo</th>
-                                    <th>Precio</th>
-                                    <th>
-                                      <Tooltip id="edit_tooltip">
-                                        Editar
-                                      </Tooltip>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {prices.map((item) => (
-                                    <tr>
-                                      <td>{item.name}</td>
-                                      <td>
-                                        {item.isEdit ? (
-                                          <Row>
-                                            <Col xs={12} md={4}>
-                                              <FormGroup controlId="priceControl">
-                                                <ControlLabel></ControlLabel>
-                                                <CurrencyInput
-                                                  placeholder="$0.00"
-                                                  type="text"
-                                                  name="price"
-                                                  onChange={({
-                                                    target: { value },
-                                                  }) => {
-                                                    const newData = prices.map(
-                                                      (price) =>
-                                                        price._id === item._id
-                                                          ? {
-                                                              ...item,
-                                                              price: value,
-                                                            }
-                                                          : price
-                                                    );
-                                                    setPrices(newData);
-                                                  }}
-                                                  value={item.price}
-                                                />
-                                              </FormGroup>
-                                            </Col>
-                                          </Row>
-                                        ) : (
-                                          item.price
-                                        )}
-                                      </td>
-                                      <td>
-                                        <Tooltip id="edit_tooltip">
-                                          Editar
-                                        </Tooltip>
-                                      </td>
-                                      <td>
-                                        <OverlayTrigger
-                                          placement="top"
-                                          overlay={edit}
-                                        >
-                                          <Button
-                                            bsStyle="info"
-                                            simple
-                                            onClick={() => {
-                                              const newData = prices.map(
-                                                (price) =>
-                                                  price._id === item._id
-                                                    ? {
-                                                        ...item,
-                                                        isEdit: item.isEdit
-                                                          ? false
-                                                          : true,
-                                                      }
-                                                    : price
-                                              );
-                                              setPrices(newData);
-                                            }}
-                                            type="button"
-                                          >
-                                            <i
-                                              className={`${
-                                                item.isEdit
-                                                  ? 'fa fa-check'
-                                                  : 'fa fa-edit'
-                                              }`}
-                                            />
-                                          </Button>
-                                        </OverlayTrigger>
-                                      </td>
-                                      <td>
-                                        <OverlayTrigger
-                                          placement="top"
-                                          overlay={remove}
-                                        >
-                                          <Button
-                                            bsStyle="danger"
-                                            simple
-                                            type="button"
-                                            onClick={() => {
-                                              const newData = prices.filter(
-                                                (price) =>
-                                                  price._id !== item._id
-                                              );
-                                              setPrices(newData);
-                                            }}
-                                          >
-                                            <i className="fa fa-times" />
-                                          </Button>
-                                        </OverlayTrigger>
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </Table>
-                            </div>
-                            <span style={{ color: 'red' }}>
-                              {' '}
-                              {errors.price}
-                            </span>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col xs={12} md={4}>
-                            <FormGroup controlId="formControlsSelect">
-                              <ControlLabel>Categoria</ControlLabel>
-                              <FormControl
-                                componentClass="select"
-                                placeholder="select"
-                                name="category"
-                                onChange={handleChange}
-                                value={
-                                  isEdit ? values.category : values.category.id
-                                }
-                              >
-                                <option value="select">select</option>
-                                {categories.map((item) => (
-                                  <option value={item._id}>{item.name}</option>
-                                ))}
-                              </FormControl>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col xs={12} md={12}>
-                            <FormGroup controlId="descrControl">
-                              <ControlLabel>Descripción</ControlLabel>
-                              <FormControl
-                                rows="3"
-                                componentClass="textarea"
-                                name="description"
-                                onChange={handleChange}
-                                bsClass="form-control"
-                                value={values.description}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Button
-                          bsStyle="info"
-                          pullRight
-                          fill
-                          type="submit"
-                          disabled={isSubmitting}
-                        >
-                          Guardar
-                        </Button>
-                        <div className="clearfix" />
-                      </form>
-                    );
-                  }}
-                </Formik>
+            if (prices.length > 0) {
+              try {
+                var response = await apiCall({
+                  url: 'products',
+                  method: 'POST',
+                  body: JSON.stringify(requestValues),
+                });
+              } catch (error) {
+                setSubmitting(false);
+                notification('tc', 'Error al guardar', 3);
               }
-            />
-          </Col>
-        </Row>
-      </Grid>
+
+              if (response.success) {
+                setSubmitting(false);
+                notification('tc', 'Producto Agregado', 1);
+                resetForm();
+                setPrices([]);
+              } else {
+                let message = 'Nuevo Producto Error';
+                if (response.error.indexOf('name') > -1)
+                  message = 'Producto Existente';
+                if (response.error.indexOf('code') > -1)
+                  message = 'Codigo Existente';
+
+                setSubmitting(false);
+                notification('tc', message, 3);
+              }
+            } else {
+              notification('tc', 'Tipo de precio requerido', 2);
+            }
+          }
+        }}
+      >
+        {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Row>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="codeControl">
+                    <ControlLabel>Codigo</ControlLabel>
+                    <FormControl
+                      type="number"
+                      name="code"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.code}
+                    />
+                  </FormGroup>
+                  <span style={{ color: 'red' }}> {errors.code}</span>
+                </Col>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="nameControl">
+                    <ControlLabel>Nombre</ControlLabel>
+                    <FormControl
+                      type="text"
+                      name="name"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.name}
+                    />
+                  </FormGroup>
+                  <span style={{ color: 'red' }}> {errors.name}</span>
+                </Col>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="brandControl">
+                    <ControlLabel>Marca</ControlLabel>
+                    <FormControl
+                      type="text"
+                      name="brand"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.brand}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="stockControl">
+                    <ControlLabel>Stock</ControlLabel>
+                    <FormControl
+                      type="number"
+                      name="stock"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.stock}
+                    />
+                  </FormGroup>
+                  <span style={{ color: 'red' }}> {errors.stock}</span>
+                </Col>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="minStockControl">
+                    <ControlLabel>Stock Minimo</ControlLabel>
+                    <FormControl
+                      type="number"
+                      name="minStock"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.minStock}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="expireControl">
+                    <ControlLabel>Fecha Vencimiento</ControlLabel>
+                    <FormControl
+                      type="date"
+                      name="expire"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={moment(values.expire).utc().format('YYYY-MM-DD')}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={12}>
+                  <div style={{ display: 'flex' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      Agregar Precio
+                    </div>{' '}
+                    <div
+                      style={{
+                        fontSize: '26px',
+                        color: 'green',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexGrow: '0.5',
+                        cursor: 'pointer',
+                        alignItems: 'center',
+                      }}
+                      onClick={setModal}
+                    >
+                      <i className="pe-7s-plus"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <Table striped hover>
+                      <thead>
+                        <tr>
+                          <th>Tipo</th>
+                          <th>Precio</th>
+                          <th>
+                            <Tooltip id="edit_tooltip">Editar</Tooltip>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {prices.map((item) => (
+                          <tr>
+                            <td>{item.name}</td>
+                            <td>
+                              {item.isEdit ? (
+                                <Row>
+                                  <Col xs={12} md={4}>
+                                    <FormGroup controlId="priceControl">
+                                      <ControlLabel></ControlLabel>
+                                      <CurrencyInput
+                                        placeholder="$0.00"
+                                        type="text"
+                                        name="price"
+                                        onChange={({ target: { value } }) => {
+                                          const newData = prices.map((price) =>
+                                            price._id === item._id
+                                              ? {
+                                                  ...item,
+                                                  price: value,
+                                                }
+                                              : price
+                                          );
+                                          setPrices(newData);
+                                        }}
+                                        value={item.price}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+                                </Row>
+                              ) : (
+                                item.price
+                              )}
+                            </td>
+                            <td>
+                              <Tooltip id="edit_tooltip">Editar</Tooltip>
+                            </td>
+                            <td>
+                              <OverlayTrigger placement="top" overlay={edit}>
+                                <Button
+                                  bsStyle="info"
+                                  simple
+                                  onClick={() => {
+                                    const newData = prices.map((price) =>
+                                      price._id === item._id
+                                        ? {
+                                            ...item,
+                                            isEdit: item.isEdit ? false : true,
+                                          }
+                                        : price
+                                    );
+                                    setPrices(newData);
+                                  }}
+                                  type="button"
+                                >
+                                  <i
+                                    className={`${
+                                      item.isEdit ? 'fa fa-check' : 'fa fa-edit'
+                                    }`}
+                                  />
+                                </Button>
+                              </OverlayTrigger>
+                            </td>
+                            <td>
+                              <OverlayTrigger placement="top" overlay={remove}>
+                                <Button
+                                  bsStyle="danger"
+                                  simple
+                                  type="button"
+                                  onClick={() => {
+                                    const newData = prices.filter(
+                                      (price) => price._id !== item._id
+                                    );
+                                    setPrices(newData);
+                                  }}
+                                >
+                                  <i className="fa fa-times" />
+                                </Button>
+                              </OverlayTrigger>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                  <span style={{ color: 'red' }}> {errors.price}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={4}>
+                  <FormGroup controlId="formControlsSelect">
+                    <ControlLabel>Categoria</ControlLabel>
+                    <FormControl
+                      componentClass="select"
+                      placeholder="select"
+                      name="category"
+                      onChange={handleChange}
+                      value={isEdit ? values.category : values.category.id}
+                    >
+                      <option value="select">select</option>
+                      {categories.map((item) => (
+                        <option value={item._id}>{item.name}</option>
+                      ))}
+                    </FormControl>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={12}>
+                  <FormGroup controlId="descrControl">
+                    <ControlLabel>Descripción</ControlLabel>
+                    <FormControl
+                      rows="3"
+                      componentClass="textarea"
+                      name="description"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.description}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Button
+                bsStyle="info"
+                pullRight
+                fill
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Guardar
+              </Button>
+              <div className="clearfix" />
+            </form>
+          );
+        }}
+      </Formik>
+
       <ModalComponent title="Tipo de precio">
         <PriceType onSave={handleSavePriceType} notification={notification} />
       </ModalComponent>
-    </div>
+    </CustomWell>
   );
 };
 

@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Bar } from 'react-chartjs-2';
-import {
-  Row,
-  Col,
-  FormGroup,
-  ControlLabel,
-  FormControl,
-} from 'react-bootstrap';
+import { FormGroup, ControlLabel, Well } from 'react-bootstrap';
 import useApiCall from '../hooks/useApiCall';
+import HeaderTitle from '../components/HeaderTitle';
 
 const Reports = () => {
   const [sales, setSales] = useState([]);
@@ -80,44 +75,54 @@ const Reports = () => {
 
   return (
     <div className="App">
-      <div style={{ padding: '20px' }}>
-        <div>
-          <h2>Ventas Por Mes</h2>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <FormGroup
-            controlId="yearControl"
-            style={{ display: 'grid', textAlign: 'center' }}
+      <HeaderTitle title={'Reportes'} link={false} />
+      <Well
+        style={{
+          background: '#fff',
+          textAlign: 'center',
+          padding: 0,
+          color: '#034f84',
+        }}
+      >
+        <div style={{ padding: '20px' }}>
+          <div>
+            <h2>Ventas Por Mes</h2>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <ControlLabel>Año</ControlLabel>
-            <input
-              type="number"
-              min="1900"
-              max="3000" // This is only for this year, we won't be here - we deaded
-              step="1"
-              value={startDate}
-              onChange={({ target: { value } }) =>
-                setStartDate(parseInt(value))
-              }
-            ></input>
-          </FormGroup>
-        </div>
+            <FormGroup
+              controlId="yearControl"
+              style={{ display: 'grid', textAlign: 'center' }}
+            >
+              <ControlLabel>Año</ControlLabel>
+              <input
+                type="number"
+                min="1900"
+                max="3000" // This is only for this year, we won't be here - we deaded
+                step="1"
+                value={startDate}
+                onChange={({ target: { value } }) =>
+                  setStartDate(parseInt(value))
+                }
+              ></input>
+            </FormGroup>
+          </div>
 
-        <Bar
-          data={data}
-          width={50}
-          height={50}
-          options={{
-            maintainAspectRatio: false,
-          }}
-        />
-      </div>
+          <Bar
+            data={data}
+            width={50}
+            height={50}
+            options={{
+              maintainAspectRatio: false,
+            }}
+          />
+        </div>
+      </Well>
     </div>
   );
 };

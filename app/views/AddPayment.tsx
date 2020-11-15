@@ -4,6 +4,7 @@ import NotificationSystem from 'react-notification-system';
 import { style } from '../variables/Variables';
 import apiCall from '../utils/apiCall';
 import AddSimpleForm from '../components/AddSimpleForm';
+import CustomWell from '../components/CustomWell';
 
 const AddPayment = ({ notification }: { notification: any }) => {
   const notificationSystem = useRef<HTMLInputElement>();
@@ -17,7 +18,7 @@ const AddPayment = ({ notification }: { notification: any }) => {
     if (response.success) {
       notification('tc', 'Tipo de pago Agregado', 1);
     } else {
-      let message = 'Agregar Forma de pago Error';
+      let message = 'Nueva Forma de pago Error';
       if (response.error.indexOf('name') > -1)
         message = 'Tipo de pago Existente';
 
@@ -26,11 +27,11 @@ const AddPayment = ({ notification }: { notification: any }) => {
   };
 
   return (
-    <div className="content">
-      <AddSimpleForm title="Agregar Forma de pago" onSave={handleSubmit} />
+    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Forma de pago`}>
+      <AddSimpleForm onSave={handleSubmit} />
 
       <NotificationSystem ref={notificationSystem} style={style} />
-    </div>
+    </CustomWell>
   );
 };
 

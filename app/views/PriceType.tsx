@@ -4,6 +4,7 @@ import NotificationSystem from 'react-notification-system';
 import { style } from '../variables/Variables';
 import apiCall from '../utils/apiCall';
 import AddSimpleForm from '../components/AddSimpleForm';
+import CustomWell from '../components/CustomWell';
 
 const PriceType = ({
   notification,
@@ -22,21 +23,21 @@ const PriceType = ({
     if (response.success) {
       notification('tc', successMessage, 1);
     } else {
-      let message = 'Agregar Tipo de Precio Error';
-      // if (response.error) {
-      //   if (response.error.indexOf('name') > -1)
-      //     message = 'Tipo de Precio Existente';
-      // }
+      let message = 'Nuevo Tipo de Precio Error';
 
       notification('tc', message, 3);
     }
   };
-  console.log('title ', title);
+  debugger;
   return (
-    <div className="content">
-      <AddSimpleForm title={title} onSave={handleSubmit} />
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nuevo Tipo de precio`}
+      isEdit={!method ? true : false}
+    >
+      <AddSimpleForm onSave={handleSubmit} />
       <NotificationSystem ref={notificationSystem} style={style} />
-    </div>
+    </CustomWell>
   );
 };
 

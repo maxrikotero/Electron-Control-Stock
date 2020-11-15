@@ -21,13 +21,13 @@ const DashboardListCards = () => {
               to: '/admin/inventario',
               title: 'Productos',
               show: isAdmin,
-              iconClass: 'pe-7s-id',
+              iconClass: 'pe-7s-note2',
             },
             {
               to: '/admin/rawmaterials',
-              title: 'Materia Prima',
+              title: 'Materia Primas',
               show: isAdmin,
-              iconClass: 'pe-7s-id',
+              iconClass: 'pe-7s-note2',
             },
             {
               to: '/admin/sales',
@@ -36,43 +36,38 @@ const DashboardListCards = () => {
 
               show: isAdmin || isControlStock,
             },
-            // {
-            //   to: '/admin/sale',
-            //   title: 'Nueva Venta',
-            //   iconClass: 'pe-7s-cash',
-            //   show: isAdmin || isSeller,
-            // },
-            // {
-            //   to: '/admin/user',
-            //   title: 'Agregar Usuario',
-            //   show: isAdmin,
-            //   iconClass: 'pe-7s-add-user',
-            // },
-            // {
-            //   to: '/admin/product',
-            //   title: 'Agregar Producto',
 
-            //   iconClass: 'pe-7s-cart',
-            //   show: isAdmin || isControlStock,
-            // },
             {
               to: '/admin/providers',
               title: 'Proveedores',
-              iconClass: 'pe-7s-add-user',
+              iconClass: 'pe-7s-note2',
               show: isAdmin || isControlStock,
             },
-            // {
-            //   to: '/admin/payment',
-            //   title: 'Agregar Forma de pago',
-            //   iconClass: 'pe-7s-credit',
-            //   show: isAdmin,
-            // },
-            // {
-            //   to: '/admin/pricetype',
-            //   title: 'Agregar Tipo de precio',
-            //   iconClass: 'pe-7s-wallet',
-            //   show: isAdmin,
-            // },
+
+            {
+              to: '/admin/categories',
+              title: 'Categorias',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin || isControlStock,
+            },
+            {
+              to: '/admin/clients',
+              title: 'Clientes',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/users',
+              title: 'Usuarios',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/audits',
+              title: 'Auditorias',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin,
+            },
           ].map((card) => {
             return (
               <>

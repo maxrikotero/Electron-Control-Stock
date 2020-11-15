@@ -22,7 +22,13 @@ import useRedirect from '../hooks/useRedirect';
 import useApiCall from '../hooks/useApiCall';
 import ModalForm from '../components/ModalForm';
 
-const RawMaterialList = ({ notification, actions = true, onSelect }) => {
+const RawMaterialList = ({
+  notification,
+  actions = true,
+  isListSelect = false,
+  onSelected,
+  selectedId,
+}) => {
   const { redirect, setRedirect } = useRedirect();
   const dispatch = useDispatch();
   const [rawMaterials, setRawMaterials] = useState([]);
@@ -48,7 +54,17 @@ const RawMaterialList = ({ notification, actions = true, onSelect }) => {
       dispatch,
       url: 'rawmaterial',
     });
-    if (response) setRawMaterials(response);
+    if (response) {
+      if (selectedId)
+        setRawMaterials(
+          response.filter((m) => {
+            if (m.providers.length > 0) {
+              return m.providers.some((p) => p.provider._id === selectedId);
+            }
+          })
+        );
+      else setRawMaterials(response);
+    }
   };
   useEffect(() => {
     fetchRawMaterials();
@@ -59,6 +75,10 @@ const RawMaterialList = ({ notification, actions = true, onSelect }) => {
       rawMaterials.filter((rawMaterial) => rawMaterial._id === id)[0]
     );
     handleShow();
+  };
+
+  const handleSelected = (data) => {
+    onSelected(data);
   };
 
   const handleShowMovement = (id) => {
@@ -130,87 +150,123 @@ const RawMaterialList = ({ notification, actions = true, onSelect }) => {
             onClick: (event, rowData) => handleDelete(rowData._id),
           },
         ]
-      : [],
+      : [
+          {
+            icon: () => {
+              return (
+                <Button bsStyle="info" fill>
+                  Agregar
+                </Button>
+              );
+            },
+            onClick: (event, rowData) => handleSelected(rowData),
+          },
+        ],
 
-    columns: [
-      { title: 'Nombre', field: 'name' },
-      {
-        title: 'Proveedores',
-        render: (rowData) => {
-          return (
-            <div style={{ width: '100px' }}>
-              <FormGroup controlId="formControlsSelect">
-                <FormControl
-                  componentClass="select"
-                  placeholder="select"
-                  name="category"
-                >
-                  {rowData.providers.map(
-                    (item) =>
-                      item.provider &&
-                      item.provider.name && (
-                        <option
-                          value={item._id}
-                        >{`${item.provider.name} $${item.price}`}</option>
-                      )
-                  )}
-                </FormControl>
-              </FormGroup>
-            </div>
-          );
-        },
-      },
-      {
-        title: 'Stock',
-        field: 'stock',
-        cellStyle: (cellValue, rowData) => {
-          return rowData.minStock >= cellValue
-            ? {
-                backgroundColor: 'red',
-                color: '#FFF',
-              }
-            : '';
-        },
-      },
+    columns: !isListSelect
+      ? [
+          { title: 'Nombre', field: 'name' },
+          {
+            title: 'Proveedores',
+            render: (rowData) => {
+              return (
+                <div style={{ width: '100px' }}>
+                  <FormGroup controlId="formControlsSelect">
+                    <FormControl
+                      componentClass="select"
+                      placeholder="select"
+                      name="category"
+                    >
+                      {rowData.providers.map(
+                        (item) =>
+                          item.provider &&
+                          item.provider.name && (
+                            <option
+                              value={item._id}
+                            >{`${item.provider.name} $${item.price}`}</option>
+                          )
+                      )}
+                    </FormControl>
+                  </FormGroup>
+                </div>
+              );
+            },
+          },
+          {
+            title: 'Stock',
+            field: 'stock',
+            cellStyle: (cellValue, rowData) => {
+              return rowData.minStock >= cellValue
+                ? {
+                    backgroundColor: 'red',
+                    color: '#FFF',
+                  }
+                : '';
+            },
+          },
 
-      {
-        title: 'Min Stock',
-        field: 'minStock',
-      },
-      {
-        title: 'Vencimiento',
-        render: (rowData) => moment.utc(rowData.expire).format('YYYY-MM-DD'),
-        cellStyle: (cellValue, rowData) => {
-          return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
-            moment(new Date()).format('YYYY-MM-DD')
-            ? {
-                backgroundColor: 'red',
-                color: '#FFF',
-              }
-            : '';
-        },
-      },
-      {
-        title: 'Movimientos',
+          {
+            title: 'Min Stock',
+            field: 'minStock',
+          },
+          {
+            title: 'Vencimiento',
+            render: (rowData) =>
+              moment.utc(rowData.expire).format('YYYY-MM-DD'),
+            cellStyle: (cellValue, rowData) => {
+              return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
+                moment(new Date()).format('YYYY-MM-DD')
+                ? {
+                    backgroundColor: 'red',
+                    color: '#FFF',
+                  }
+                : '';
+            },
+          },
+          {
+            title: 'Movimientos',
 
-        render: (rowData) => (
-          <Button
-            bsStyle="info"
-            onClick={() => handleShowMovement(rowData._id)}
-          >
-            Ver
-          </Button>
-        ),
-      },
-    ],
+            render: (rowData) => (
+              <Button
+                bsStyle="info"
+                onClick={() => handleShowMovement(rowData._id)}
+              >
+                Ver
+              </Button>
+            ),
+          },
+        ]
+      : [
+          { title: 'Nombre', field: 'name' },
+          {
+            title: 'Stock',
+            field: 'stock',
+            cellStyle: (cellValue, rowData) => {
+              return rowData.minStock >= cellValue
+                ? {
+                    backgroundColor: 'red',
+                    color: '#FFF',
+                  }
+                : '';
+            },
+          },
+
+          {
+            title: 'Min Stock',
+            field: 'minStock',
+          },
+        ],
   };
   return (
     <div className="content">
-      <HeaderTitle
-        title="Materia Prima"
-        redirect={redirect}
-        onRedirect={() => setRedirect((prev) => !prev)}
-      />
+      {!isListSelect && (
+        <HeaderTitle
+          title="Materia Primas"
+          redirect={redirect}
+          onRedirect={() => setRedirect((prev) => !prev)}
+        />
+      )}
+
       <Grid fluid>
         <Row>
           <Well

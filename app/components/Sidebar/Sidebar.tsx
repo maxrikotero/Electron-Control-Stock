@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import useRoute from '../../hooks/useRoutes';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
-import logo from '../../assets/img/logo.jpeg';
+import logo from '../../assets/img/logoicon.jpeg';
 
 const Sidebar = (props) => {
   const [showList, setShowList] = useState(false);

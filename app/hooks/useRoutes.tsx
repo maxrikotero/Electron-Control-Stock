@@ -25,6 +25,7 @@ import RawMaterialList from '../views/RawMaterialList';
 import Sales from '../views/SalesList';
 import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
+import OrderProvider from '../views/forms/OrderProvider';
 import ClientList from '../views/ClientList';
 import AddCategory from '../views/AddCategory';
 import ProvidertList from '../views/ProvidertList';
@@ -52,6 +53,15 @@ const useRoutes = () => {
 
   const adminRoutes = [
     {
+      path: '/orderprovider',
+      name: 'Nuevo pedido a proveedores',
+      icon: 'pe-7s-graph',
+      component: OrderProvider,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
       path: '/client',
       name: 'Agregar Client',
       icon: 'pe-7s-graph',
@@ -73,7 +83,7 @@ const useRoutes = () => {
 
     {
       path: '/provider',
-      name: 'Agregar Proveedor',
+      name: 'Nuevo Proveedor',
       // icon: 'pe-7s-graph',
       component: AddProvider,
       layout: '/admin',
@@ -82,7 +92,7 @@ const useRoutes = () => {
     },
     {
       path: '/product',
-      name: 'Agregar Producto',
+      name: 'Nuevo Producto',
       // icon: 'pe-7s-graph',
       component: AddProduct,
       layout: '/admin',
@@ -91,7 +101,7 @@ const useRoutes = () => {
     },
     {
       path: '/rawmaterial',
-      name: 'Agregar Materia Prima',
+      name: 'Nueva Materia Prima',
       // icon: 'pe-7s-graph',
       component: AddRawMaterial,
       layout: '/admin',
@@ -100,7 +110,7 @@ const useRoutes = () => {
     },
     {
       path: '/user',
-      name: 'Agregar Usuario',
+      name: 'Nuevo Usuario',
       icon: 'pe-7s-user',
       component: AddUser,
       show: isAdmin,
@@ -243,7 +253,7 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       type: 'Agregar ´Precio',
       method: 'POST',
-      title: ' Agregar tipo de precio',
+      title: ' Nuevo tipo de precio',
       successMessage: 'Tipo de precio agregado',
       component: PriceType,
       layout: '/admin',

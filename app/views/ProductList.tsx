@@ -49,8 +49,8 @@ const ProductList = ({
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await useApiCall({
-        loadingOn: true,
-        dispatch,
+        // loadingOn: true,
+        // dispatch,
         url: 'products',
       });
       if (response) setProducts(response);
