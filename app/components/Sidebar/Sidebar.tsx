@@ -27,18 +27,12 @@ const Sidebar = (props) => {
   return (
     <div id="sidebar" className="sidebar">
       <div className="logo">
-        <a
-          href="https://www.creative-tim.com?ref=lbd-sidebar"
-          className="simple-text logo-mini"
-        >
+        <a href="#" className="simple-text logo-mini">
           <div className="logo-img">
             <img src={logo} alt="logo_image" />
           </div>
         </a>
-        <a
-          href="https://www.creative-tim.com?ref=lbd-sidebar"
-          className="simple-text logo-normal"
-        >
+        <a href="#" className="simple-text logo-normal">
           {!props.isMarisa && 'Marisa'}
         </a>
       </div>

@@ -70,26 +70,24 @@ const AddUser = ({ notification }) => {
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          resetForm();
-
-          // var response = await apiCall({
-          //   url: 'users',
-          //   method: 'POST',
-          //   body: JSON.stringify(values),
-          // });
-          // if (response.success) {
-          //   setSubmitting(false);
-          //   notification('tc', 'Usuario Agregado', 1);
-          //   resetForm();
-          // } else {
-          //   let message = 'Nuevo Usuario Error';
-          //   if (response.error.indexOf('userName') > -1)
-          //     message = 'Usuario Existente';
-          //   if (response.error.indexOf('email') > -1)
-          //     message = 'Email Existente';
-          //   setSubmitting(false);
-          //   notification('tc', message, 3);
-          // }
+          var response = await apiCall({
+            url: 'users',
+            method: 'POST',
+            body: JSON.stringify(values),
+          });
+          if (response.success) {
+            setSubmitting(false);
+            notification('tc', 'Usuario Agregado', 1);
+            resetForm();
+          } else {
+            let message = 'Nuevo Usuario Error';
+            if (response.error.indexOf('userName') > -1)
+              message = 'Usuario Existente';
+            if (response.error.indexOf('email') > -1)
+              message = 'Email Existente';
+            setSubmitting(false);
+            notification('tc', message, 3);
+          }
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
