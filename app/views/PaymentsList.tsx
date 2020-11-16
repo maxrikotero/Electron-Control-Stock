@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import apiCall from '../utils/apiCall';
-import { Grid, Row, Col, Button } from 'react-bootstrap';
-import Card from '../components/Card/Card';
+import { Button } from 'react-bootstrap';
 import ConfirmModal from '../components/Confirm/Confirm';
 import useModal from '../hooks/useModal';
 import AddSimpleForm from '../components/AddSimpleForm';
+import CustomWell from '../components/CustomWell';
 
 const PaymentsList = ({ notification }) => {
   const [payments, setPayments] = useState([]);
@@ -73,92 +73,80 @@ const PaymentsList = ({ notification }) => {
   };
 
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title="Lista de Tipo de pagos"
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div>
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    columns={[
-                      { title: 'Nombre', field: 'name' },
-                      { title: 'Descripción', field: 'description' },
-                    ]}
-                    options={{
-                      exportButton: true,
-                      actionsColumnIndex: -1,
-                    }}
-                    data={
-                      payments.length > 0
-                        ? payments.reduce(
-                            (acc, item) => [
-                              ...acc,
-                              {
-                                _id: item._id,
-                                name: item.name,
-                                description: item.description || '',
-                              },
-                            ],
-                            []
-                          )
-                        : []
-                    }
-                    localization={{
-                      body: {
-                        emptyDataSourceMessage: 'No hay registros',
-                        addTooltip: 'Agregar',
-                        deleteTooltip: 'Eliminar',
-                        editTooltip: 'Editar',
-                        filterRow: {
-                          filterTooltip: 'Filtrar',
-                        },
-                        editRow: {
-                          deleteText: 'Esta seguro de borrar esta categoria?',
-                          cancelTooltip: 'Cancelar',
-                        },
-                      },
-                      header: {
-                        actions: 'Acciones',
-                      },
-                      pagination: {
-                        labelDisplayedRows: '{from}-{to} de {count}',
-                        labelRowsSelect: 'Filas',
-                        labelRowsPerPage: 'Filas por pagina:',
-                      },
-                      toolbar: {
-                        nRowsSelected: '{0} Filas(s) seleccionadas(s)',
-                        exportTitle: 'Exportar',
-                        exportAriaLabel: 'Exportar',
-                        exportName: 'Exportar en CSV',
-                        searchTooltip: 'Buscar',
-                        searchPlaceholder: 'Buscar',
-                      },
-                    }}
-                    actions={[
-                      {
-                        icon: () => {
-                          return <Button bsStyle="info">Edit</Button>;
-                        },
-                        onClick: (event, rowData) => handleEdit(rowData._id),
-                      },
-                      {
-                        icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => handleDelete(rowData._id),
-                      },
-                    ]}
-                  />
-                </div>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+    <CustomWell headerTitle={`Tipo Pagos`}>
+      <div>
+        <MaterialTable
+          title=""
+          components={{ Container: (props) => props.children }}
+          columns={[
+            { title: 'Nombre', field: 'name' },
+            { title: 'Descripción', field: 'description' },
+          ]}
+          options={{
+            exportButton: true,
+            actionsColumnIndex: -1,
+          }}
+          data={
+            payments.length > 0
+              ? payments.reduce(
+                  (acc, item) => [
+                    ...acc,
+                    {
+                      _id: item._id,
+                      name: item.name,
+                      description: item.description || '',
+                    },
+                  ],
+                  []
+                )
+              : []
+          }
+          localization={{
+            body: {
+              emptyDataSourceMessage: 'No hay registros',
+              addTooltip: 'Agregar',
+              deleteTooltip: 'Eliminar',
+              editTooltip: 'Editar',
+              filterRow: {
+                filterTooltip: 'Filtrar',
+              },
+              editRow: {
+                deleteText: 'Esta seguro de borrar esta categoria?',
+                cancelTooltip: 'Cancelar',
+              },
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              labelRowsPerPage: 'Filas por pagina:',
+            },
+            toolbar: {
+              nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+              exportTitle: 'Exportar',
+              exportAriaLabel: 'Exportar',
+              exportName: 'Exportar en CSV',
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          actions={[
+            {
+              icon: () => {
+                return <Button bsStyle="info">Editar</Button>;
+              },
+              onClick: (event, rowData) => handleEdit(rowData._id),
+            },
+            {
+              icon: () => <Button bsStyle="danger">Borrar</Button>,
+              onClick: (event, rowData) => handleDelete(rowData._id),
+            },
+          ]}
+        />
+      </div>
+
       <ModalComponent title="Editar tipo de pago">
         <AddSimpleForm
           // title="Editar tipo de pago"
@@ -181,7 +169,7 @@ const PaymentsList = ({ notification }) => {
             }),
         }}
       />
-    </div>
+    </CustomWell>
   );
 };
 

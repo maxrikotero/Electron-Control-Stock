@@ -29,8 +29,8 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
       setPrices(
         product.prices.map((p) => ({
           ...p,
-          name: p.priceType.name,
-          priceTypeId: p.priceType._id,
+          name: p.priceType?.name,
+          priceTypeId: p.priceType?._id,
         }))
       );
     }

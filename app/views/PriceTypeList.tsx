@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import apiCall from '../utils/apiCall';
-import { Grid, Row, Col, Button } from 'react-bootstrap';
-import Card from '../components/Card/Card';
+import { Button } from 'react-bootstrap';
 import ConfirmModal from '../components/Confirm/Confirm';
 import useModal from '../hooks/useModal';
+import CustomWell from '../components/CustomWell';
 import AddSimpleForm from '../components/AddSimpleForm';
 
 const PriceTypeList = ({ notification }) => {
@@ -38,10 +38,11 @@ const PriceTypeList = ({ notification }) => {
   const handleSave = async (data) => {
     setModal((prev) => !prev);
     var response = await apiCall({
-      url: `payments/${data._id}`,
+      url: `pricetype/${data._id}`,
       method: 'PUT',
       body: JSON.stringify({ name: data.name, description: data.description }),
     });
+    debugger;
     if (response.success) {
       notification('tc', 'Tipo de precio Actualizado', 1);
       setPriceTypes(response.data);
@@ -71,61 +72,49 @@ const PriceTypeList = ({ notification }) => {
   };
 
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title="Lista de Tipo de pagos"
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div>
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    columns={[
-                      { title: 'Nombre', field: 'name' },
-                      { title: 'Descripción', field: 'description' },
-                    ]}
-                    options={{
-                      exportButton: true,
-                      actionsColumnIndex: -1,
-                    }}
-                    data={
-                      priceTypes.length > 0
-                        ? priceTypes.reduce(
-                            (acc, item) => [
-                              ...acc,
-                              {
-                                _id: item._id,
-                                name: item.name,
-                                description: item.description || '',
-                              },
-                            ],
-                            []
-                          )
-                        : []
-                    }
-                    actions={[
-                      {
-                        icon: () => {
-                          return <Button bsStyle="info">Edit</Button>;
-                        },
-                        onClick: (event, rowData) => handleEdit(rowData._id),
-                      },
-                      {
-                        icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => handleDelete(rowData._id),
-                      },
-                    ]}
-                  />
-                </div>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+    <CustomWell headerTitle={`Tipo Precios`}>
+      <div>
+        <MaterialTable
+          title=""
+          components={{ Container: (props) => props.children }}
+          columns={[
+            { title: 'Nombre', field: 'name' },
+            { title: 'Descripción', field: 'description' },
+          ]}
+          options={{
+            exportButton: true,
+            actionsColumnIndex: -1,
+          }}
+          data={
+            priceTypes.length > 0
+              ? priceTypes.reduce(
+                  (acc, item) => [
+                    ...acc,
+                    {
+                      _id: item._id,
+                      name: item.name,
+                      description: item.description || '',
+                    },
+                  ],
+                  []
+                )
+              : []
+          }
+          actions={[
+            {
+              icon: () => {
+                return <Button bsStyle="info">Editar</Button>;
+              },
+              onClick: (event, rowData) => handleEdit(rowData._id),
+            },
+            {
+              icon: () => <Button bsStyle="danger">Borrar</Button>,
+              onClick: (event, rowData) => handleDelete(rowData._id),
+            },
+          ]}
+        />
+      </div>
+
       <ModalComponent title="Tipo de precio">
         <AddSimpleForm
           title="Editar tipo de precio"
@@ -148,7 +137,7 @@ const PriceTypeList = ({ notification }) => {
             }),
         }}
       />
-    </div>
+    </CustomWell>
   );
 };
 

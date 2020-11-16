@@ -23,21 +23,23 @@ const AddUser = ({ notification }) => {
   });
   const notificationSystem = useRef();
 
+  const initialState = {
+    dni: 0,
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    password: '',
+    phone: 0,
+    mobile: 0,
+    cuil: 0,
+    role: '',
+  };
+
   return (
     <CustomWell toLink={'/admin/principal'} headerTitle={`Nuevo Usuario`}>
       <Formik
-        initialValues={{
-          dni: null,
-          firstName: '',
-          lastName: '',
-          userName: '',
-          email: '',
-          password: '',
-          phone: null,
-          mobile: null,
-          cuil: null,
-          role: '',
-        }}
+        initialValues={initialState}
         validate={(values) => {
           const errors = {};
 
@@ -68,27 +70,30 @@ const AddUser = ({ notification }) => {
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          var response = await apiCall({
-            url: 'users',
-            method: 'POST',
-            body: JSON.stringify(values),
-          });
-          if (response.success) {
-            setSubmitting(false);
-            notification('tc', 'Usuario Agregado', 1);
-            resetForm();
-          } else {
-            let message = 'Nuevo Usuario Error';
-            if (response.error.indexOf('userName') > -1)
-              message = 'Usuario Existente';
-            if (response.error.indexOf('email') > -1)
-              message = 'Email Existente';
-            setSubmitting(false);
-            notification('tc', message, 3);
-          }
+          resetForm();
+
+          // var response = await apiCall({
+          //   url: 'users',
+          //   method: 'POST',
+          //   body: JSON.stringify(values),
+          // });
+          // if (response.success) {
+          //   setSubmitting(false);
+          //   notification('tc', 'Usuario Agregado', 1);
+          //   resetForm();
+          // } else {
+          //   let message = 'Nuevo Usuario Error';
+          //   if (response.error.indexOf('userName') > -1)
+          //     message = 'Usuario Existente';
+          //   if (response.error.indexOf('email') > -1)
+          //     message = 'Email Existente';
+          //   setSubmitting(false);
+          //   notification('tc', message, 3);
+          // }
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
+          debugger;
           return (
             <form onSubmit={handleSubmit}>
               <Row>
@@ -100,7 +105,7 @@ const AddUser = ({ notification }) => {
                       name="dni"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.dni}
+                      value={values.dni || 0}
                     />
                   </FormGroup>
                   <span style={{ color: 'red' }}> {errors.dni}</span>
@@ -113,7 +118,7 @@ const AddUser = ({ notification }) => {
                       name="cuil"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.cuil}
+                      value={values.cuil || 0}
                     />
                   </FormGroup>
                 </Col>
@@ -153,7 +158,7 @@ const AddUser = ({ notification }) => {
                       name="mobile"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.mobile}
+                      value={values.mobile || 0}
                     />
                   </FormGroup>
                 </Col>
@@ -165,7 +170,7 @@ const AddUser = ({ notification }) => {
                       name="phone"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.phone}
+                      value={values.phone || 0}
                     />
                   </FormGroup>
                 </Col>

@@ -36,6 +36,20 @@ const DashboardListCards = () => {
 
               show: isAdmin || isControlStock,
             },
+            {
+              to: '/admin/pricetypes',
+              title: 'Tipo de Precios',
+              iconClass: 'pe-7s-note2',
+
+              show: isAdmin || isControlStock,
+            },
+            {
+              to: '/admin/payments',
+              title: 'Tipos de pagos',
+              iconClass: 'pe-7s-note2',
+
+              show: isAdmin || isControlStock,
+            },
 
             {
               to: '/admin/providers',

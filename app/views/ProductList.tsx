@@ -46,15 +46,13 @@ const ProductList = ({
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const fetchProducts = async () => {
+    const response = await useApiCall({
+      url: 'products',
+    });
+    if (response) setProducts(response);
+  };
   useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await useApiCall({
-        // loadingOn: true,
-        // dispatch,
-        url: 'products',
-      });
-      if (response) setProducts(response);
-    };
     fetchProducts();
   }, []);
 

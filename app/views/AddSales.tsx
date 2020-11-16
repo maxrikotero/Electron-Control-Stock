@@ -214,7 +214,7 @@ const AddSales = ({ notification }) => {
 
       <Row>
         <Col md={12} style={{ textAlign: 'center', marginBottom: '15px' }}>
-          <h3>Venta</h3>
+          <h3>Detalle</h3>
         </Col>
       </Row>
       <Table striped hover>
