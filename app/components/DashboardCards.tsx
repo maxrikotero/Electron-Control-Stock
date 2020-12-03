@@ -68,6 +68,12 @@ const DashboardCards = () => {
               show: isAdmin,
             },
             {
+              to: '/admin/balance',
+              title: 'Caja',
+              iconClass: 'pe-7s-credit',
+              show: isAdmin,
+            },
+            {
               to: '/admin/pricetype',
               title: 'Nuevo Tipo de precio',
               iconClass: 'pe-7s-wallet',

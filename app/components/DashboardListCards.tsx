@@ -57,7 +57,12 @@ const DashboardListCards = () => {
               iconClass: 'pe-7s-note2',
               show: isAdmin || isControlStock,
             },
-
+            {
+              to: '/admin/balance',
+              title: 'Caja',
+              iconClass: 'pe-7s-credit',
+              show: isAdmin,
+            },
             {
               to: '/admin/categories',
               title: 'Categorias',

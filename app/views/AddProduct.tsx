@@ -15,7 +15,6 @@ import {
 } from 'react-bootstrap';
 import moment from 'moment';
 import apiCall from '../utils/apiCall';
-import Card from '../components/Card/Card';
 import Button from '../components/CustomButton/CustomButton';
 import useModal from '../hooks/useModal';
 import CurrencyInput from '../components/CurrencyInput/CurrencyInput';

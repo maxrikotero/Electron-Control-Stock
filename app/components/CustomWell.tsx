@@ -3,7 +3,13 @@ import { Grid, Row, Col, Well } from 'react-bootstrap';
 import HeaderTitle from './HeaderTitle';
 import useRedirect from '../hooks/useRedirect';
 
-const CustomWell = ({ children, headerTitle, toLink, isEdit = false }) => {
+const CustomWell = ({
+  children,
+  headerTitle,
+  toLink,
+  isEdit = false,
+  link = true,
+}) => {
   const { redirect, setRedirect } = useRedirect();
   return (
     <div className="content">
@@ -11,6 +17,7 @@ const CustomWell = ({ children, headerTitle, toLink, isEdit = false }) => {
         <HeaderTitle
           title={headerTitle}
           redirect={redirect}
+          link={link}
           onRedirect={() => setRedirect((prev) => !prev)}
           toLink={toLink}
         />

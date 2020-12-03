@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from 'react';
 import Dashboard from '../components/DashboardCards';
 import DashboardListCards from '../components/DashboardListCards';
 import UserProfile from '../views/UserProfile';
@@ -37,10 +36,12 @@ import AddSale from '../views/AddSales';
 import UserList from '../views/UserList';
 import AuditList from '../views/AuditList';
 import AddPayment from '../views/AddPayment';
+import Balance from '../views/Balance';
 import PriceType from '../views/PriceType';
 import PaymentsList from '../views/PaymentsList';
 import PriceTypeList from '../views/PriceTypeList';
 import AddRawMaterial from '../views/AddRawMaterial';
+import Process from '../views/Process';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -132,6 +133,14 @@ const useRoutes = () => {
       icon: 'pe-7s-graph',
       component: Dashboard,
       show: true,
+      layout: '/admin',
+    },
+    {
+      path: '/process',
+      name: 'Proceso',
+      icon: 'pe-7s-graph',
+      component: Process,
+      show: isAdmin,
       layout: '/admin',
     },
     {
@@ -256,6 +265,15 @@ const useRoutes = () => {
       title: ' Nuevo tipo de precio',
       successMessage: 'Tipo de precio agregado',
       component: PriceType,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/balance',
+      name: 'Caja',
+      icon: 'pe-7s-news-paper',
+      component: Balance,
       layout: '/admin',
       show: isAdmin,
       redirect: true,

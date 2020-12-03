@@ -6,7 +6,6 @@ import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
 import logo from '../../assets/img/logoicon.jpeg';
 
 const Sidebar = (props) => {
-  const [showList, setShowList] = useState(false);
   const [state, setState] = useState({
     width: window.innerWidth,
   });
