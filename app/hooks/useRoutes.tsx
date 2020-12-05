@@ -42,6 +42,7 @@ import PaymentsList from '../views/PaymentsList';
 import PriceTypeList from '../views/PriceTypeList';
 import AddRawMaterial from '../views/AddRawMaterial';
 import Process from '../views/Process';
+import OrderList from '../views/list/OrderList';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -293,6 +294,16 @@ const useRoutes = () => {
       name: 'Listado Pagos',
       icon: 'pe-7s-news-paper',
       component: PaymentsList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/orders',
+      name: 'Pedidos Proveedores',
+      icon: 'pe-7s-news-paper',
+      component: OrderList,
       layout: '/admin',
       show: isAdmin,
       isList: true,

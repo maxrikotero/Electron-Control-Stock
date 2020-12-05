@@ -64,7 +64,7 @@ const OrderProvider = ({
   }, []);
 
   const handleShow = () => {
-    if (show && selectedId) setSelectedId(null);
+    // if (show && selectedId) setSelectedId(null);
 
     setShow((prev) => !prev);
   };
@@ -73,6 +73,23 @@ const OrderProvider = ({
       handleShow();
       setRawMaterials((prev) => [...prev, rawMaterial]);
     } else notification('tc', 'Materia Prima ya fue agregada', 2);
+  };
+  const handleSave = async () => {
+    var response = await apiCall({
+      url: 'orders',
+      method: 'POST',
+      body: JSON.stringify({
+        provider: selectedId,
+        products: rawMaterials.map((r) => ({
+          amount: r.amount,
+          product: r._id,
+        })),
+      }),
+    });
+    if (response.success) {
+      notification('tc', 'Orden Guardada', 1);
+      setRawMaterials([]);
+    }
   };
 
   return (
@@ -93,19 +110,10 @@ const OrderProvider = ({
             <Well style={style.wall}>
               <Formik
                 initialValues={isEdit ? { ...provider } : { ...initialState }}
-                // validate={(values) => {
-                //   const errors: any = {};
-                //   if (!values.name) {
-                //     errors.name = 'Requerido';
-                //   }
-
-                //   return errors;
-                // }}
                 onSubmit={async (values: any, { setSubmitting, resetForm }) => {
-                  setSubmitting(false);
                   var response = await apiCall({
-                    url: !isEdit ? 'providers' : `providers/${values._id}`,
-                    method: isEdit ? 'PUT' : 'POST',
+                    url: 'orders',
+                    method: 'POST',
                     body: JSON.stringify(values),
                   });
 
@@ -136,6 +144,8 @@ const OrderProvider = ({
                                   placeholder="select"
                                   name="provider"
                                   onChange={(e) => {
+                                    if (rawMaterials.length > 0)
+                                      setRawMaterials([]);
                                     if (e.target.value === 'select')
                                       setSelectedId(null);
                                     else setSelectedId(e.target.value);
@@ -205,12 +215,20 @@ const OrderProvider = ({
                           <div>
                             <FormControl
                               type="numeric"
-                              name="quality"
+                              name="amount"
                               maxLength={50}
-                              onChange={(e) => {}}
+                              onChange={({ target: { value } }) => {
+                                setRawMaterials(
+                                  rawMaterials.map((r) =>
+                                    r._id === item._id
+                                      ? { ...r, amount: value }
+                                      : r
+                                  )
+                                );
+                              }}
                               placeHolder="Cantidad"
                               bsClass="form-control"
-                              value={item.quality}
+                              value={item.amount}
                             />
                           </div>
                         </td>
@@ -246,14 +264,7 @@ const OrderProvider = ({
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                bsStyle="success"
-                onClick={() =>
-                  setRawMaterials((prev) =>
-                    prev.filter((ra) => ra._id !== item._id)
-                  )
-                }
-              >
+              <Button bsStyle="success" onClick={handleSave}>
                 <i className="fa fa-check-circle-o"></i>
                 Realizar Pedido
               </Button>
