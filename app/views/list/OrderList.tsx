@@ -10,6 +10,7 @@ import {
   Well,
 } from 'react-bootstrap';
 import MaterialTable from 'material-table';
+import moment from 'moment';
 import { Formik } from 'formik';
 import HeaderTitle from '../../components/HeaderTitle';
 import apiCall from '../../utils/apiCall';
@@ -17,8 +18,8 @@ import Button from '../../components/CustomButton/CustomButton';
 import useRedirect from '../../hooks/useRedirect';
 import useApiCall from '../../hooks/useApiCall';
 import { useDispatch } from 'react-redux';
+import ConfirmModal from '../../components/Confirm/Confirm';
 import ModalForm from '../../components/ModalForm';
-import RawMaterialList from '../../views/RawMaterialList';
 
 const OrderList = ({
   notification,
@@ -36,11 +37,15 @@ const OrderList = ({
     name: '',
   };
   const [orders, setOrders] = useState([]);
-  //   const [rawMaterials, setRawMaterials] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [showConfirm, setShowConfirm] = useState({
+    show: false,
+    id: null,
+  });
   const [orderSelected, setOrderSelected] = useState({
     products: [],
   });
+
   const { redirect, setRedirect } = useRedirect();
   const [show, setShow] = useState(false);
 
@@ -72,25 +77,47 @@ const OrderList = ({
 
     setShow((prev) => !prev);
   };
-  const handleRawMaterialSelected = (rawMaterial) => {
-    // if (!rawMaterials.some((item) => item._id === rawMaterial._id)) {
-    //   handleShow();
-    //   setRawMaterials((prev) => [...prev, rawMaterial]);
-    // } else notification('tc', 'Materia Prima ya fue agregada', 2);
+
+  const deleteOrder = async () => {
+    const url = `orders/${showConfirm.id}`;
+    var response = await apiCall({
+      url,
+      method: 'DELETE',
+    });
+
+    if (response.success) {
+      notification('tc', 'Orden Borrada', 1);
+      setOrderSelected({ products: [] });
+      setShowConfirm({
+        show: false,
+        id: null,
+      });
+      fetchOrders();
+    } else {
+      notification('tc', 'Error', 3);
+    }
   };
+
   const handleSave = async () => {
-    // var response = await apiCall({
-    //   url: 'orders',
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     products: rawMaterials.map((r) => ({ amount: r.amount, _id: r._id })),
-    //   }),
-    // });
-    // if (response.success) {
-    //   notification('tc', 'Orden Guardada', 1);
-    //   setRawMaterials([]);
-    // }
+    var response = await apiCall({
+      url: `orders/${orderSelected._id}`,
+      method: 'PUT',
+      body: JSON.stringify(orderSelected),
+    });
+
+    if (response.success) {
+      notification('tc', 'Orden Actualizada', 1);
+      setOrderSelected({ products: [] });
+      fetchOrders();
+    } else {
+      notification('tc', 'Error', 3);
+    }
   };
+
+  const handleDelete = (_id) => {
+    setShowConfirm({ show: true, id: _id });
+  };
+
   const handleRowClick = (event, rowData) => {
     setOrderSelected(rowData);
   };
@@ -154,11 +181,35 @@ const OrderList = ({
                                   {
                                     title: 'Fecha',
                                     field: 'createAt',
+                                    render: (rowData) =>
+                                      moment
+                                        .utc(rowData.createAt)
+                                        .format('YYYY-MM-DD'),
+                                  },
+                                ]}
+                                actions={[
+                                  {
+                                    icon: () => (
+                                      <Button bsStyle="danger">Borrar</Button>
+                                    ),
+                                    onClick: (event, rowData) =>
+                                      handleDelete(rowData._id),
                                   },
                                 ]}
                                 options={{
                                   exportButton: true,
                                   actionsColumnIndex: -1,
+                                  rowStyle: (rowData) => {
+                                    const selected =
+                                      orderSelected._id &&
+                                      orderSelected.tableData.id ===
+                                        rowData.tableData.id;
+                                    return {
+                                      backgroundColor: selected
+                                        ? '#a5a5ad'
+                                        : '#FFF',
+                                    };
+                                  },
                                 }}
                                 data={orders}
                                 localization={{
@@ -195,48 +246,6 @@ const OrderList = ({
                                     searchPlaceholder: 'Buscar',
                                   },
                                 }}
-                                editable={{
-                                  onRowUpdate: (newData) =>
-                                    new Promise(async (resolve, reject) => {
-                                      // if (!newData.name) {
-                                      //   notification('tc', 'Nombre de la categoria es Requerido', 2);
-                                      //   reject();
-                                      // } else {
-                                      //   try {
-                                      //     var response = await apiCall({
-                                      //       url: `categories/${newData._id}`,
-                                      //       method: 'PUT',
-                                      //       body: JSON.stringify(newData),
-                                      //     });
-                                      //     notification('tc', 'Categoria Actualizada', 1);
-                                      //     dispatch(setCategories(response.data));
-                                      //     resolve();
-                                      //   } catch (error) {
-                                      //     notification('tc', 'Error Acualizar', 3);
-                                      //   }
-                                      // }
-                                    }),
-                                  onRowDelete: (oldData) =>
-                                    new Promise(async (resolve, reject) => {
-                                      // try {
-                                      //   var response = await apiCall({
-                                      //     url: `categories/${oldData._id}`,
-                                      //     method: 'DELETE',
-                                      //   });
-                                      //   if (!response.success) {
-                                      //     notification('tc', 'Error Borrar', 3);
-                                      //     reject();
-                                      //   } else {
-                                      //     notification('tc', 'Categoria Borrada', 1);
-                                      //     dispatch(setCategories(response.data));
-                                      //     resolve();
-                                      //   }
-                                      // } catch (error) {
-                                      //   notification('tc', 'Error Borrar', 3);
-                                      //   reject();
-                                      // }
-                                    }),
-                                }}
                               />
                             </Col>
                           </Row>
@@ -251,6 +260,26 @@ const OrderList = ({
           </Col>
           <Col md={12} style={style.noPadding}>
             <h3 style={{ textAlign: 'center' }}>Detalle</h3>
+            {orderSelected.products.length > 0 && !orderSelected.isEdit && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignContent: 'flex-end',
+                  justifyContent: 'flex-end',
+                  marginBottom: 10,
+                }}
+              >
+                <Button
+                  bsStyle="primary"
+                  onClick={() =>
+                    setOrderSelected((prev) => ({ ...prev, isEdit: true }))
+                  }
+                >
+                  Editar
+                </Button>
+              </div>
+            )}
+
             <Well style={{ ...style.wall }}>
               <Table striped hover>
                 <thead>
@@ -264,27 +293,32 @@ const OrderList = ({
                     {orderSelected.products.map((item) => (
                       <React.Fragment>
                         <td>{item.product.name}</td>
-                        <td style={{ width: '300px' }}>
-                          <div>
-                            <FormControl
-                              type="numeric"
-                              name="amount"
-                              maxLength={50}
-                              onChange={({ target: { value } }) => {
-                                // setRawMaterials(
-                                //   rawMaterials.map((r) =>
-                                //     r._id === item._id
-                                //       ? { ...r, amount: value }
-                                //       : r
-                                //   )
-                                // );
-                              }}
-                              placeHolder="Cantidad"
-                              bsClass="form-control"
-                              value={item.amount}
-                            />
-                          </div>
-                        </td>
+
+                        {(!orderSelected.isEdit && <td>{item.amount}</td>) || (
+                          <td>
+                            <div>
+                              <FormControl
+                                type="numeric"
+                                name="amount"
+                                maxLength={50}
+                                style={{ width: '200px' }}
+                                onChange={({ target: { value } }) => {
+                                  setOrderSelected((prev) => ({
+                                    ...prev,
+                                    products: prev.products.map((r) =>
+                                      r._id === item._id
+                                        ? { ...r, amount: value }
+                                        : r
+                                    ),
+                                  }));
+                                }}
+                                placeHolder="Cantidad"
+                                bsClass="form-control"
+                                value={item.amount}
+                              />
+                            </div>
+                          </td>
+                        )}
                         {/* <td style={{ textAlign: 'center' }}>
                           <Button
                             bsStyle="danger"
@@ -309,40 +343,50 @@ const OrderList = ({
               </Table>
             </Well>
           </Col>
-          <Col md={12} style={style.noPadding}>
-            <Well
-              style={{
-                ...style.wall,
-                display: 'flex',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Button bsStyle="success" onClick={handleSave}>
-                <i className="fa fa-check-circle-o"></i>
-                Realizar Pedido
-              </Button>
-            </Well>
-          </Col>
+          {orderSelected.isEdit && (
+            <Col md={12} style={style.noPadding}>
+              <Well
+                style={{
+                  ...style.wall,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Button
+                  bsStyle="primary"
+                  style={{ marginRight: 10 }}
+                  onClick={() =>
+                    setOrderSelected((prev) => ({
+                      ...prev,
+                      isEdit: !prev.isEdit,
+                    }))
+                  }
+                >
+                  Cancelar
+                </Button>
+                <Button bsStyle="success" onClick={handleSave}>
+                  Guardar
+                </Button>
+              </Well>
+            </Col>
+          )}
         </Row>
       </Grid>
-
-      <ModalForm
+      <ConfirmModal
         {...{
-          show,
-          handleClose: handleShow,
-          title: 'Seleccionar Materia Prima',
+          closeText: 'Cancelar',
+          confirmText: 'Si',
+          title: 'Borrar Pedido',
+          body: 'Esta seguro de borrar este Pedido.',
+          show: showConfirm.show,
+          onAction: deleteOrder,
+          onClose: () =>
+            setShowConfirm({
+              show: false,
+              id: null,
+            }),
         }}
-      >
-        <RawMaterialList
-          {...{
-            notification,
-            isListSelect: true,
-            actions: false,
-            onSelected: handleRawMaterialSelected,
-            selectedId: selectedId,
-          }}
-        />
-      </ModalForm>
+      />
     </div>
   );
 };
