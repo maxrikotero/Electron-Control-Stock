@@ -43,6 +43,7 @@ import PriceTypeList from '../views/PriceTypeList';
 import AddRawMaterial from '../views/AddRawMaterial';
 import Process from '../views/Process';
 import OrderList from '../views/list/OrderList';
+import Delivery from '../views/forms/Delivery';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -125,6 +126,15 @@ const useRoutes = () => {
       show: isAdmin || isControlStock,
       // icon: 'pe-7s-graph',
       component: AddCategory,
+      layout: '/admin',
+      redirect: true,
+    },
+    {
+      path: '/delivery',
+      name: 'Agregar Entregado',
+      show: isAdmin || isControlStock,
+      // icon: 'pe-7s-graph',
+      component: Delivery,
       layout: '/admin',
       redirect: true,
     },

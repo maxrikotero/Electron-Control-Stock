@@ -31,6 +31,13 @@ const DashboardCards = () => {
               show: isAdmin || isControlStock,
             },
             {
+              to: '/admin/delivery',
+              title: 'Nueva Entrega',
+              iconClass: 'pe-7s-note2',
+
+              show: isAdmin || isControlStock,
+            },
+            {
               to: '/admin/sale',
               title: 'Nueva Venta',
               iconClass: 'pe-7s-cash',
