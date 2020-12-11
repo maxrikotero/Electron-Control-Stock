@@ -206,8 +206,8 @@ const OrderProvider = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    {rawMaterials.map((item) => (
+                  {rawMaterials.map((item) => (
+                    <tr>
                       <React.Fragment>
                         <td>{item.name}</td>
                         <td>{item.stock}</td>
@@ -250,8 +250,8 @@ const OrderProvider = ({
                           </Button>
                         </td>
                       </React.Fragment>
-                    ))}
-                  </tr>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </Well>

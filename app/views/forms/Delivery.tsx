@@ -21,15 +21,19 @@ import ModalForm from '../../components/ModalForm';
 import RawMaterialList from '../../views/RawMaterialList';
 import { StatsCard } from '../../components/StatsCard/StatsCard';
 
-const Delivery = ({
-  notification,
-  isEdit,
-  provider,
-  onSave,
-}: {
-  notification: any;
-}) => {
-  const [state, setState] = useState({});
+interface reactState {
+  description: string;
+}
+
+interface sModal {
+  rawMaterials: boolean;
+  orderProviders: boolean;
+}
+
+const Delivery = ({ notification }: { notification: any }) => {
+  const [state, setState] = useState<reactState>({
+    description: '',
+  });
   const [providers, setProviders] = useState([]);
   const [rawMaterials, setRawMaterials] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -38,7 +42,7 @@ const Delivery = ({
   });
   const [selectedId, setSelectedId] = useState(null);
   const { redirect, setRedirect } = useRedirect();
-  const [showModal, setShowModal] = useState({
+  const [showModal, setShowModal] = useState<sModal>({
     rawMaterials: false,
     orderProviders: false,
   });
@@ -53,6 +57,7 @@ const Delivery = ({
   };
 
   const dispatch = useDispatch();
+
   const fetchProviders = async () => {
     const response = await useApiCall({
       loadingOn: true,
@@ -66,7 +71,7 @@ const Delivery = ({
     const response = await useApiCall({
       loadingOn: true,
       dispatch,
-      url: 'orders',
+      url: 'orders/orderDelivery',
     });
     if (response) setOrders(response);
   };
@@ -83,6 +88,7 @@ const Delivery = ({
   const handleShow = (type) => {
     setShowModal((prev) => ({ ...prev, [type]: !prev[type] }));
   };
+
   const handleRawMaterialSelected = (rawMaterial) => {
     if (!rawMaterials.some((item) => item._id === rawMaterial._id)) {
       handleShow('rawMaterials');
@@ -91,19 +97,32 @@ const Delivery = ({
   };
   const handleSave = async () => {
     var response = await apiCall({
-      url: 'orders',
+      url: 'delivery',
       method: 'POST',
       body: JSON.stringify({
-        provider: selectedId,
+        orderId: orderSelected._id,
+        provider: orderSelected.provider._id,
+        description: state.description,
+        total: rawMaterials.reduce(
+          (acc, p) => acc + (p.unitPrice || 0) * p.amount,
+          0
+        ),
         products: rawMaterials.map((r) => ({
           amount: r.amount,
           product: r._id,
+          unitPrice: r.unitPrice,
         })),
       }),
     });
     if (response.success) {
-      notification('tc', 'Orden Guardada', 1);
+      setOrderSelected({
+        products: [],
+      });
+      setState({
+        description: '',
+      });
       setRawMaterials([]);
+      notification('tc', 'Pedido Guardado', 1);
     }
   };
 
@@ -117,11 +136,7 @@ const Delivery = ({
         amount: p.amount,
       }))
     );
-    // handleShow('orderProviders');
-    // setOrderSelected(rowData);
   };
-
-  const handleSubmit = () => {};
 
   const handleChange = ({ target: { name, value } }) =>
     setState((prev) => ({ ...prev, [name]: value }));
@@ -129,7 +144,7 @@ const Delivery = ({
   return (
     <div className="content">
       <HeaderTitle
-        title="Entrega Pedido"
+        title="Pedido"
         redirect={redirect}
         toLink={'/admin/principal'}
         onRedirect={() => setRedirect((prev) => !prev)}
@@ -171,13 +186,10 @@ const Delivery = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    {rawMaterials.map((item) => (
+                  {rawMaterials.map((item) => (
+                    <tr>
                       <React.Fragment>
                         <td>{item.name}</td>
-                        {/* <td>{item.amount}</td>
-                        <td>{item.unitPrice || 0}</td> */}
-
                         <td>
                           <div>
                             <FormControl
@@ -221,10 +233,25 @@ const Delivery = ({
                           </div>
                         </td>
                       </React.Fragment>
-                    ))}
-                  </tr>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
+              <Row style={{ marginTop: '100px' }}>
+                <Col xs={12} md={12}>
+                  <FormGroup controlId="descrControl">
+                    <ControlLabel>Descripción</ControlLabel>
+                    <FormControl
+                      rows="5"
+                      componentClass="textarea"
+                      name="description"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={state.description}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
             </Well>
           </Col>
           <Col md={3} style={style.noPadding}>

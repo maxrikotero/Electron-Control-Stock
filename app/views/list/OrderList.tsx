@@ -186,6 +186,21 @@ const OrderList = ({
                                         .utc(rowData.createAt)
                                         .format('YYYY-MM-DD'),
                                   },
+                                  {
+                                    title: 'Entregado',
+                                    render: (rowData) =>
+                                      rowData.isDelivery ? (
+                                        <i
+                                          className="fa fa-check-circle-o"
+                                          style={{
+                                            fontSize: '25px',
+                                            color: 'green',
+                                          }}
+                                        ></i>
+                                      ) : (
+                                        <></>
+                                      ),
+                                  },
                                 ]}
                                 actions={[
                                   {
@@ -289,8 +304,8 @@ const OrderList = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    {orderSelected.products.map((item) => (
+                  {orderSelected.products.map((item) => (
+                    <tr>
                       <React.Fragment>
                         <td>{item.product.name}</td>
 
@@ -337,8 +352,8 @@ const OrderList = ({
                           </Button>
                         </td> */}
                       </React.Fragment>
-                    ))}
-                  </tr>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </Well>
