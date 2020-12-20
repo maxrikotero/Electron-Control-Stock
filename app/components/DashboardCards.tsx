@@ -25,7 +25,7 @@ const DashboardCards = () => {
             },
             {
               to: '/admin/category',
-              title: 'Nueva Categoria',
+              title: 'Nueva Categoria de producto',
               iconClass: 'pe-7s-note2',
 
               show: isAdmin || isControlStock,
