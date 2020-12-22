@@ -62,56 +62,8 @@ const Sidebar = (props) => {
                     </NavLink>
                   </li>
                 );
-              return null;
+              return <></>;
             })}
-          {/* <li>
-            <a
-              className="nav-link"
-              onClick={() => setShowList((prev) => !prev)}
-              style={{ display: 'flex' }}
-            >
-              <i className="pe-7s-graph2"></i>
-              <p>Listados</p>
-              <i
-                className={`${
-                  showList ? 'pe-7s-angle-down' : 'pe-7s-angle-up'
-                }`}
-                style={{ marginLeft: '10%' }}
-              ></i>
-            </a>
-            <Collapse in={showList}>
-              <div>
-                <ul className="nav">
-                  {adminRoutes
-                    .filter((item) => item.isList)
-                    .map((prop, key) => {
-                      console.log(prop);
-                      if (!prop.redirect && prop.show)
-                        return (
-                          <li
-                            className={
-                              prop.upgrade
-                                ? 'active active-pro'
-                                : activeRoute(prop.layout + prop.path)
-                            }
-                            key={key}
-                          >
-                            <NavLink
-                              to={prop.layout + prop.path}
-                              className="nav-link"
-                              activeClassName="active"
-                            >
-                              <i className={prop.icon} />
-                              <p>{prop.name}</p>
-                            </NavLink>
-                          </li>
-                        );
-                      return null;
-                    })}
-                </ul>
-              </div>
-            </Collapse>
-          </li> */}
           <li>
             <NavLink
               to="/admin/logout"

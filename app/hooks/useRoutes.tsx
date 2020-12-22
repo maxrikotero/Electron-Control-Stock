@@ -26,7 +26,9 @@ import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
 import OrderProvider from '../views/forms/OrderProvider';
 import ClientList from '../views/ClientList';
+import DailyEntryList from '../views/list/DailyEntryList';
 import AddCategory from '../views/AddCategory';
+import DailyEntry from '../views/forms/DailyEntry';
 import ProvidertList from '../views/ProvidertList';
 import CategoryList from '../views/CategoryList';
 import Reports from '../views/Reports';
@@ -43,6 +45,7 @@ import PriceTypeList from '../views/PriceTypeList';
 import AddRawMaterial from '../views/AddRawMaterial';
 import Process from '../views/Process';
 import OrderList from '../views/list/OrderList';
+import BalanceList from '../views/list/BalanceList';
 import Delivery from '../views/forms/Delivery';
 
 const useRoutes = () => {
@@ -130,6 +133,15 @@ const useRoutes = () => {
       redirect: true,
     },
     {
+      path: '/dailyentry',
+      name: 'Agregar Diaria',
+      show: isAdmin || isControlStock,
+      // icon: 'pe-7s-graph',
+      component: DailyEntry,
+      layout: '/admin',
+      redirect: true,
+    },
+    {
       path: '/delivery',
       name: 'Agregar Entregado',
       show: isAdmin || isControlStock,
@@ -159,6 +171,14 @@ const useRoutes = () => {
       name: 'Listados',
       icon: 'pe-7s-news-paper',
       component: DashboardListCards,
+      show: true,
+      layout: '/admin',
+    },
+    {
+      path: '/balance',
+      name: 'Caja',
+      icon: 'pe-7s-piggy',
+      component: Balance,
       show: true,
       layout: '/admin',
     },
@@ -239,6 +259,16 @@ const useRoutes = () => {
       redirect: true,
     },
     {
+      path: '/dailylist',
+      name: 'Diarias',
+      show: isAdmin,
+      icon: 'pe-7s-news-paper',
+      component: DailyEntryList,
+      layout: '/admin',
+      isList: true,
+      redirect: true,
+    },
+    {
       path: '/users',
       name: 'Listado Usuario',
       icon: 'pe-7s-users',
@@ -281,15 +311,6 @@ const useRoutes = () => {
       redirect: true,
     },
     {
-      path: '/balance',
-      name: 'Caja',
-      icon: 'pe-7s-news-paper',
-      component: Balance,
-      layout: '/admin',
-      show: isAdmin,
-      redirect: true,
-    },
-    {
       path: '/pricetypes',
       name: 'Listado Precios',
       icon: 'pe-7s-news-paper',
@@ -314,6 +335,16 @@ const useRoutes = () => {
       name: 'Pedidos Proveedores',
       icon: 'pe-7s-news-paper',
       component: OrderList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/balances',
+      name: 'Cajas',
+      icon: 'pe-7s-news-paper',
+      component: BalanceList,
       layout: '/admin',
       show: isAdmin,
       isList: true,

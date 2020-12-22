@@ -8,7 +8,7 @@ import useApiCall from '../hooks/useApiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
 import CustomWell from '../components/CustomWell';
 
-const ProductList = ({ notification }) => {
+const ClientList = ({ notification }) => {
   const [clients, setClients] = useState([]);
   const [showConfirm, setShowConfirm] = useState({
     show: false,
@@ -191,4 +191,4 @@ const ProductList = ({ notification }) => {
   );
 };
 
-export default ProductList;
+export default ClientList;

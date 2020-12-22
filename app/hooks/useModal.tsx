@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 
 const useModal = (size) => {
   const [show, setShow] = useState(false);
-  console.log(size);
+
   const ModalComponent = ({ children, title }) => {
     return (
       <Modal
@@ -21,6 +21,7 @@ const useModal = (size) => {
   return {
     ModalComponent,
     setModal: setShow,
+    modalStatus: show,
   };
 };
 

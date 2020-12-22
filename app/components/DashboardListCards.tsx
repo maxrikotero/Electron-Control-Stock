@@ -123,12 +123,6 @@ const DashboardListCards = () => {
               show: isAdmin || isControlStock,
             },
             {
-              to: '/admin/balance',
-              title: 'Caja',
-              iconClass: 'pe-7s-credit',
-              show: isAdmin,
-            },
-            {
               to: '/admin/categories',
               title: 'Categorias',
               iconClass: 'pe-7s-note2',
@@ -137,6 +131,12 @@ const DashboardListCards = () => {
             {
               to: '/admin/clients',
               title: 'Clientes',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/dailylist',
+              title: 'Diarias',
               iconClass: 'pe-7s-note2',
               show: isAdmin,
             },
@@ -155,6 +155,12 @@ const DashboardListCards = () => {
             {
               to: '/admin/orders',
               title: 'Pedidos Proveedores',
+              iconClass: 'pe-7s-note2',
+              show: isAdmin,
+            },
+            {
+              to: '/admin/balances',
+              title: 'Cajas',
               iconClass: 'pe-7s-note2',
               show: isAdmin,
             },
