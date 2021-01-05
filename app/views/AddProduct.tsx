@@ -105,6 +105,13 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
           } else {
             const requestValues = {
               ...values,
+              expires: [
+                {
+                  amount: values.stock,
+                  expire: values.expire,
+                  entryDate: new Date(),
+                },
+              ],
               prices: prices.map((price) => ({
                 priceType: price._id,
                 price: price.price,
@@ -213,18 +220,20 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                     />
                   </FormGroup>
                 </Col>
-                <Col xs={12} md={4}>
-                  <FormGroup controlId="expireControl">
-                    <ControlLabel>Fecha Vencimiento</ControlLabel>
-                    <FormControl
-                      type="date"
-                      name="expire"
-                      onChange={handleChange}
-                      bsClass="form-control"
-                      value={moment(values.expire).utc().format('YYYY-MM-DD')}
-                    />
-                  </FormGroup>
-                </Col>
+                {!isEdit && (
+                  <Col xs={12} md={4}>
+                    <FormGroup controlId="expireControl">
+                      <ControlLabel>Fecha Vencimiento</ControlLabel>
+                      <FormControl
+                        type="date"
+                        name="expire"
+                        onChange={handleChange}
+                        bsClass="form-control"
+                        value={moment(values.expire).utc().format('YYYY-MM-DD')}
+                      />
+                    </FormGroup>
+                  </Col>
+                )}
               </Row>
               <Row>
                 <Col xs={12} md={12}>

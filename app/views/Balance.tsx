@@ -42,10 +42,11 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
 
   const fetchBalance = async () => {
     const data = await apiCall({
-      url: 'balance',
+      url: 'balance/openbalance',
     });
 
     const balance = data.find((b) => b.isOpen === true);
+
     if (balance && Object.keys(balance).length > 0) setState(balance);
   };
 
@@ -60,7 +61,6 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
   const { income, exit } = entry;
 
   const handleSubmit = async (values: any) => {
-    debugger;
     var response = await apiCall({
       url: `balance/${state._id}`,
       method: 'PUT',

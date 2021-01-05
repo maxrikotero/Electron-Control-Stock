@@ -89,6 +89,12 @@ const DashboardCards = () => {
               iconClass: 'pe-7s-id',
             },
             {
+              to: '/admin/addnewstock',
+              title: 'Alta de stock',
+              show: isAdmin,
+              iconClass: 'pe-7s-id',
+            },
+            {
               to: '/admin/category',
               title: 'Nueva Categoria de producto',
               iconClass: 'pe-7s-note2',

@@ -9,6 +9,7 @@ import {
   FormControl,
   Well,
   FormGroup,
+  ControlLabel,
 } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 import moment from 'moment';
@@ -20,22 +21,123 @@ import HeaderTitle from '../components/HeaderTitle';
 import AddProduct from './AddProduct';
 import useRedirect from '../hooks/useRedirect';
 import useApiCall from '../hooks/useApiCall';
+import useModal from '../hooks/useModal';
+import materialLocation from '../utils/materialLocation';
 
+const ExpireList = ({
+  expires = [],
+  productId,
+  handleSaveExpire,
+  handleDeleteExpire,
+}) => {
+  const [state, setState] = useState([]);
+
+  useEffect(() => {
+    setState(
+      expires.map((exp) => ({
+        ...exp,
+        expire: moment(exp?.expire).utc().format('YYYY-MM-DD'),
+        entryDate: moment(exp?.entryDate).utc().format('YYYY-MM-DD'),
+      }))
+    );
+  }, [expires]);
+  return (
+    <MaterialTable
+      title=""
+      components={{ Container: (props) => props.children }}
+      options={{
+        actionsColumnIndex: -1,
+      }}
+      editable={{
+        onRowAdd: (newData) =>
+          new Promise((resolve, reject) => {
+            const newArray = state.concat(newData);
+            resolve(handleSaveExpire(productId, newArray));
+          }),
+        onRowUpdate: (rowData) =>
+          new Promise((resolve, reject) => {
+            const newArray = state.map((i) =>
+              i._id === rowData._id ? rowData : i
+            );
+            resolve(handleSaveExpire(productId, newArray));
+          }),
+        onRowDelete: (rowData) =>
+          new Promise((resolve, reject) => {
+            resolve(handleDeleteExpire(productId, rowData, state));
+          }),
+      }}
+      localization={materialLocation}
+      columns={[
+        {
+          title: 'Fecha',
+          field: 'expire',
+          editComponent: (rowData) => {
+            return (
+              <FormGroup controlId="expireControl">
+                <FormControl
+                  type="date"
+                  name="expire"
+                  bsClass="form-control"
+                  value={rowData?.rowData?.value || rowData.value}
+                  onChange={(e) => rowData.onChange(e.target.value)}
+                />
+              </FormGroup>
+            );
+          },
+          cellStyle: (cellValue, rowData) => {
+            return rowData?._id &&
+              !rowData?.tableData?.editing &&
+              moment.utc(cellValue).format('YYYY-MM-DD') <=
+                moment(new Date()).format('YYYY-MM-DD')
+              ? {
+                  backgroundColor: 'red',
+                  color: '#FFF',
+                }
+              : {};
+          },
+        },
+        {
+          title: 'Fecha Ingreso',
+          field: 'entryDate',
+          editComponent: (rowData) => (
+            <FormGroup controlId="expireControl">
+              <FormControl
+                type="date"
+                name="entryDate"
+                bsClass="form-control"
+                value={rowData?.rowData?.value || rowData.value}
+                onChange={(e) => rowData.onChange(e.target.value)}
+              />
+            </FormGroup>
+          ),
+        },
+      ]}
+      data={state}
+    />
+  );
+};
 const ProductList = ({
   notification,
   onlyCode = false,
   actions = true,
   onSelect,
+  hasLink = true,
 }) => {
   const { redirect, setRedirect } = useRedirect();
-  const dispatch = useDispatch();
+  const { ModalComponent, setModal } = useModal('large');
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState({});
   const [show, setShow] = useState(false);
+
   const [movement, setMovementId] = useState({
     showMovement: false,
     movementId: 0,
   });
+
+  const [expires, setExpires] = useState({
+    expiresData: [],
+  });
+
   const [showConfirm, setShowConfirm] = useState({
     show: false,
     id: null,
@@ -66,6 +168,14 @@ const ProductList = ({
       showMovement: true,
       movementId: id,
     });
+  };
+
+  const handleShowExpiresData = (data) => {
+    setExpires({
+      productId: data._id,
+      expiresData: data.expires,
+    });
+    setModal(true);
   };
 
   const handleCloseMovement = () => {
@@ -101,6 +211,33 @@ const ProductList = ({
     setShowConfirm({ show: true, id: _id });
   };
 
+  const handleDeleteExpire = (productId, data, expiresList) => {
+    const product = products.find((prod) => productId === prod._id);
+    if (product?._id) {
+      const prodToSave = {
+        ...product,
+        expires: expiresList.filter((exp) => exp._id !== data._id),
+      };
+      handleUpdate(prodToSave);
+      setExpires({
+        expiresData: [],
+      });
+      setModal(false);
+    }
+  };
+
+  const handleSaveExpire = (productId, data) => {
+    const product = products.find((prod) => productId === prod._id);
+    if (product?._id && (data || []).length > 0) {
+      const prodToSave = { ...product, expires: data };
+      handleUpdate(prodToSave);
+      setExpires({
+        expiresData: [],
+      });
+      setModal(false);
+    }
+  };
+
   const deleteProduct = async () => {
     const url = `products/${showConfirm.id}`;
     try {
@@ -122,7 +259,7 @@ const ProductList = ({
       ? [
           {
             icon: () => {
-              return <Button bsStyle="info">Edit</Button>;
+              return <Button bsStyle="info">Editar</Button>;
             },
             onClick: (event, rowData) => handleEdit(rowData._id),
           },
@@ -181,22 +318,18 @@ const ProductList = ({
             field: 'minStock',
           },
           {
-            title: 'Vencimiento',
-            render: (rowData) =>
-              moment.utc(rowData.expire).format('YYYY-MM-DD'),
-            cellStyle: (cellValue, rowData) => {
-              return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
-                moment(new Date()).format('YYYY-MM-DD')
-                ? {
-                    backgroundColor: 'red',
-                    color: '#FFF',
-                  }
-                : '';
-            },
+            title: 'Vencimientos',
+            render: (rowData) => (
+              <Button
+                bsStyle="info"
+                onClick={() => handleShowExpiresData(rowData)}
+              >
+                Ver
+              </Button>
+            ),
           },
           {
             title: 'Movimientos',
-
             render: (rowData) => (
               <Button
                 bsStyle="info"
@@ -210,11 +343,6 @@ const ProductList = ({
       : [
           { title: 'Codigo', field: 'code' },
           { title: 'Nombre', field: 'name' },
-
-          {
-            title: 'Precio',
-            field: 'price',
-          },
           {
             render: (rowData) => (
               <Button bsStyle="info" onClick={() => onSelect(rowData)}>
@@ -226,11 +354,15 @@ const ProductList = ({
   };
   return (
     <div className="content">
-      <HeaderTitle
-        title="PRODUCTOS"
-        redirect={redirect}
-        onRedirect={() => setRedirect((prev) => !prev)}
-      />
+      {hasLink && (
+        <HeaderTitle
+          title="PRODUCTOS"
+          link={hasLink}
+          redirect={redirect}
+          onRedirect={() => setRedirect((prev) => !prev)}
+        />
+      )}
+
       <Grid fluid>
         <Row>
           <Well
@@ -247,37 +379,7 @@ const ProductList = ({
                     actionsColumnIndex: -1,
                     exportButton: true,
                   }}
-                  localization={{
-                    body: {
-                      emptyDataSourceMessage: 'No hay registros',
-                      addTooltip: 'Agregar',
-                      deleteTooltip: 'Eliminar',
-                      editTooltip: 'Editar',
-                      filterRow: {
-                        filterTooltip: 'Filtrar',
-                      },
-                      editRow: {
-                        deleteText: 'Esta seguro de borrar?',
-                        cancelTooltip: 'Cancelar',
-                      },
-                    },
-                    header: {
-                      actions: 'Acciones',
-                    },
-                    pagination: {
-                      labelDisplayedRows: '{from}-{to} de {count}',
-                      labelRowsSelect: 'Filas',
-                      labelRowsPerPage: 'Filas por pagina:',
-                    },
-                    toolbar: {
-                      nRowsSelected: '{0} Filas(s) seleccionadas(s)',
-                      exportTitle: 'Exportar',
-                      exportAriaLabel: 'Exportar',
-                      exportName: 'Exportar en CSV',
-                      searchTooltip: 'Buscar',
-                      searchPlaceholder: 'Buscar',
-                    },
-                  }}
+                  localization={materialLocation}
                   columns={materialConfig.columns}
                   data={products}
                   actions={materialConfig.actions}
@@ -303,6 +405,16 @@ const ProductList = ({
       {showMovement && (
         <Movement id={movementId} onClose={handleCloseMovement} />
       )}
+      <ModalComponent title="Fecha de vencimientos">
+        <ExpireList
+          {...{
+            expires: expires.expiresData,
+            productId: expires.productId,
+            handleSaveExpire,
+            handleDeleteExpire,
+          }}
+        />
+      </ModalComponent>
       <ConfirmModal
         {...{
           closeText: 'Cancelar',

@@ -47,6 +47,7 @@ import Process from '../views/Process';
 import OrderList from '../views/list/OrderList';
 import BalanceList from '../views/list/BalanceList';
 import Delivery from '../views/forms/Delivery';
+import AddNewStock from '../views/forms/AddNewStock';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -63,6 +64,15 @@ const useRoutes = () => {
       name: 'Nuevo pedido a proveedores',
       icon: 'pe-7s-graph',
       component: OrderProvider,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/addnewstock',
+      name: 'Alta de stock',
+      icon: 'pe-7s-graph',
+      component: AddNewStock,
       layout: '/admin',
       show: isAdmin,
       redirect: true,
