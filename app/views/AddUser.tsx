@@ -16,11 +16,13 @@ import Button from '../components/CustomButton/CustomButton';
 import CustomWell from '../components/CustomWell';
 
 const AddUser = ({ notification }) => {
-  const [role, seRole] = useState({
-    isAdmin: false,
-    isSeller: false,
-    isControlStock: false,
-  });
+
+  // const [role, seRole] = useState({
+  //   isAdmin: false,
+  //   isSeller: false,
+  //   isControlStock: false,
+  // });
+
   const notificationSystem = useRef();
 
   const initialState = {
@@ -91,7 +93,7 @@ const AddUser = ({ notification }) => {
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
-          debugger;
+          console.log(values,' vals')
           return (
             <form onSubmit={handleSubmit}>
               <Row>
@@ -224,18 +226,23 @@ const AddUser = ({ notification }) => {
                       componentClass="select"
                       placeholder="select"
                       name="role"
+                      value={values.role}
                       onChange={handleChange}
                     >
                       <option value="select">select</option>
                       {[
-                        { id: 'isAdmin', text: 'Administrador' },
-                        { id: 'isSeller', text: 'Vendedor' },
+                        { id: 1, text: 'Administrador' },
+                        { id: 2, text: 'Vendedor' },
                         {
-                          id: 'isControlStock',
+                          id: 3,
                           text: 'Control de stock',
                         },
+                        {
+                          id: 4,
+                          text: "Secretaria",
+                        }
                       ].map((item) => (
-                        <option value={item._id}>{item.text}</option>
+                        <option value={item.id}>{item.text}</option>
                       ))}
                     </FormControl>
                   </FormGroup>
