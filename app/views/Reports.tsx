@@ -15,10 +15,39 @@ import HeaderTitle from '../components/HeaderTitle';
 const Reports = () => {
   const [sales, setSales] = useState([]);
   const [balances, setBalances] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [priceMovements, setPriceMovements] = useState([]);
   const [balanceType, setBalanceType] = useState(1);
+  const [productSelected, setProductSelected] = useState(null);
   const [tabSelected, setTabSelect] = useState(1);
   const [startDate, setStartDate] = useState(new Date().getFullYear());
   const dispatch = useDispatch();
+
+  const getPriceMovement = async () => {
+    const data = await useApiCall({
+      url: 'pricemovement',
+      loadingOn: true,
+      method: 'POST',
+      body: JSON.stringify({
+        year: startDate,
+        productId: productSelected,
+      }),
+      dispatch,
+    });
+    if (data) setProductSelected(data.data);
+  };
+
+  useEffect(() => {
+    if (productSelected) getPriceMovement();
+  }, [productSelected]);
+
+  const getProducts = async () => {
+    const response = await useApiCall({
+      url: 'products',
+    });
+    if (response) setProducts(response);
+  };
+
   useEffect(() => {
     const getSales = async () => {
       const data = await useApiCall({
@@ -38,6 +67,7 @@ const Reports = () => {
     };
     getSales();
     getBalances();
+    getProducts();
   }, []);
 
   const filterByMonth = (month, year = 2010) => {
@@ -243,6 +273,71 @@ const Reports = () => {
                   maintainAspectRatio: false,
                 }}
               />
+            </div>
+          </Tab>
+          <Tab eventKey={3} title="Precios">
+            <div style={{ padding: '20px' }}>
+              <div>
+                <h2>Movimiento Precios</h2>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <FormGroup
+                  controlId="yearControl"
+                  style={{ display: 'grid', textAlign: 'center' }}
+                >
+                  <ControlLabel>Año</ControlLabel>
+                  <input
+                    type="number"
+                    min="1900"
+                    max="3000" // This is only for this year, we won't be here - we deaded
+                    step="1"
+                    value={startDate}
+                    onChange={({ target: { value } }) =>
+                      setStartDate(parseInt(value))
+                    }
+                  ></input>
+                </FormGroup>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <FormGroup controlId="formControlsSelect">
+                  <ControlLabel>Productos</ControlLabel>
+                  <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={productSelected}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      if (e.target.value !== 0)
+                        setProductSelected(e.target.value);
+                    }}
+                  >
+                    <option value={0}>Seleccione</option>
+                    {products.map((item) => (
+                      <option value={item._id}>{item.name}</option>
+                    ))}
+                  </FormControl>
+                </FormGroup>
+              </div>
+              {/* <Bar
+                data={balances.length > 0 ? data : []}
+                width={50}
+                height={50}
+                options={{
+                  maintainAspectRatio: false,
+                }}
+              /> */}
             </div>
           </Tab>
         </Tabs>
