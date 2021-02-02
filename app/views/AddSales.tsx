@@ -92,6 +92,7 @@ const AddSales = ({ notification }) => {
 
     const data = { ...sale, products: saleProducts };
 
+
     try {
       const response = await useApiCall({
         loadingOn: true,

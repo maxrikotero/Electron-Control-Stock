@@ -37,7 +37,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceSelected, setPriceSelected] = useState({});
   // State and setter for search results
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
   // State for search status (whether there is a pending API request)
   const [isSearching, setIsSearching] = useState(false);
 
@@ -103,10 +103,11 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
     };
     onAdd(product);
     setSearchTerm('');
-    setResults([]);
+    setResults(results.filter(result => result._id !== data._id));
   };
 
   const handleSelectProduct = (data) => {
+    alert('yay')
     if (!results.some((item) => item._id === data._id)) {
       if (
         saleProducts.length > 0 &&
