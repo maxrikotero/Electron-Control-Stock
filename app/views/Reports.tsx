@@ -16,35 +16,42 @@ const Reports = () => {
   const [sales, setSales] = useState([]);
   const [balances, setBalances] = useState([]);
   const [products, setProducts] = useState([]);
+  const [priceTypeSelected, setPriceTypeSelected] = useState(0);
   const [priceMovements, setPriceMovements] = useState([]);
   const [balanceType, setBalanceType] = useState(1);
   const [productSelected, setProductSelected] = useState(null);
+  const [priceTypeByMonth, setPriceTypeByMonth] = useState([]);
   const [tabSelected, setTabSelect] = useState(1);
   const [startDate, setStartDate] = useState(new Date().getFullYear());
   const dispatch = useDispatch();
 
   const getPriceMovement = async () => {
-    const data = await useApiCall({
+    const { data } = await useApiCall({
       url: 'pricemovement',
       loadingOn: true,
       method: 'POST',
       body: JSON.stringify({
         year: startDate,
-        productId: productSelected,
+        productId: productSelected?._id,
       }),
       dispatch,
     });
-    if (data) setProductSelected(data.data);
+    if (data) setPriceMovements(data);
   };
 
   useEffect(() => {
-    if (productSelected) getPriceMovement();
-  }, [productSelected]);
+    if (productSelected && tabSelected === 3) {
+      setPriceTypeSelected(0);
+      setPriceTypeByMonth([]);
+      getPriceMovement();
+    }
+  }, [productSelected, tabSelected, startDate]);
 
   const getProducts = async () => {
     const response = await useApiCall({
       url: 'products',
     });
+
     if (response) setProducts(response);
   };
 
@@ -100,10 +107,18 @@ const Reports = () => {
     return totalMonth;
   };
 
-  const filterBy = (month, startDate) =>
-    tabSelected === 1
-      ? filterByMonth(month, startDate)
-      : filterBalanceByMonth(month, startDate);
+  const filterBy = (month, startDate) => {
+    switch (tabSelected) {
+      case 1:
+        return filterByMonth(month, startDate);
+
+      case 2:
+        return filterBalanceByMonth(month, startDate);
+
+      default:
+        return;
+    }
+  };
 
   const data = {
     labels: [
@@ -152,7 +167,37 @@ const Reports = () => {
   const handleSelect = (key) => {
     setTabSelect(key);
   };
-  debugger;
+
+  const filterByPriceType = (priceTypeId) => {
+    setPriceTypeByMonth(
+      priceMovements
+        .sort((a, b) => new Date(a.createAt) - new Date(b.createAt))
+        .reduce((acc, d) => {
+          // Build the object
+          const modelData = {
+            month: new Date(d.createAt).getMonth(),
+            price: d.prices
+              .filter((pacc) => pacc.priceType === priceTypeId)
+              .find(Boolean)?.price,
+          };
+
+          // break if price is null or undefined
+          if (!modelData?.price) return acc;
+
+          // Check if there's a equal object and will replace it in its index position
+
+          const index = acc.findIndex((ac) => ac.month === modelData.month);
+
+          // replace object acording to its index into the array position
+          if (index !== -1)
+            return acc.filter((a, i) => i !== index).concat(modelData);
+
+          // add the new object if it is passing the conditional.
+          return [...acc, modelData];
+        }, [])
+    );
+  };
+
   return (
     <div className="App">
       <HeaderTitle title={'Reportes'} link={false} />
@@ -316,28 +361,105 @@ const Reports = () => {
                   <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={productSelected}
+                    value={productSelected?._id || 'nId'}
                     onChange={(e) => {
-                      console.log(e.target.value);
-                      if (e.target.value !== 0)
-                        setProductSelected(e.target.value);
+                      if (e.target.value !== 'nId')
+                        setProductSelected(
+                          products.find((pd) => pd._id === e.target.value)
+                        );
+                      else {
+                        setProductSelected(null);
+                        setPriceTypeSelected(0);
+                        setPriceTypeByMonth([]);
+                      }
                     }}
                   >
-                    <option value={0}>Seleccione</option>
+                    <option value={'nId'}>Seleccione</option>
                     {products.map((item) => (
                       <option value={item._id}>{item.name}</option>
                     ))}
                   </FormControl>
                 </FormGroup>
+                <FormGroup
+                  controlId="formControlsSelect"
+                  style={{ marginLeft: 20 }}
+                >
+                  <ControlLabel>Tipos de precios</ControlLabel>
+                  <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={priceTypeSelected}
+                    onChange={(e) => {
+                      if (e.target.value !== '0') {
+                        setPriceTypeSelected(e.target.value);
+                        filterByPriceType(e.target.value);
+                      } else {
+                        setPriceTypeSelected(0);
+                        setPriceTypeByMonth([]);
+                      }
+                    }}
+                  >
+                    <option value={'0'}>Seleccione</option>
+                    {(productSelected?.prices || []).map(
+                      ({ priceType: { _id, name } }) => (
+                        <option value={_id}>{name}</option>
+                      )
+                    )}
+                  </FormControl>
+                </FormGroup>
               </div>
-              {/* <Bar
-                data={balances.length > 0 ? data : []}
+              <Bar
+                data={{
+                  labels: [
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre',
+                  ],
+                  datasets: [
+                    {
+                      label: 'Precios',
+                      backgroundColor: 'rgba(255,99,132,0.2)',
+                      borderColor: 'rgba(255,99,132,1)',
+                      borderWidth: 1,
+                      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                      hoverBorderColor: 'rgba(255,99,132,1)',
+                      data: [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                      ].map((m) =>
+                        priceTypeByMonth.some((pfm) => pfm.month === m)
+                          ? priceTypeByMonth.find((pt) => pt.month === m).price
+                          : 0
+                      ),
+                    },
+                  ],
+                }}
                 width={50}
                 height={50}
                 options={{
                   maintainAspectRatio: false,
                 }}
-              /> */}
+              />
             </div>
           </Tab>
         </Tabs>
