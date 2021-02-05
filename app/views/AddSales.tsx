@@ -17,7 +17,8 @@ import useApiCall from '../hooks/useApiCall';
 import apiCall from '../utils/apiCall';
 import CustomWell from '../components/CustomWell';
 
-const AddSales = ({ notification }) => {
+const AddSales = ({ notification, saleData }) => {
+
   const [sale, setSales] = useState({
     totalPrice: 0,
     client: null,
@@ -32,7 +33,12 @@ const AddSales = ({ notification }) => {
   const { sessionData } = useSelector(({ user }) => user);
   const { totalPrice, client } = sale;
 
+
+  
   useEffect(() => {
+    if(saleData?._id){
+      setProducts(saleData.products.map(item => ({price: item.price, quality: item.quality,_id: item._id, stock: item.product.stock, code: item.product.code, name: item.product.name, subTotal: item.price * item.quality})));
+    }
     const fetchPayments = async () => {
       try {
         const data = await apiCall({ url: 'payments' });
@@ -66,7 +72,49 @@ const AddSales = ({ notification }) => {
     window.open(fileURL, '_blank');
   };
 
+  const setSaleDataTotal = ( value ) => {
+    if(saleData?._id){
+      setSales((prev) => ({
+        ...prev,
+        totalPrice: value,
+      }));
+    }
+    return
+  }
+
   const handleAddSale = async () => {
+
+    if(saleData?._id){
+      try {
+        const saleProducts = products.map((item) => ({
+          quality: item.quality,
+          price: item.price,
+          name: item.name,
+          product: item._id,
+        }));
+    
+        const data = { products: saleProducts, totalPrice: sale.totalPrice };
+        const response = await useApiCall({
+          loadingOn: true,
+          dispatch,
+          url: `sales/${saleData?._id}`,
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+        if (response.success) {
+          notification('tc', response.message, 1);
+        } else {
+          let message = 'Venta  Error';
+          notification('tc', message, 3);
+        }
+
+      } catch (error) {
+          notification('tc', error.message, 3);
+      }
+      return
+    }
+    
+    
     if (!sale.client) {
       notification('tc', 'Agregar Cliente', 2);
       return;
@@ -156,14 +204,16 @@ const AddSales = ({ notification }) => {
   const totalPriceIva = totalPrice + totalIva;
 
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Venta`}>
-      <Client onAdd={handleAddClientToSale} clientSale={client} />
-      <SearchProduct
+    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Venta`} isEdit={Boolean(saleData?._id)}>
+      {!saleData?._id && (
+      <React.Fragment key='headerSales'>
+        <Client onAdd={handleAddClientToSale} clientSale={client} />
+        <SearchProduct
         onAdd={handleAddProduct}
         saleProducts={products}
         alertNotification={notification}
       />
-      <div className="content">
+       <div className="content">
         <Row>
           <Col md={4}>
             <FormGroup controlId="formControlsSelect">
@@ -212,7 +262,7 @@ const AddSales = ({ notification }) => {
           </Col>
         </Row>
       </div>
-
+      </React.Fragment>)}
       <Row>
         <Col md={12} style={{ textAlign: 'center', marginBottom: '15px' }}>
           <h3>Detalle</h3>
@@ -338,14 +388,17 @@ const AddSales = ({ notification }) => {
                         </Button>
                       </Col>
                     )}
-                    <Col xs={12} md={6}>
-                      <Button
-                        bsStyle="danger"
-                        onClick={() => handleRemove(item._id)}
-                      >
-                        Borrar
-                      </Button>
-                    </Col>
+                    {!saleData?._id && (
+                      <Col xs={12} md={6}>
+                        <Button
+                          bsStyle="danger"
+                          onClick={() => handleRemove(item._id)}
+                        >
+                          Borrar
+                        </Button>
+                      </Col>
+                    )}
+                    
                   </Row>
                 </td>
               </tr>
@@ -358,33 +411,39 @@ const AddSales = ({ notification }) => {
           <Col lg={3} sm={6}>
             <StatsCard
               bigIcon={<i className="pe-7s-wallet text-success" />}
+              isEdit={saleData?._id}
+              setSaleDataTotal={setSaleDataTotal}
               statsText="Total a pagar:"
-              statsValue={'$' + totalPrice}
+              statsValue={totalPrice}
               statsIcon={<i className="fa fa-refresh" />}
             />
           </Col>
-          <Col lg={3} sm={6}>
-            <StatsCard
-              bigIcon={<i className="pe-7s-server text-warning" />}
-              statsText="Iva %:"
-              statsValue={sale.billType ? (sale.billType !== '1' ? 21 : 0) : 0}
-              statsIcon={<i className="fa fa-refresh" />}
-            />
-          </Col>
-          <Col lg={3} sm={6}>
-            <StatsCard
-              bigIcon={<i className="pe-7s-server text-warning" />}
-              statsText="Total a pagar + iva :"
-              statsValue={
-                sale.billType
-                  ? sale.billType !== '1'
-                    ? '$ ' + totalPriceIva
-                    : '$ ' + totalPrice
-                  : 0
-              }
-              statsIcon={<i className="fa fa-refresh" />}
-            />
-          </Col>
+          {!saleData?._id && (
+            <React.Fragment key={'iva&&iva+total'}>
+              <Col lg={3} sm={6}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-server text-warning" />}
+                  statsText="Iva %:"
+                  statsValue={sale.billType ? (sale.billType !== '1' ? 21 : 0) : 0}
+                  statsIcon={<i className="fa fa-refresh" />}
+                />
+              </Col>
+              <Col lg={3} sm={6}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-server text-warning" />}
+                  statsText="Total a pagar + iva :"
+                  statsValue={
+                    sale.billType
+                      ? sale.billType !== '1'
+                        ? '$ ' + totalPriceIva
+                        : '$ ' + totalPrice
+                      : 0
+                  }
+                  statsIcon={<i className="fa fa-refresh" />}
+                />
+              </Col>
+            </React.Fragment>
+          )}
         </Row>
       </div>
 

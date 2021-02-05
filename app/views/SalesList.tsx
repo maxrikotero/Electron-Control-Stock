@@ -4,13 +4,16 @@ import { Grid, Row, Col, Button, Modal, Well } from 'react-bootstrap';
 import moment from 'moment';
 import MaterialTable from 'material-table';
 import ShowSaleDetail from '../components/ShowSaleDetail';
+import AddSales from './AddSales';
 import useApiCall from '../hooks/useApiCall';
 import HeaderTitle from '../components/HeaderTitle';
 import useRedirect from '../hooks/useRedirect';
 
 const SalesList = ({ notification }) => {
+
   const [sales, setSales] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [action, setAction] = useState('');
   const [saleId, setSaleId] = useState();
 
   const { redirect, setRedirect } = useRedirect();
@@ -24,11 +27,6 @@ const SalesList = ({ notification }) => {
 
     fetchSales();
   }, []);
-
-  const handleShowSaleDetail = (_id) => {
-    setSaleId(_id);
-    setShowModal((prev) => !prev);
-  };
 
   const fetchBill = async (_id) => {
     try {
@@ -45,9 +43,27 @@ const SalesList = ({ notification }) => {
     }
   };
 
-  const handleShowBill = (_id: string) => {
-    fetchBill(_id);
-  };
+  const handleSaleList = ( id,  act) => {
+    switch (act) {
+      case 'showDetail':
+        setAction(act)
+        setSaleId(id);
+        setShowModal((prev) => !prev);
+      break;
+      case 'showBill':
+        setAction(act)
+        fetchBill(id);
+      break
+      case 'showModify':
+        setAction(act)
+        setSaleId(id);
+        setShowModal((prev) => !prev);
+      break
+      default:
+        return
+      break;
+    }
+  }
 
   return (
     <div className="content">
@@ -113,7 +129,7 @@ const SalesList = ({ notification }) => {
                     render: (rowData) => (
                       <Button
                         bsStyle="info"
-                        onClick={() => handleShowSaleDetail(rowData._id)}
+                        onClick={() => handleSaleList(rowData._id, 'showDetail')}
                       >
                         Detalle
                       </Button>
@@ -123,12 +139,22 @@ const SalesList = ({ notification }) => {
                     render: (rowData) => (
                       <Button
                         bsStyle="info"
-                        onClick={() => handleShowBill(rowData._id)}
+                        onClick={() => handleSaleList(rowData._id, 'showBill')}
                       >
                         Ver Factura
                       </Button>
                     ),
                   },
+                  {
+                    render: (rowData) => (
+                      <Button
+                      bsStyle="info"
+                      onClick={()=> handleSaleList(rowData, 'showModify')}
+                      >
+                      Modificar  
+                      </Button>
+                    )
+                  }
                 ]}
                 data={sales}
               />
@@ -145,7 +171,8 @@ const SalesList = ({ notification }) => {
           <Modal.Title>Detalle Venta</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <ShowSaleDetail saleId={saleId} />
+          {action === 'showDetail' && (<ShowSaleDetail saleId={saleId} />)}
+          {action === 'showModify' && (<AddSales saleData={saleId}/>)}
         </Modal.Body>
       </Modal>
     </div>

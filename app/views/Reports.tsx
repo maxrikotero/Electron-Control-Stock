@@ -24,18 +24,19 @@ const Reports = () => {
   const dispatch = useDispatch();
 
   const getPriceMovement = async () => {
-    const data = await useApiCall({
+    const {data} = await useApiCall({
       url: 'pricemovement',
       loadingOn: true,
       method: 'POST',
       body: JSON.stringify({
         year: startDate,
-        productId: productSelected,
+        productId: '5fb2945511cb515058b8ef63',
       }),
       dispatch,
     });
-    if (data) setProductSelected(data.data);
+    if (data) setPriceMovements(data);
   };
+
 
   useEffect(() => {
     if (productSelected) getPriceMovement();
@@ -152,7 +153,6 @@ const Reports = () => {
   const handleSelect = (key) => {
     setTabSelect(key);
   };
-  debugger;
   return (
     <div className="App">
       <HeaderTitle title={'Reportes'} link={false} />
@@ -318,7 +318,6 @@ const Reports = () => {
                     placeholder="select"
                     value={productSelected}
                     onChange={(e) => {
-                      console.log(e.target.value);
                       if (e.target.value !== 0)
                         setProductSelected(e.target.value);
                     }}

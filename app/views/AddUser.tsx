@@ -93,7 +93,6 @@ const AddUser = ({ notification }) => {
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
-          console.log(values,' vals')
           return (
             <form onSubmit={handleSubmit}>
               <Row>

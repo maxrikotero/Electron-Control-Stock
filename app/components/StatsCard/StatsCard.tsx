@@ -4,6 +4,9 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
 export class StatsCard extends Component {
+
+
+
   render() {
     return (
       <div className="card card-stats">
@@ -17,7 +20,16 @@ export class StatsCard extends Component {
           </Row>
           <div className="footer">
             <hr />
-            <div>{this.props.statsValue}</div>
+            {this.props.isEdit ? (
+              <input 
+              type="number"
+              onChange={(e) => this.props.setSaleDataTotal(e.target.value)}
+              value={this.props.statsValue}
+              />
+            ): (
+              <div>${this.props.statsValue}</div>
+            )}
+            
           </div>
         </div>
       </div>

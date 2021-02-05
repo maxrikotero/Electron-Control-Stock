@@ -27,7 +27,6 @@ function searchCharacters(search) {
       return r.products;
     })
     .catch((error) => {
-      console.error(error);
       return [];
     });
 }
@@ -107,7 +106,6 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
   };
 
   const handleSelectProduct = (data) => {
-    alert('yay')
     if (!results.some((item) => item._id === data._id)) {
       if (
         saleProducts.length > 0 &&
