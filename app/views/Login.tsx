@@ -145,7 +145,11 @@ const Login = () => {
               <form className="form_body" onSubmit={handleSubmit}>
                 <div className="input__content">
                   <FormGroup controlId="emailControl">
-                    <ControlLabel>Email</ControlLabel>
+                    <ControlLabel
+                      style={{ fontWeight: 'initial', fontSize: '15px' }}
+                    >
+                      Email
+                    </ControlLabel>
                     <FormControl
                       type="email"
                       name="email"
@@ -159,7 +163,11 @@ const Login = () => {
 
                 <div className="input__content">
                   <FormGroup controlId="passControl">
-                    <ControlLabel>Password</ControlLabel>
+                    <ControlLabel
+                      style={{ fontWeight: 'initial', fontSize: '15px' }}
+                    >
+                      Password
+                    </ControlLabel>
                     <FormControl
                       type="password"
                       name="password"

@@ -9,6 +9,11 @@
   background-color: #111;
 }
 
+.emailControl {
+  font-weight: initial !important;
+  font-size: 15px !important;
+}
+
 .login {
   background-color: white;
   top: 0;
