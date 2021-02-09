@@ -28,7 +28,7 @@ const Process = ({ notification, url = 'process' }) => {
   return (
     <CustomWell
       toLink={'/admin/principal'}
-      headerTitle={`Proceso`}
+      headerTitle={`Procesos`}
       link={false}
     >
       <AddSimpleForm onSave={handleSubmit} />

@@ -170,7 +170,7 @@ const useRoutes = () => {
     },
     {
       path: '/process',
-      name: 'Proceso',
+      name: 'Procesos',
       icon: 'pe-7s-graph',
       component: Process,
       show: isAdmin,

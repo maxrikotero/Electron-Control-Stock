@@ -16,13 +16,6 @@ import Button from '../components/CustomButton/CustomButton';
 import CustomWell from '../components/CustomWell';
 
 const AddUser = ({ notification }) => {
-
-  // const [role, seRole] = useState({
-  //   isAdmin: false,
-  //   isSeller: false,
-  //   isControlStock: false,
-  // });
-
   const notificationSystem = useRef();
 
   const initialState = {
@@ -39,7 +32,11 @@ const AddUser = ({ notification }) => {
   };
 
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nuevo Usuario`}>
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nuevo Usuario`}
+      dynamicPath={'/admin/users'}
+    >
       <Formik
         initialValues={initialState}
         validate={(values) => {
@@ -93,7 +90,6 @@ const AddUser = ({ notification }) => {
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => {
-          console.log(values,' vals')
           return (
             <form onSubmit={handleSubmit}>
               <Row>
@@ -239,8 +235,8 @@ const AddUser = ({ notification }) => {
                         },
                         {
                           id: 4,
-                          text: "Secretaria",
-                        }
+                          text: 'Secretaria',
+                        },
                       ].map((item) => (
                         <option value={item.id}>{item.text}</option>
                       ))}

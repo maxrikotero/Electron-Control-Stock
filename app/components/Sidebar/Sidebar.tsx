@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import useRoute from '../../hooks/useRoutes';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
 import logo from '../../assets/img/logoicon.jpeg';
+import './Sidebar.css';
 
 const Sidebar = (props) => {
   const [state, setState] = useState({
@@ -26,14 +27,26 @@ const Sidebar = (props) => {
   return (
     <div id="sidebar" className="sidebar">
       <div className="logo">
-        <a href="#" className="simple-text logo-mini">
-          <div className="logo-img">
-            <img src={logo} alt="logo_image" />
-          </div>
-        </a>
-        <a href="#" className="simple-text logo-normal">
-          {!props.isMarisa && 'Marisa'}
-        </a>
+        <div className="logo-img">
+          <NavLink
+            to="/admin/principal"
+            className="nav-link"
+            activeClassName="active"
+          >
+            <img src={logo} alt="logo_image" style={{ height: '50px' }} />
+          </NavLink>
+        </div>
+        <div className="logo__brand">
+          <NavLink
+            to="/admin/principal"
+            className="nav-link"
+            activeClassName="active"
+          >
+            <a href="/admin/principal" className="simple-text logo-normal">
+              {!props.isMarisa && 'Marisa'}
+            </a>
+          </NavLink>
+        </div>
       </div>
       <div className="sidebar-wrapper">
         <ul className="nav">
@@ -45,6 +58,7 @@ const Sidebar = (props) => {
               if (!prop.redirect && prop.show && !prop.isList)
                 return (
                   <li
+                    key={prop.layout}
                     className={
                       prop.upgrade
                         ? 'active active-pro'

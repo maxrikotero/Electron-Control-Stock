@@ -101,7 +101,6 @@ const OrderList = ({
   };
 
   useEffect(() => {
-  
     fetchBalances();
   }, []);
 

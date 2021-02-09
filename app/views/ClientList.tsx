@@ -87,7 +87,7 @@ const ClientList = ({ notification }) => {
   };
 
   return (
-    <CustomWell headerTitle={`Clientes`}>
+    <CustomWell headerTitle={`Clientes`} dynamicPath={'/admin/client'}>
       <div>
         <MaterialTable
           title=""

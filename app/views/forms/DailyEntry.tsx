@@ -30,6 +30,7 @@ const DailyEntry = ({
       toLink={'/admin/principal'}
       headerTitle={`Nueva Diaria`}
       isEdit={isEdit}
+      dynamicPath={!isEdit ? '/admin/dailylist' : ''}
     >
       <Formik
         initialValues={
@@ -60,6 +61,7 @@ const DailyEntry = ({
             method: isEdit ? 'PUT' : 'POST',
             body: JSON.stringify(values),
           });
+
           if (response.success) {
             setSubmitting(false);
             notification(

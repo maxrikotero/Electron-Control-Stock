@@ -126,7 +126,7 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
 
   return (
     <React.Fragment>
-      <CustomWell toLink={'/admin/principal'} headerTitle={`Caja`}>
+      <CustomWell toLink={'/admin/principal'} headerTitle={`Caja`} link={false}>
         <Formik
           initialValues={{
             amount: 0,

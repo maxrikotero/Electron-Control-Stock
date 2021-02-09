@@ -178,7 +178,7 @@ const DashboardCards = () => {
             )
             .map((card) => {
               return (
-                <>
+                <React.Fragment key={card.to}>
                   {(card.show && (
                     <Col lg={4} sm={4}>
                       <div className="wrimagecard wrimagecard-topimage">
@@ -214,7 +214,7 @@ const DashboardCards = () => {
                       </div>
                     </Col>
                   )) || <></>}
-                </>
+                </React.Fragment>
               );
             })}
         </Row>

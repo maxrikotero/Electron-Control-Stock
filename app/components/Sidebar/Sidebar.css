@@ -1,0 +1,26 @@
+.logo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo__brand {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.logo-img {
+  width: 100%;
+  display: block;
+  height: 100%;
+  margin: 0;
+}
+
+.nav > li:last-child {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 232px;
+  color: white;
+  text-align: center;
+}

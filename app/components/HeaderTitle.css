@@ -1,0 +1,35 @@
+.header__content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__linkBack {
+  display: flex;
+  align-items: center;
+}
+
+.header__linkBack > span {
+  font-size: 45px;
+  margin-left: 21px;
+  cursor: pointer;
+}
+
+.header__title > h2 {
+  margin-top: 12px;
+}
+
+.header__listBack {
+  display: flex;
+  align-items: center;
+  margin-right: 21px;
+}
+
+.header__listBack > span {
+  font-size: 45px;
+  margin-left: 21px;
+  cursor: pointer;
+}
+
+.header__listBack > span:hover {
+  transform: scale(1.08);
+}

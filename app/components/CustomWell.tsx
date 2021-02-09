@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Row, Col, Well } from 'react-bootstrap';
 import HeaderTitle from './HeaderTitle';
 import useRedirect from '../hooks/useRedirect';
@@ -9,8 +9,10 @@ const CustomWell = ({
   toLink,
   isEdit = false,
   link = true,
+  dynamicPath = null,
 }) => {
   const { redirect, setRedirect } = useRedirect();
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   return (
     <div className="content">
       {!isEdit && (
@@ -18,8 +20,11 @@ const CustomWell = ({
           title={headerTitle}
           redirect={redirect}
           link={link}
+          onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
           onRedirect={() => setRedirect((prev) => !prev)}
           toLink={toLink}
+          dynamicPath={dynamicPath}
+          {...{ dynamicRedirect }}
         />
       )}
 

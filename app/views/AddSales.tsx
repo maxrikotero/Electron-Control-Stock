@@ -23,7 +23,7 @@ const AddSales = ({ notification }) => {
     client: null,
     products: [],
     paymentType: '',
-    billType: '1',
+    billType: '',
   });
   const [products, setProducts] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -92,7 +92,6 @@ const AddSales = ({ notification }) => {
 
     const data = { ...sale, products: saleProducts };
 
-
     try {
       const response = await useApiCall({
         loadingOn: true,
@@ -109,6 +108,8 @@ const AddSales = ({ notification }) => {
           totalPrice: 0,
           client: '',
           products: [],
+          paymentType: '',
+          billType: '',
         });
         fetchData(response.data._id);
       } else {
@@ -172,6 +173,7 @@ const AddSales = ({ notification }) => {
                 componentClass="select"
                 placeholder="select"
                 name="payment"
+                value={sale.paymentType || ''}
                 onChange={handlePayment}
               >
                 <option value="">Seleccione</option>
@@ -189,7 +191,7 @@ const AddSales = ({ notification }) => {
                 componentClass="select"
                 placeholder="select"
                 name="billType"
-                value={sale.billType}
+                value={sale.billType || ''}
                 onChange={({ target: { value } }) => {
                   if (value !== 'select')
                     setSales((prev) => ({
@@ -363,15 +365,15 @@ const AddSales = ({ notification }) => {
               statsIcon={<i className="fa fa-refresh" />}
             />
           </Col>
-          <Col lg={3} sm={6}>
+          {/* <Col lg={3} sm={6}>
             <StatsCard
               bigIcon={<i className="pe-7s-server text-warning" />}
               statsText="Iva %:"
               statsValue={sale.billType ? (sale.billType !== '1' ? 21 : 0) : 0}
               statsIcon={<i className="fa fa-refresh" />}
             />
-          </Col>
-          <Col lg={3} sm={6}>
+          </Col> */}
+          {/* <Col lg={3} sm={6}>
             <StatsCard
               bigIcon={<i className="pe-7s-server text-warning" />}
               statsText="Total a pagar + iva :"
@@ -384,7 +386,7 @@ const AddSales = ({ notification }) => {
               }
               statsIcon={<i className="fa fa-refresh" />}
             />
-          </Col>
+          </Col> */}
         </Row>
       </div>
 

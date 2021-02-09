@@ -64,7 +64,7 @@ const DailyEntryList = ({ notification }) => {
   };
 
   return (
-    <CustomWell headerTitle={`Diarias`}>
+    <CustomWell headerTitle={`Diarias`} dynamicPath={'/admin/dailyentry'}>
       <div>
         <MaterialTable
           title=""

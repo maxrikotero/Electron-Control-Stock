@@ -17,7 +17,11 @@ import CustomWell from '../components/CustomWell';
 const AddClient = ({ notification }: { notification: any }) => {
   const notificationSystem = useRef<HTMLInputElement>();
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nuevo Cliente`}>
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nuevo Cliente`}
+      dynamicPath={'/admin/clients'}
+    >
       <Formik
         initialValues={{
           name: '',
@@ -47,9 +51,10 @@ const AddClient = ({ notification }: { notification: any }) => {
             resetForm();
           } else {
             let message = 'Agregar Cliente Error';
-            if (response.error.indexOf('name') > -1)
+            if ((response?.error || '').indexOf('name') > -1)
               message = 'Nombre Requerido';
-            if (response.error.indexOf('cuil') > -1) message = 'Cuil Existente';
+            if ((response?.error || '').indexOf('cuil') > -1)
+              message = 'Cuil ya existe';
             setSubmitting(false);
             notification('tc', message, 3);
           }
