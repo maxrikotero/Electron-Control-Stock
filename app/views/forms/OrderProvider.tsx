@@ -18,6 +18,7 @@ import useApiCall from '../../hooks/useApiCall';
 import { useDispatch } from 'react-redux';
 import ModalForm from '../../components/ModalForm';
 import RawMaterialList from '../../views/RawMaterialList';
+import StatsCard from '../../components/StatsCard/StatsCard';
 
 const OrderProvider = ({
   notification,
@@ -36,6 +37,7 @@ const OrderProvider = ({
   };
   const [providers, setProviders] = useState([]);
   const [rawMaterials, setRawMaterials] = useState([]);
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const { redirect, setRedirect } = useRedirect();
   const [show, setShow] = useState(false);
@@ -64,31 +66,45 @@ const OrderProvider = ({
   }, []);
 
   const handleShow = () => {
-    // if (show && selectedId) setSelectedId(null);
-
     setShow((prev) => !prev);
   };
   const handleRawMaterialSelected = (rawMaterial) => {
     if (!rawMaterials.some((item) => item._id === rawMaterial._id)) {
       handleShow();
-      setRawMaterials((prev) => [...prev, rawMaterial]);
+      const selected = (rawMaterial.providers || []).find(
+        ({ provider = {} }) => provider?._id === selectedId
+      );
+
+      setRawMaterials((prev) => [
+        ...prev,
+        { ...rawMaterial, unitPrice: selected?.price },
+      ]);
     } else notification('tc', 'Materia Prima ya fue agregada', 2);
   };
   const handleSave = async () => {
-    var response = await apiCall({
-      url: 'orders',
-      method: 'POST',
-      body: JSON.stringify({
-        provider: selectedId,
-        products: rawMaterials.map((r) => ({
-          amount: r.amount,
-          product: r._id,
-        })),
-      }),
-    });
-    if (response.success) {
-      notification('tc', 'Orden Guardada', 1);
-      setRawMaterials([]);
+    try {
+      var response = await apiCall({
+        url: 'orders',
+        method: 'POST',
+        body: JSON.stringify({
+          provider: selectedId,
+          products: rawMaterials.map((r) => ({
+            amount: r?.amount,
+            product: r._id,
+            unitPrice: r?.unitPrice,
+          })),
+        }),
+      });
+      if (response.success) {
+        setSelectedId(null);
+        notification('tc', 'Orden Guardada', 1);
+        setRawMaterials([]);
+      } else {
+        notification('tc', 'Agregar pedido error al guardar', 3);
+      }
+    } catch (error) {
+      const message = 'Agregar pedido error';
+      notification('tc', message, 3);
     }
   };
 
@@ -100,6 +116,9 @@ const OrderProvider = ({
           redirect={redirect}
           toLink={'/admin/principal'}
           onRedirect={() => setRedirect((prev) => !prev)}
+          onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+          dynamicRedirect={dynamicRedirect}
+          dynamicPath={'/admin/orders'}
         />
       )}
 
@@ -153,7 +172,7 @@ const OrderProvider = ({
                                   }}
                                   value={values.provider}
                                 >
-                                  <option value="select">select</option>
+                                  <option value="select">Seleccionar</option>
                                   {providers.length > 0 &&
                                     providers.map((item) => (
                                       <option value={item._id}>
@@ -202,6 +221,7 @@ const OrderProvider = ({
                   <tr>
                     <th>Nombre</th>
                     <th>Stock</th>
+                    <th>Precio</th>
                     <th>Unidades</th>
                   </tr>
                 </thead>
@@ -211,6 +231,7 @@ const OrderProvider = ({
                       <React.Fragment>
                         <td>{item.name}</td>
                         <td>{item.stock}</td>
+                        <td>{item?.unitPrice}</td>
                         <td style={{ width: '300px' }}>
                           <div>
                             <FormControl
@@ -255,6 +276,21 @@ const OrderProvider = ({
                 </tbody>
               </Table>
             </Well>
+          </Col>
+
+          <Col md={3} style={style.noPadding}>
+            <StatsCard
+              bigIcon={<i className="pe-7s-wallet text-success" />}
+              statsText="Total a pagar:"
+              statsValue={
+                '$' +
+                rawMaterials.reduce(
+                  (acc, p) => acc + (p.unitPrice || 0) * (p.amount || 0),
+                  0
+                )
+              }
+              statsIcon={<i className="fa fa-refresh" />}
+            />
           </Col>
           <Col md={12} style={style.noPadding}>
             <Well

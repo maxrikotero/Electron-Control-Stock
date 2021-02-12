@@ -34,6 +34,7 @@ const AddProvider = ({
       toLink={'/admin/principal'}
       headerTitle={`Nuevo Proveedor`}
       isEdit={isEdit}
+      dynamicPath={isEdit ? null : '/admin/providers'}
     >
       <Formik
         initialValues={isEdit ? { ...provider } : { ...initialState }}
@@ -61,6 +62,12 @@ const AddProvider = ({
             );
 
             (!isEdit && resetForm(initialState)) || onSave();
+          } else {
+            let message = 'Agregar Proveedor Error';
+            if (response.error.indexOf('name') > -1)
+              message = 'Proveedor Existente';
+
+            notification('tc', message, 3);
           }
         }}
       >

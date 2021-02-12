@@ -30,6 +30,7 @@ const RawMaterialList = ({
   selectedId,
 }) => {
   const { redirect, setRedirect } = useRedirect();
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   const dispatch = useDispatch();
   const [rawMaterials, setRawMaterials] = useState([]);
   const [editRawMaterial, setEditRawMaterial] = useState({});
@@ -54,12 +55,13 @@ const RawMaterialList = ({
       dispatch,
       url: 'rawmaterial',
     });
+
     if (response) {
       if (selectedId)
         setRawMaterials(
           response.filter((m) => {
             if (m.providers.length > 0) {
-              return m.providers.some((p) => p.provider._id === selectedId);
+              return m.providers.some((p) => p.provider?._id === selectedId);
             }
           })
         );
@@ -250,6 +252,19 @@ const RawMaterialList = ({
                 : '';
             },
           },
+          {
+            title: 'Precio',
+            render: (rowData) => {
+              const data = (rowData.providers || []).find(
+                ({ provider = {} }) => provider?._id === selectedId
+              );
+              return (
+                <div style={{ width: '100px' }}>
+                  <span>{data?.price || 0}</span>
+                </div>
+              );
+            },
+          },
 
           {
             title: 'Min Stock',
@@ -257,6 +272,7 @@ const RawMaterialList = ({
           },
         ],
   };
+
   return (
     <div className="content">
       {!isListSelect && (
@@ -264,6 +280,9 @@ const RawMaterialList = ({
           title="Materia Primas"
           redirect={redirect}
           onRedirect={() => setRedirect((prev) => !prev)}
+          onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+          dynamicRedirect={dynamicRedirect}
+          dynamicPath={'/admin/rawmaterial'}
         />
       )}
 

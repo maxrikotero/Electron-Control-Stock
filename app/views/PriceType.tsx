@@ -24,6 +24,8 @@ const PriceType = ({
       notification('tc', successMessage, 1);
     } else {
       let message = 'Nuevo Tipo de Precio Error';
+      if ((response?.error || '').indexOf('name') > -1)
+        message = 'Nombre ya existe';
 
       notification('tc', message, 3);
     }
@@ -33,6 +35,7 @@ const PriceType = ({
       toLink={'/admin/principal'}
       headerTitle={`Nuevo Tipo de precio`}
       isEdit={!method ? true : false}
+      dynamicPath={!method ? null : '/admin/pricetypes'}
     >
       <AddSimpleForm onSave={handleSubmit} />
       <NotificationSystem ref={notificationSystem} style={style} />

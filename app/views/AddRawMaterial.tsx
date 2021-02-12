@@ -71,6 +71,7 @@ const AddRawMaterial = ({ notification, rawMaterial, onEdit, isEdit }) => {
       toLink={'/admin/principal'}
       headerTitle={`Nueva Materia Prima`}
       isEdit={isEdit}
+      dynamicPath={!isEdit ? '/admin/rawmaterials' : null}
     >
       <Formik
         initialValues={{

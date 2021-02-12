@@ -128,6 +128,7 @@ const ProductList = ({
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState({});
   const [show, setShow] = useState(false);
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
 
   const [movement, setMovementId] = useState({
     showMovement: false,
@@ -360,6 +361,9 @@ const ProductList = ({
           link={hasLink}
           redirect={redirect}
           onRedirect={() => setRedirect((prev) => !prev)}
+          onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+          dynamicRedirect={dynamicRedirect}
+          dynamicPath={'/admin/product'}
         />
       )}
 

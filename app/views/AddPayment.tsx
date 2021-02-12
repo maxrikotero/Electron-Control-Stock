@@ -6,7 +6,14 @@ import apiCall from '../utils/apiCall';
 import AddSimpleForm from '../components/AddSimpleForm';
 import CustomWell from '../components/CustomWell';
 
-const AddPayment = ({ notification }: { notification: any }) => {
+const AddPayment = ({
+  notification,
+  isSale = null,
+  onCancelSale,
+  afterSave = null,
+}: {
+  notification: any;
+}) => {
   const notificationSystem = useRef<HTMLInputElement>();
 
   const handleSubmit = async (values: any) => {
@@ -17,6 +24,7 @@ const AddPayment = ({ notification }: { notification: any }) => {
     });
     if (response.success) {
       notification('tc', 'Tipo de pago Agregado', 1);
+      if (typeof afterSave === 'function') afterSave();
     } else {
       let message = 'Nueva Forma de pago Error';
       if (response.error.indexOf('name') > -1)
@@ -27,8 +35,17 @@ const AddPayment = ({ notification }: { notification: any }) => {
   };
 
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Forma de pago`}>
-      <AddSimpleForm onSave={handleSubmit} />
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nueva Forma de pago`}
+      dynamicPath={'/admin/payments'}
+      hideHeader={isSale}
+    >
+      <AddSimpleForm
+        onSave={handleSubmit}
+        onCancel={onCancelSale}
+        cancelButton={true}
+      />
 
       <NotificationSystem ref={notificationSystem} style={style} />
     </CustomWell>

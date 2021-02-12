@@ -103,11 +103,10 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
     };
     onAdd(product);
     setSearchTerm('');
-    setResults(results.filter(result => result._id !== data._id));
+    setResults(results.filter((result) => result._id !== data._id));
   };
 
   const handleSelectProduct = (data) => {
-    alert('yay')
     if (!results.some((item) => item._id === data._id)) {
       if (
         saleProducts.length > 0 &&
@@ -318,7 +317,12 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
       )}
       <ModalComponent title="Lista de productos">
         <ProductList
-          {...{ actions: false, onlyCode: true, onSelect: handleSelectProduct }}
+          {...{
+            actions: false,
+            onlyCode: true,
+            onSelect: handleSelectProduct,
+            hasLink: false,
+          }}
         />
       </ModalComponent>
     </div>

@@ -17,6 +17,7 @@ const ProviderList = ({ notification }) => {
   const [providers, setProviders] = useState([]);
   const [editProvider, setEditProvider] = useState({});
   const [show, setShow] = useState(false);
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   const [showConfirm, setShowConfirm] = useState({
     show: false,
     id: null,
@@ -121,6 +122,9 @@ const ProviderList = ({ notification }) => {
         title="PROVEEDORES"
         redirect={redirect}
         onRedirect={() => setRedirect((prev) => !prev)}
+        onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+        dynamicRedirect={dynamicRedirect}
+        dynamicPath={'/admin/provider'}
       />
       <Grid fluid>
         <Row>

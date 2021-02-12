@@ -72,6 +72,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
       toLink={'/admin/principal'}
       headerTitle={`Nuevo Producto`}
       isEdit={isEdit}
+      dynamicPath={isEdit ? null : '/admin/inventario'}
     >
       <Formik
         initialValues={{
@@ -94,6 +95,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
+          debugger;
           if (onEdit) {
             onEdit({
               ...values,
@@ -370,7 +372,11 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                       placeholder="select"
                       name="category"
                       onChange={handleChange}
-                      value={isEdit ? values.category : values.category.id}
+                      value={
+                        isEdit
+                          ? values.category || 'select'
+                          : values.category.id || 'select'
+                      }
                     >
                       <option value="select">select</option>
                       {categories.map((item) => (

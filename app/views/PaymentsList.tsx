@@ -73,7 +73,7 @@ const PaymentsList = ({ notification }) => {
   };
 
   return (
-    <CustomWell headerTitle={`Tipo Pagos`}>
+    <CustomWell headerTitle={`Tipo Pagos`} dynamicPath={'/admin/payment'}>
       <div>
         <MaterialTable
           title=""

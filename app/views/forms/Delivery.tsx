@@ -40,6 +40,7 @@ const Delivery = ({ notification }: { notification: any }) => {
   const [orderSelected, setOrderSelected] = useState({
     products: [],
   });
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const { redirect, setRedirect } = useRedirect();
   const [showModal, setShowModal] = useState<sModal>({
@@ -131,9 +132,10 @@ const Delivery = ({ notification }: { notification: any }) => {
     setOrderSelected(rowData);
     setRawMaterials(
       rowData.products.map((p) => ({
-        _id: p.product._id,
-        name: p.product.name,
-        amount: p.amount,
+        _id: p?.product?._id,
+        name: p?.product?.name,
+        amount: p?.amount,
+        unitPrice: p?.unitPrice,
       }))
     );
   };
@@ -148,6 +150,9 @@ const Delivery = ({ notification }: { notification: any }) => {
         redirect={redirect}
         toLink={'/admin/principal'}
         onRedirect={() => setRedirect((prev) => !prev)}
+        onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+        dynamicRedirect={dynamicRedirect}
+        dynamicPath={'/admin/orders'}
       />
 
       <Grid fluid>
@@ -267,20 +272,6 @@ const Delivery = ({ notification }: { notification: any }) => {
               }
               statsIcon={<i className="fa fa-refresh" />}
             />
-
-            {/* <FormGroup controlId="formControlsSelect">
-              <ControlLabel>Total A pagar</ControlLabel>
-              <FormControl
-                type="numeric"
-                name="unitPrice"
-                style={{ width: '300px' }}
-                maxLength={50}
-                // onChange={}
-                placeHolder="Cantidad"
-                bsClass="form-control"
-                // value={item.unitPrice}
-              />
-            </FormGroup> */}
           </Col>
           {rawMaterials.length > 0 && (
             <Col md={12} style={style.noPadding}>

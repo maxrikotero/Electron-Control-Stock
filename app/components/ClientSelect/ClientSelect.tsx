@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 import apiCall from '../../utils/apiCall';
 
-const ClientSelect = ({ onAdd, clientSale }) => {
+const ClientSelect = ({ onAdd, clientSale, reloadState = false }) => {
   const [clients, setClients] = useState([]);
   const [client, setClient] = useState({});
   const inputSelect = useRef();
@@ -23,7 +23,7 @@ const ClientSelect = ({ onAdd, clientSale }) => {
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [reloadState]);
 
   useEffect(() => {
     if (!clientSale) {
@@ -82,34 +82,6 @@ const ClientSelect = ({ onAdd, clientSale }) => {
           <br />
           <div>{client.cuil || '-'}</div>
         </Col>
-        {/* {/* <Col md={3}>
-          <FormGroup controlId="stockControl">
-            <ControlLabel>Stock</ControlLabel>
-            <FormControl
-              type="number"
-              name="stock"
-              disabled={true}
-              onChange={() => {}}
-              placeholder="Stock"
-              bsClass="form-control"
-              value={stock}
-            />
-          </FormGroup>
-        </Col> */}
-        {/* <Col md={3}>
-          <FormGroup controlId="priceControl">
-            <ControlLabel>Precio Venta</ControlLabel>
-            <FormControl
-              type="number"
-              name="price"
-              disabled={true}
-              onChange={() => {}}
-              placeholder="Precio Venta"
-              bsClass="form-control"
-              value={price}
-            />
-          </FormGroup>
-        </Col>{' '} */}
       </Row>
     </div>
   );

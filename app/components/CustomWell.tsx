@@ -8,6 +8,7 @@ const CustomWell = ({
   headerTitle,
   toLink,
   isEdit = false,
+  hideHeader = false,
   link = true,
   dynamicPath = null,
 }) => {
@@ -15,7 +16,7 @@ const CustomWell = ({
   const [dynamicRedirect, setDynamicRedirect] = useState(false);
   return (
     <div className="content">
-      {!isEdit && (
+      {!isEdit && !hideHeader && (
         <HeaderTitle
           title={headerTitle}
           redirect={redirect}

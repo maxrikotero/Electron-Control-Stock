@@ -16,6 +16,9 @@ import SearchProduct from '../views/SearchProduct';
 import useApiCall from '../hooks/useApiCall';
 import apiCall from '../utils/apiCall';
 import CustomWell from '../components/CustomWell';
+import AddClient from './AddClient';
+import AddPayment from './AddPayment';
+import './AddSales.css';
 
 const AddSales = ({ notification }) => {
   const [sale, setSales] = useState({
@@ -28,19 +31,30 @@ const AddSales = ({ notification }) => {
   const [products, setProducts] = useState([]);
   const [payments, setPayments] = useState([]);
   const [errors, setErrors] = useState({});
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [reloadClientState, setReloadClientState] = useState(false);
   const dispatch = useDispatch();
   const { sessionData } = useSelector(({ user }) => user);
   const { totalPrice, client } = sale;
 
+  const addClientStyleShow = {
+    width: '600px',
+    position: 'absolute',
+    right: 0,
+    top: '10%',
+  };
+
+  const fetchPayments = async () => {
+    try {
+      const data = await apiCall({ url: 'payments' });
+      if (data) setPayments(data);
+    } catch (error) {
+      setPayments([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const data = await apiCall({ url: 'payments' });
-        if (data) setPayments(data);
-      } catch (error) {
-        setPayments([]);
-      }
-    };
     fetchPayments();
   }, []);
 
@@ -69,6 +83,11 @@ const AddSales = ({ notification }) => {
   const handleAddSale = async () => {
     if (!sale.client) {
       notification('tc', 'Agregar Cliente', 2);
+      return;
+    }
+
+    if (!sale.billType) {
+      notification('tc', 'Agregar Tipo de factura', 2);
       return;
     }
 
@@ -157,8 +176,16 @@ const AddSales = ({ notification }) => {
   const totalPriceIva = totalPrice + totalIva;
 
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Venta`}>
-      <Client onAdd={handleAddClientToSale} clientSale={client} />
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nueva Venta`}
+      dynamicPath={'/admin/sales'}
+    >
+      <Client
+        onAdd={handleAddClientToSale}
+        clientSale={client}
+        reloadState={reloadClientState}
+      />
       <SearchProduct
         onAdd={handleAddProduct}
         saleProducts={products}
@@ -364,29 +391,21 @@ const AddSales = ({ notification }) => {
               statsValue={'$' + totalPrice}
               statsIcon={<i className="fa fa-refresh" />}
             />
-          </Col>
-          {/* <Col lg={3} sm={6}>
-            <StatsCard
-              bigIcon={<i className="pe-7s-server text-warning" />}
-              statsText="Iva %:"
-              statsValue={sale.billType ? (sale.billType !== '1' ? 21 : 0) : 0}
-              statsIcon={<i className="fa fa-refresh" />}
-            />
-          </Col> */}
-          {/* <Col lg={3} sm={6}>
-            <StatsCard
-              bigIcon={<i className="pe-7s-server text-warning" />}
-              statsText="Total a pagar + iva :"
-              statsValue={
-                sale.billType
-                  ? sale.billType !== '1'
-                    ? '$ ' + totalPriceIva
-                    : '$ ' + totalPrice
-                  : 0
-              }
-              statsIcon={<i className="fa fa-refresh" />}
-            />
-          </Col> */}
+          </Col>{' '}
+          {sale.billType === '1' && (
+            <>
+              <Col lg={3} sm={6}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-server text-warning" />}
+                  statsText="Iva %:"
+                  statsValue={
+                    totalPrice ? (totalPrice - totalPrice / 1.21).toFixed(2) : 0
+                  }
+                  statsIcon={<i className="fa fa-refresh" />}
+                />
+              </Col>
+            </>
+          )}
         </Row>
       </div>
 
@@ -404,6 +423,63 @@ const AddSales = ({ notification }) => {
           )}
         </Col>
       </Row>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+        }}
+      >
+        <div style={{ marginBottom: '15px' }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowAddClient(true)}
+          >
+            Agregar Cliente
+          </button>
+        </div>
+        <div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowPayment(true)}
+            disabled={showAddClient}
+          >
+            Agregar Forma de pago
+          </button>
+        </div>
+      </div>
+      <div className="form__sale">
+        {(showAddClient || showPayment) && (
+          <div style={addClientStyleShow}>
+            {(showAddClient && (
+              <AddClient
+                isSale={true}
+                onCancelSale={() => setShowAddClient(false)}
+                afterSave={() => {
+                  setShowAddClient(false);
+                  setReloadClientState((prev) => !prev);
+                }}
+                {...{ notification }}
+              />
+            )) || (
+              <AddPayment
+                isSale={true}
+                onCancelSale={() => setShowPayment(false)}
+                afterSave={() => {
+                  setShowPayment(false);
+                  fetchPayments();
+                }}
+                {...{ notification }}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </CustomWell>
   );
 };

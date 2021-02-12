@@ -20,6 +20,7 @@ import useApiCall from '../../hooks/useApiCall';
 import { useDispatch } from 'react-redux';
 import ConfirmModal from '../../components/Confirm/Confirm';
 import ModalForm from '../../components/ModalForm';
+import StatsCard from '../../components/StatsCard/StatsCard';
 
 const OrderList = ({
   notification,
@@ -38,6 +39,7 @@ const OrderList = ({
   };
   const [orders, setOrders] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [dynamicRedirect, setDynamicRedirect] = useState(false);
   const [showConfirm, setShowConfirm] = useState({
     show: false,
     id: null,
@@ -130,6 +132,9 @@ const OrderList = ({
           redirect={redirect}
           toLink={'/admin/principal'}
           onRedirect={() => setRedirect((prev) => !prev)}
+          onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+          dynamicRedirect={dynamicRedirect}
+          dynamicPath={'/admin/orderprovider'}
         />
       )}
 
@@ -300,6 +305,7 @@ const OrderList = ({
                 <thead>
                   <tr>
                     <th>Nombre</th>
+                    <th>Precio</th>
                     <th>Unidades</th>
                   </tr>
                 </thead>
@@ -308,7 +314,7 @@ const OrderList = ({
                     <tr>
                       <React.Fragment>
                         <td>{item.product.name}</td>
-
+                        <td>{item.unitPrice}</td>
                         {(!orderSelected.isEdit && <td>{item.amount}</td>) || (
                           <td>
                             <div>
@@ -334,23 +340,6 @@ const OrderList = ({
                             </div>
                           </td>
                         )}
-                        {/* <td style={{ textAlign: 'center' }}>
-                          <Button
-                            bsStyle="danger"
-                            onClick={() =>
-                              setRawMaterials((prev) =>
-                                prev.filter((ra) => ra._id !== item._id)
-                              )
-                            }
-                          >
-                            <i
-                              className="fa fa-times"
-                              style={{ fontSize: '21px' }}
-                            >
-                              {' '}
-                            </i>
-                          </Button>
-                        </td> */}
                       </React.Fragment>
                     </tr>
                   ))}
@@ -385,6 +374,21 @@ const OrderList = ({
               </Well>
             </Col>
           )}
+
+          <Col md={3} style={style.noPadding}>
+            <StatsCard
+              bigIcon={<i className="pe-7s-wallet text-success" />}
+              statsText="Total a pagar:"
+              statsValue={
+                '$' +
+                orderSelected?.products.reduce(
+                  (acc, p) => acc + (p.unitPrice || 0) * (p.amount || 0),
+                  0
+                )
+              }
+              statsIcon={<i className="fa fa-refresh" />}
+            />
+          </Col>
         </Row>
       </Grid>
       <ConfirmModal

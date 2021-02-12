@@ -18,7 +18,7 @@ const Sidebar = (props) => {
   }, []);
 
   const activeRoute = (routeName) => {
-    return props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
+    return props.location.pathname === routeName ? 'active' : '';
   };
   const updateDimensions = () => {
     setState({ width: window.innerWidth });
@@ -49,7 +49,7 @@ const Sidebar = (props) => {
         </div>
       </div>
       <div className="sidebar-wrapper">
-        <ul className="nav">
+        <ul className="nav nav_list">
           {state.width <= 991 ? <AdminNavbarLinks /> : null}
 
           {adminRoutes

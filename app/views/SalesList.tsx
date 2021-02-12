@@ -12,6 +12,7 @@ const SalesList = ({ notification }) => {
   const [sales, setSales] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [saleId, setSaleId] = useState();
+  const [dynamicRedirect, setDynamicRedirect] = useState();
 
   const { redirect, setRedirect } = useRedirect();
   useEffect(() => {
@@ -55,6 +56,9 @@ const SalesList = ({ notification }) => {
         title="Ventas"
         redirect={redirect}
         onRedirect={() => setRedirect((prev) => !prev)}
+        onDynamicRedirect={() => setDynamicRedirect((prev) => !prev)}
+        dynamicRedirect={dynamicRedirect}
+        dynamicPath={'/admin/sale'}
       />
       <Grid fluid>
         <Row>

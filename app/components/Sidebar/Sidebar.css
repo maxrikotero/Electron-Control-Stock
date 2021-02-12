@@ -16,7 +16,7 @@
   margin: 0;
 }
 
-.nav > li:last-child {
+.nav_list > li:last-child {
   position: fixed;
   left: 0;
   bottom: 0;

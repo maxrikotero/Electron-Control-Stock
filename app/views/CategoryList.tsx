@@ -10,7 +10,7 @@ const CategoryList = ({ notification }) => {
   const { categories } = useSelector(({ selects }) => selects);
   const dispatch = useDispatch();
   return (
-    <CustomWell headerTitle={`Categorias`}>
+    <CustomWell headerTitle={`Categorias`} dynamicPath={'/admin/category'}>
       <div>
         <MaterialTable
           title=""

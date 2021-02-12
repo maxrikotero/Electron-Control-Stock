@@ -21,7 +21,11 @@ const AddCategory = ({ notification }: { notification: any }) => {
   const dispatch = useDispatch();
 
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Nueva Categoría de producto`}>
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nueva Categoría de producto`}
+      dynamicPath={'/admin/categories'}
+    >
       <Formik
         initialValues={{
           name: '',

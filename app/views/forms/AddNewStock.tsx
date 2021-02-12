@@ -81,8 +81,12 @@ const AddNewStock = ({ notification }: { notification: any }) => {
 
   const notificationSystem = useRef<HTMLInputElement>();
   return (
-    <CustomWell toLink={'/admin/principal'} headerTitle={`Alta de stock`}>
-      <Grid container spacing={1}>
+    <CustomWell
+      dynamicPath={'/admin/inventario'}
+      toLink={'/admin/principal'}
+      headerTitle={`Alta de stock`}
+    >
+      <Grid container>
         <Row>
           <Col md={12}>
             <FormGroup controlId="queryControl">
@@ -94,7 +98,7 @@ const AddNewStock = ({ notification }: { notification: any }) => {
         </Row>
       </Grid>
 
-      <Grid container spacing={1}>
+      <Grid container spacing={1} fluid>
         <Row>
           <Col xs={12} md={3}>
             <FormGroup controlId="nameControl">

@@ -53,7 +53,7 @@ const PriceTypeList = ({ notification }) => {
     }
   };
 
-  const deleteUser = async () => {
+  const deletePriceType = async () => {
     const url = `pricetype/${showConfirm.id}`;
     try {
       const response = await apiCall({ url, method: 'DELETE' });
@@ -70,12 +70,12 @@ const PriceTypeList = ({ notification }) => {
         notification('tc', response.error, 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Eliminar Error', 3);
     }
   };
 
   return (
-    <CustomWell headerTitle={`Tipo Precios`}>
+    <CustomWell headerTitle={`Tipo Precios`} dynamicPath={'/admin/pricetype'}>
       <div>
         <MaterialTable
           title=""
@@ -132,7 +132,7 @@ const PriceTypeList = ({ notification }) => {
           title: 'Borrar Tipo de precio',
           body: 'Esta seguro de borrar este tipo de precio.',
           show: showConfirm.show,
-          onAction: deleteUser,
+          onAction: deletePriceType,
           onClose: () =>
             setShowConfirm({
               show: false,

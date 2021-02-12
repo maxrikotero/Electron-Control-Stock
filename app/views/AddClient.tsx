@@ -14,13 +14,21 @@ import apiCall from '../utils/apiCall';
 import Button from '../components/CustomButton/CustomButton';
 import CustomWell from '../components/CustomWell';
 
-const AddClient = ({ notification }: { notification: any }) => {
+const AddClient = ({
+  notification,
+  isSale = null,
+  onCancelSale,
+  afterSave = null,
+}: {
+  notification: any;
+}) => {
   const notificationSystem = useRef<HTMLInputElement>();
   return (
     <CustomWell
       toLink={'/admin/principal'}
       headerTitle={`Nuevo Cliente`}
       dynamicPath={'/admin/clients'}
+      hideHeader={isSale}
     >
       <Formik
         initialValues={{
@@ -49,6 +57,7 @@ const AddClient = ({ notification }: { notification: any }) => {
             setSubmitting(false);
             notification('tc', 'Cliente Agregado', 1);
             resetForm();
+            if (typeof afterSave === 'function') afterSave();
           } else {
             let message = 'Agregar Cliente Error';
             if ((response?.error || '').indexOf('name') > -1)
@@ -154,6 +163,18 @@ const AddClient = ({ notification }: { notification: any }) => {
             >
               Guardar
             </Button>
+
+            {isSale && (
+              <Button
+                bsStyle="primary"
+                fill
+                pullRight
+                style={{ marginRight: 10 }}
+                onClick={onCancelSale}
+              >
+                Cancelar
+              </Button>
+            )}
             <div className="clearfix" />
           </form>
         )}

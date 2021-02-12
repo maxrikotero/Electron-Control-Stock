@@ -11,6 +11,8 @@ import {
 import Button from '../components/CustomButton/CustomButton';
 
 const AddSimpleForm = ({
+  cancelButton = false,
+  onCancel = null,
   onSave,
   data = {
     name: '',
@@ -77,6 +79,17 @@ const AddSimpleForm = ({
           >
             Guardar
           </Button>
+          {cancelButton && (
+            <Button
+              bsStyle="primary"
+              fill
+              pullRight
+              style={{ marginRight: 10 }}
+              onClick={onCancel}
+            >
+              Cancelar
+            </Button>
+          )}
           <div className="clearfix" />
         </form>
       )}
