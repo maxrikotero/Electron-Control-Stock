@@ -23,7 +23,7 @@ const ConfirmModal = ({
           <Button bsStyle="primary" onClick={onClose}>
             {closeText}
           </Button>
-          <Button bsStyle="danger" onClick={onAction}>
+          <Button bsStyle="success" onClick={onAction}>
             {confirmText}
           </Button>
         </Modal.Footer>

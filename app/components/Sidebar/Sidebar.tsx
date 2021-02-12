@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import useRoute from '../../hooks/useRoutes';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
-
-// import logo from '../../assets/img/reactlogo.png';
+import logo from '../../assets/img/logoicon.jpeg';
+import './Sidebar.css';
 
 const Sidebar = (props) => {
   const [state, setState] = useState({
@@ -18,67 +18,74 @@ const Sidebar = (props) => {
   }, []);
 
   const activeRoute = (routeName) => {
-    return props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
+    return props.location.pathname === routeName ? 'active' : '';
   };
   const updateDimensions = () => {
     setState({ width: window.innerWidth });
   };
 
-  const sidebarBackground = {
-    backgroundImage: 'url(' + props.image + ')',
-  };
   return (
     <div id="sidebar" className="sidebar">
       <div className="logo">
-        <a
-          href="https://www.creative-tim.com?ref=lbd-sidebar"
-          className="simple-text logo-mini"
-        >
-          <div className="logo-img">
-            {/* <img src={logo} alt="logo_image" /> */}
-          </div>
-        </a>
-        <a
-          href="https://www.creative-tim.com?ref=lbd-sidebar"
-          className="simple-text logo-normal"
-        >
-          Marisa
-        </a>
+        <div className="logo-img">
+          <NavLink
+            to="/admin/principal"
+            className="nav-link"
+            activeClassName="active"
+          >
+            <img src={logo} alt="logo_image" style={{ height: '50px' }} />
+          </NavLink>
+        </div>
+        <div className="logo__brand">
+          <NavLink
+            to="/admin/principal"
+            className="nav-link"
+            activeClassName="active"
+          >
+            <a href="/admin/principal" className="simple-text logo-normal">
+              {!props.isMarisa && 'Marisa'}
+            </a>
+          </NavLink>
+        </div>
       </div>
       <div className="sidebar-wrapper">
-        <ul className="nav">
+        <ul className="nav nav_list">
           {state.width <= 991 ? <AdminNavbarLinks /> : null}
 
-          {adminRoutes.map((prop, key) => {
-            if (!prop.redirect && prop.show)
-              return (
-                <li
-                  className={
-                    prop.upgrade
-                      ? 'active active-pro'
-                      : activeRoute(prop.layout + prop.path)
-                  }
-                  key={key}
-                >
-                  <NavLink
-                    to={prop.layout + prop.path}
-                    className="nav-link"
-                    activeClassName="active"
+          {adminRoutes
+            .filter((item) => !item.isList)
+            .map((prop, key) => {
+              if (!prop.redirect && prop.show && !prop.isList)
+                return (
+                  <li
+                    key={prop.layout}
+                    className={
+                      prop.upgrade
+                        ? 'active active-pro'
+                        : activeRoute(prop.layout + prop.path)
+                    }
+                    key={key}
                   >
-                    <i className={prop.icon} />
-                    <p>{prop.name}</p>
-                  </NavLink>
-                </li>
-              );
-            return null;
-          })}
+                    <NavLink
+                      to={prop.layout + prop.path}
+                      className="nav-link"
+                      activeClassName="active"
+                    >
+                      <i className={prop.icon} />
+                      <p>{prop.name}</p>
+                    </NavLink>
+                  </li>
+                );
+              return <></>;
+            })}
           <li>
             <NavLink
               to="/admin/logout"
               className="nav-link"
               activeClassName="active"
             >
-              <p>Cerrar Session</p>
+              <i className="pe-7s-power" />
+              <p>Cerrar Sesión</p>
             </NavLink>
           </li>
         </ul>

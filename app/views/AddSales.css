@@ -1,0 +1,5 @@
+.form__sale {
+  /* Animations */
+  transition-timing-function: ease-in;
+  transition: all 0.5s;
+}

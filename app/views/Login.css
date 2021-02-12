@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+}
+
+.login__content {
+  height: 100%;
+  color: white;
+  overflow: hidden;
+  background-color: #111;
+}
+
+.emailControl {
+  font-weight: initial !important;
+  font-size: 15px !important;
+}
+
+.login {
+  background-color: white;
+  top: 0;
+}
+.login_header {
+  display: flex;
+  justify-content: center;
+}
+
+.login__logo {
+  height: 28vh;
+}
+
+.form_content {
+  margin-top: 7%;
+  height: 100%;
+}
+
+.form_body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input__content {
+  width: 450px;
+}
