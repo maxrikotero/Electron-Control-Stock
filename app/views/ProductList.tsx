@@ -34,11 +34,13 @@ const ExpireList = ({
 
   useEffect(() => {
     setState(
-      expires.map((exp) => ({
-        ...exp,
-        expire: moment(exp?.expire).utc().format('YYYY-MM-DD'),
-        entryDate: moment(exp?.entryDate).utc().format('YYYY-MM-DD'),
-      }))
+      expires
+        .map((exp) => ({
+          ...exp,
+          expire: moment(exp?.expire).utc().format('DD-MM-YYYY'),
+          entryDate: moment(exp?.entryDate).utc().format('DD-MM-YYYY'),
+        }))
+        .sort((a, b) => new Date(b.expire) - new Date(a.expire))
     );
   }, [expires]);
   return (
@@ -87,8 +89,8 @@ const ExpireList = ({
           cellStyle: (cellValue, rowData) => {
             return rowData?._id &&
               !rowData?.tableData?.editing &&
-              moment.utc(cellValue).format('YYYY-MM-DD') <=
-                moment(new Date()).format('YYYY-MM-DD')
+              moment.utc(cellValue).format('DD-MM-YYYY') <=
+                moment(new Date()).format('DD-MM-YYYY')
               ? {
                   backgroundColor: 'red',
                   color: '#FFF',

@@ -7,22 +7,32 @@ import ShowSaleDetail from '../components/ShowSaleDetail';
 import useApiCall from '../hooks/useApiCall';
 import HeaderTitle from '../components/HeaderTitle';
 import useRedirect from '../hooks/useRedirect';
+import apiCall from '../utils/apiCall';
+import ConfirmModal from '../components/Confirm/Confirm';
 
 const SalesList = ({ notification }) => {
   const [sales, setSales] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [saleId, setSaleId] = useState();
   const [dynamicRedirect, setDynamicRedirect] = useState();
+  const [showConfirm, setShowConfirm] = useState({
+    show: false,
+    id: null,
+  });
 
   const { redirect, setRedirect } = useRedirect();
-  useEffect(() => {
-    const fetchSales = async () => {
-      const response = await useApiCall({
-        url: 'sales',
-      });
-      if (response.success) setSales(response.data);
-    };
 
+  const fetchSales = async () => {
+    const response = await useApiCall({
+      url: 'sales',
+    });
+    if (response.success)
+      setSales(
+        response.data.sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt))
+      );
+  };
+
+  useEffect(() => {
     fetchSales();
   }, []);
 
@@ -48,6 +58,27 @@ const SalesList = ({ notification }) => {
 
   const handleShowBill = (_id: string) => {
     fetchBill(_id);
+  };
+
+  const handleRemove = async () => {
+    const url = `sales/${showConfirm.id}`;
+    try {
+      const response = await apiCall({ url, method: 'DELETE' });
+
+      if (response.success) {
+        setShowConfirm({
+          show: false,
+          id: null,
+        }),
+          fetchSales();
+      }
+    } catch (error) {
+      alert('error');
+    }
+  };
+
+  const handleDelete = (_id) => {
+    setShowConfirm({ show: true, id: _id });
   };
 
   return (
@@ -111,7 +142,7 @@ const SalesList = ({ notification }) => {
                   {
                     title: 'Fecha',
                     render: (rowData: any) =>
-                      moment(rowData.paidAt).format('YYYY-MM-DD'),
+                      moment(rowData.paidAt).format('DD-MM-YYYY'),
                   },
                   {
                     render: (rowData) => (
@@ -130,6 +161,16 @@ const SalesList = ({ notification }) => {
                         onClick={() => handleShowBill(rowData._id)}
                       >
                         Ver Factura
+                      </Button>
+                    ),
+                  },
+                  {
+                    render: (rowData) => (
+                      <Button
+                        bsStyle="danger"
+                        onClick={() => handleDelete(rowData._id)}
+                      >
+                        Borrar
                       </Button>
                     ),
                   },
@@ -152,6 +193,21 @@ const SalesList = ({ notification }) => {
           <ShowSaleDetail saleId={saleId} />
         </Modal.Body>
       </Modal>
+      <ConfirmModal
+        {...{
+          closeText: 'Cancelar',
+          confirmText: 'Borrar',
+          title: 'Borrar Venta',
+          body: 'Esta seguro de borrar esta Venta.',
+          show: showConfirm.show,
+          onAction: handleRemove,
+          onClose: () =>
+            setShowConfirm({
+              show: false,
+              id: null,
+            }),
+        }}
+      />
     </div>
   );
 };

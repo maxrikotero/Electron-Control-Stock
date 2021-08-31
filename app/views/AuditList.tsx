@@ -25,7 +25,7 @@ const AuditList = () => {
           { title: 'Auditoria', field: 'audit' },
           {
             title: 'Fecha',
-            render: (rowData) => moment(rowData.createdAt).format('YYYY-MM-DD'),
+            render: (rowData) => moment(rowData.createdAt).format('DD-MM-YYYY'),
           },
           {
             title: 'Usuario',

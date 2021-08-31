@@ -23,6 +23,14 @@ import CustomWell from '../components/CustomWell';
 
 const AddProduct = ({ notification, product, onEdit, isEdit }) => {
   const [prices, setPrices] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    const response = await apiCall({
+      url: 'categories',
+    });
+    setCategories(response);
+  };
   useEffect(() => {
     if (product) {
       setPrices(
@@ -33,8 +41,10 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
         }))
       );
     }
+
+    fetchCategories();
   }, []);
-  const { categories = [] } = useSelector(({ selects }) => selects);
+
   const edit = <Tooltip id="edit_tooltip">Editar Precio</Tooltip>;
   const remove = <Tooltip id="remove_tooltip">Remover</Tooltip>;
   const { ModalComponent, setModal } = useModal();
@@ -95,10 +105,14 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          debugger;
           if (onEdit) {
             onEdit({
               ...values,
+              quality:
+                values.stock !== product.stock
+                  ? Math.abs(product.stock - values.stock)
+                  : product.stock,
+
               prices: prices.map((price) => ({
                 priceType: !price.priceTypeId ? price._id : price.priceTypeId,
                 price: price.price,
@@ -231,7 +245,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                         name="expire"
                         onChange={handleChange}
                         bsClass="form-control"
-                        value={moment(values.expire).utc().format('YYYY-MM-DD')}
+                        value={moment(values.expire).utc().format('DD-MM-YYYY')}
                       />
                     </FormGroup>
                   </Col>
@@ -372,11 +386,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                       placeholder="select"
                       name="category"
                       onChange={handleChange}
-                      value={
-                        isEdit
-                          ? values.category || 'select'
-                          : values.category.id || 'select'
-                      }
+                      value={values.category || 'select'}
                     >
                       <option value="select">select</option>
                       {categories.map((item) => (

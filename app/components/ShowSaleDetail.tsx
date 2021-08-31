@@ -34,7 +34,7 @@ const ShowSaleDetail = ({ saleId }: { saleId: any }) => {
               <Col md={4}>
                 <div>Fecha</div>
                 <br />
-                <div>{moment(sale.paidAt).format('YYYY-MM-DD')}</div>
+                <div>{moment(sale.paidAt).format('DD-MM-YYYY')}</div>
               </Col>
               <Col md={4}>
                 <div>Vendedor</div>

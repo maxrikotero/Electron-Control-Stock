@@ -28,7 +28,7 @@ const EditProduct = ({ product, onEdit }) => {
               initialValues={{
                 ...product,
                 expire: product.expire
-                  ? moment(product.expire).format('YYYY-MM-DD')
+                  ? moment(product.expire).format('DD-MM-YYYY')
                   : '',
               }}
               validate={(values) => {

@@ -19,15 +19,15 @@ const AddUser = ({ notification }) => {
   const notificationSystem = useRef();
 
   const initialState = {
-    dni: 0,
+    dni: '',
     firstName: '',
     lastName: '',
     userName: '',
     email: '',
     password: '',
-    phone: 0,
-    mobile: 0,
-    cuil: 0,
+    phone: '',
+    mobile: '',
+    cuil: '',
     role: '',
   };
 
@@ -44,9 +44,6 @@ const AddUser = ({ notification }) => {
 
           if (!values.role) errors.role = 'Requerido';
 
-          if (!values.dni) {
-            errors.dni = 'Requerido';
-          }
           if (!values.firstName) {
             errors.firstName = 'Requerido';
           }
@@ -97,11 +94,11 @@ const AddUser = ({ notification }) => {
                   <FormGroup controlId="idControl">
                     <ControlLabel>DNI</ControlLabel>
                     <FormControl
-                      type="number"
+                      type="text"
                       name="dni"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.dni || 0}
+                      value={values.dni}
                     />
                   </FormGroup>
                   <span style={{ color: 'red' }}> {errors.dni}</span>
@@ -110,11 +107,11 @@ const AddUser = ({ notification }) => {
                   <FormGroup controlId="cuilControl">
                     <ControlLabel>CUIL</ControlLabel>
                     <FormControl
-                      type="number"
+                      type="text"
                       name="cuil"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.cuil || 0}
+                      value={values.cuil}
                     />
                   </FormGroup>
                 </Col>
@@ -150,11 +147,11 @@ const AddUser = ({ notification }) => {
                   <FormGroup controlId="mobileControl">
                     <ControlLabel>Celular</ControlLabel>
                     <FormControl
-                      type="number"
+                      type="text"
                       name="mobile"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.mobile || 0}
+                      value={values.mobile}
                     />
                   </FormGroup>
                 </Col>
@@ -162,11 +159,11 @@ const AddUser = ({ notification }) => {
                   <FormGroup controlId="phoneControl">
                     <ControlLabel>Telefono Fijo</ControlLabel>
                     <FormControl
-                      type="number"
+                      type="text"
                       name="phone"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={values.phone || 0}
+                      value={values.phone}
                     />
                   </FormGroup>
                 </Col>

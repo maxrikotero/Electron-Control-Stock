@@ -44,7 +44,10 @@ const AddNewStock = ({ notification }: { notification: any }) => {
         url: `products/${state.productSelected._id}`,
         method: 'PUT',
         body: JSON.stringify({
+          _id: state.productSelected._id,
           stock: state.productSelected.stock + parseInt(state.amount, 10),
+          quality: parseInt(state.amount, 10),
+          from: 'updateStock',
           expires: [
             ...state.productSelected.expires,
             {

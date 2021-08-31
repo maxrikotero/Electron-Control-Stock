@@ -205,7 +205,7 @@ const AddRawMaterial = ({ notification, rawMaterial, onEdit, isEdit }) => {
                       name="expire"
                       onChange={handleChange}
                       bsClass="form-control"
-                      value={moment(values.expire).utc().format('YYYY-MM-DD')}
+                      value={moment(values.expire).utc().format('DD-MM-YYYY')}
                     />
                   </FormGroup>
                 </Col>

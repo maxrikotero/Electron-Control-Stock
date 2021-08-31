@@ -68,13 +68,15 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
           // Set back to false since request finished
           setIsSearching(false);
           // Set results state
-          if (
-            saleProducts.length >= 0 &&
-            saleProducts.filter((item) => item.code === results[0].code)
-              .length === 0
-          )
-            setResults(results);
-          else alertNotification('tc', 'Producto ya fue agregado', 3);
+          // if (
+          //   saleProducts.length >= 0 &&
+          //   saleProducts.filter((item) => item.code === results[0].code)
+          //     .length === 0
+          // )
+          setResults(
+            results.map((item, index) => ({ ...item, uniqueId: index + 1 }))
+          );
+          // else alertNotification('tc', 'Producto ya fue agregado', 3);
           // }
         });
       } else {
@@ -100,26 +102,18 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
       price: data.price,
       subTotal: data.price * data.quality,
       stock: data.stock,
+      uniqueId: data.uniqueId,
     };
     onAdd(product);
     setSearchTerm('');
-    setResults(results.filter((result) => result._id !== data._id));
+    setResults(results.filter((result) => result.uniqueId !== data.uniqueId));
   };
 
   const handleSelectProduct = (data) => {
-    if (!results.some((item) => item._id === data._id)) {
-      if (
-        saleProducts.length > 0 &&
-        saleProducts.some((item) => item._id === data._id)
-      ) {
-        alertNotification('tc', 'Producto ya fue agregado a la venta', 3);
-      } else {
-        setResults((prev) => prev.concat(data));
-        setModal(false);
-      }
-    } else {
-      alertNotification('tc', 'Producto ya fue agregado', 3);
-    }
+    setResults((prev) =>
+      prev.concat({ uniqueId: Math.round(Math.random() * 1000), ...data })
+    );
+    setModal(false);
   };
 
   return (
@@ -156,7 +150,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
           </Row>
         </Col>
       </Row>
-      {isSearching && <div>Searching ...</div>}
+      {isSearching && <div>Buscando ...</div>}
       {results.length > 0 && (
         <>
           <Row>
@@ -191,7 +185,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                     const value = e.target.value;
                                     setResults((prev) =>
                                       prev.map((prod) =>
-                                        prod._id === item._id
+                                        prod.uniqueId === item.uniqueId
                                           ? {
                                               ...prod,
                                               price:
@@ -237,7 +231,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                       });
                                       setResults((prev) =>
                                         prev.map((prod) =>
-                                          prod._id === item._id
+                                          prod.uniqueId === item.uniqueId
                                             ? { ...prod, quality: '' }
                                             : prod
                                         )
@@ -250,7 +244,7 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                                       else {
                                         setResults((prev) =>
                                           prev.map((prod) =>
-                                            prod._id === item._id
+                                            prod.uniqueId === item.uniqueId
                                               ? { ...prod, quality: value }
                                               : prod
                                           )
@@ -293,7 +287,9 @@ const SearchProduct = ({ onAdd, saleProducts, alertNotification }) => {
                               bsStyle="danger"
                               onClick={() =>
                                 setResults((prev) =>
-                                  prev.filter((prod) => prod._id !== item._id)
+                                  prev.filter(
+                                    (prod) => prod.uniqueId !== item.uniqueId
+                                  )
                                 )
                               }
                             >

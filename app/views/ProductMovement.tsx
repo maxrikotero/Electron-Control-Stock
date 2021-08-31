@@ -74,7 +74,7 @@ const MovementList = ({ id, onClose, url = 'products' }) => {
                     {
                       title: 'Fecha',
                       render: (rowData) =>
-                        moment(rowData.dateAt).format('YYYY-MM-DD, h:mm:ss a'),
+                        moment(rowData.dateAt).format('DD-MM-YYYY, h:mm:ss a'),
                     },
                     { title: 'Cantidad', field: 'quality' },
                     {

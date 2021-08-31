@@ -214,10 +214,10 @@ const RawMaterialList = ({
           {
             title: 'Vencimiento',
             render: (rowData) =>
-              moment.utc(rowData.expire).format('YYYY-MM-DD'),
+              moment.utc(rowData.expire).format('DD-MM-YYYY'),
             cellStyle: (cellValue, rowData) => {
-              return moment.utc(rowData.expire).format('YYYY-MM-DD') <=
-                moment(new Date()).format('YYYY-MM-DD')
+              return moment.utc(rowData.expire).format('DD-MM-YYYY') <=
+                moment(new Date()).format('DD-MM-YYYY')
                 ? {
                     backgroundColor: 'red',
                     color: '#FFF',

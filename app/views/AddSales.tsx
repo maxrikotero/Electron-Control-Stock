@@ -150,7 +150,7 @@ const AddSales = ({ notification }) => {
   const handleEdit = (id) => {
     const newArray = products.map(
       (product) =>
-        (product._id === id && {
+        (product.uniqueId === id && {
           ...product,
           qualityEdit: true,
         }) ||
@@ -161,7 +161,7 @@ const AddSales = ({ notification }) => {
   };
 
   const handleRemove = (id) => {
-    const newArray = products.filter((product) => product._id !== id);
+    const newArray = products.filter((product) => product.uniqueId !== id);
     setProducts(newArray);
   };
 
@@ -170,10 +170,6 @@ const AddSales = ({ notification }) => {
       setSales((prev) => ({ ...prev, paymentType: value }));
     else setSales((prev) => ({ ...prev, paymentType: '' }));
   };
-
-  const totalIva = totalPrice * 0.21;
-
-  const totalPriceIva = totalPrice + totalIva;
 
   return (
     <CustomWell
@@ -281,7 +277,7 @@ const AddSales = ({ notification }) => {
                                   });
                                   const newArray = products.map(
                                     (product) =>
-                                      (product._id === item._id && {
+                                      (product.uniqueId === item.uniqueId && {
                                         ...product,
                                         quality: '',
                                         subTotal: item.price * value,
@@ -297,7 +293,7 @@ const AddSales = ({ notification }) => {
                                     });
                                   const newArray = products.map(
                                     (product) =>
-                                      (product._id === item._id && {
+                                      (product.uniqueId === item.uniqueId && {
                                         ...product,
                                         quality: value ? value : 0,
                                         subTotal: item.price * value,
@@ -319,7 +315,7 @@ const AddSales = ({ notification }) => {
                               onClick={() => {
                                 const newArray = products.map(
                                   (product) =>
-                                    (product._id === item._id && {
+                                    (product.uniqueId === item.uniqueId && {
                                       ...product,
                                       qualityEdit: false,
                                     }) ||
@@ -342,7 +338,6 @@ const AddSales = ({ notification }) => {
 
                       {item.qualityEdit && errors.stock && (
                         <span style={{ color: 'red' }}>
-                          {' '}
                           {errors.stock}
                           <br />
                           {`Stock Disponible : ${item.stock}`}
@@ -361,7 +356,7 @@ const AddSales = ({ notification }) => {
                       <Col xs={12} md={6}>
                         <Button
                           bsStyle="info"
-                          onClick={() => handleEdit(item._id)}
+                          onClick={() => handleEdit(item.uniqueId)}
                         >
                           Edit
                         </Button>
@@ -370,7 +365,7 @@ const AddSales = ({ notification }) => {
                     <Col xs={12} md={6}>
                       <Button
                         bsStyle="danger"
-                        onClick={() => handleRemove(item._id)}
+                        onClick={() => handleRemove(item.uniqueId)}
                       >
                         Borrar
                       </Button>
@@ -391,7 +386,7 @@ const AddSales = ({ notification }) => {
               statsValue={'$' + totalPrice}
               statsIcon={<i className="fa fa-refresh" />}
             />
-          </Col>{' '}
+          </Col>
           {sale.billType === '1' && (
             <>
               <Col lg={3} sm={6}>
