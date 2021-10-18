@@ -293,7 +293,6 @@
     "jwt-decode": "^2.2.0",
     "material-table": "^1.68.0",
     "moment": "^2.27.0",
-    "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-async-hook": "^3.6.1",
     "react-bootstrap": "0.32.4",
@@ -310,6 +309,7 @@
     "react-toggle": "4.0.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.38.1",
     "source-map-support": "^0.5.19",
     "text-mask-addons": "^3.8.0",
     "use-constant": "^1.0.0"

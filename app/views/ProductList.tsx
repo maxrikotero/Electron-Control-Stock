@@ -13,7 +13,6 @@ import {
 } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
 import Movement from '../views/ProductMovement';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
@@ -80,7 +79,7 @@ const ExpireList = ({
                   type="date"
                   name="expire"
                   bsClass="form-control"
-                  value={rowData?.rowData?.value || rowData.value}
+                  value={rowData?.value}
                   onChange={(e) => rowData.onChange(e.target.value)}
                 />
               </FormGroup>
@@ -89,7 +88,7 @@ const ExpireList = ({
           cellStyle: (cellValue, rowData) => {
             return rowData?._id &&
               !rowData?.tableData?.editing &&
-              moment.utc(cellValue).format('DD-MM-YYYY') <=
+              moment(cellValue).format('DD-MM-YYYY') <=
                 moment(new Date()).format('DD-MM-YYYY')
               ? {
                   backgroundColor: 'red',

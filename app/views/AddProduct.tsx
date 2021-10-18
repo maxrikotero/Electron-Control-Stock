@@ -245,7 +245,7 @@ const AddProduct = ({ notification, product, onEdit, isEdit }) => {
                         name="expire"
                         onChange={handleChange}
                         bsClass="form-control"
-                        value={moment(values.expire).utc().format('DD-MM-YYYY')}
+                        value={values.expire}
                       />
                     </FormGroup>
                   </Col>
