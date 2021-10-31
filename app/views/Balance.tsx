@@ -249,7 +249,12 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
 
         <Row>
           <Col md={6}>
-            <h4>Ingresos</h4>
+            <h4>
+              {`Ingresos : ${incomes.reduce(
+                (acc, item) => acc + item.amount,
+                0
+              )}`}
+            </h4>
             <MaterialTable
               title=""
               components={{ Container: (props) => props.children }}
@@ -299,7 +304,9 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
           </Col>
 
           <Col md={6}>
-            <h4>Egresos</h4>
+            <h4>
+              {`Egresos : ${exits.reduce((acc, item) => acc + item.amount, 0)}`}
+            </h4>
             <MaterialTable
               title=""
               components={{ Container: (props) => props.children }}
@@ -348,6 +355,12 @@ const Balance = ({ notification, data, isEdit }: { notification: any }) => {
             />
           </Col>
         </Row>
+        <h6>
+          {`Balance: ${
+            incomes.reduce((acc, item) => acc + item.amount, 0) -
+            exits.reduce((acc, item) => acc + item.amount, 0)
+          }`}
+        </h6>
       </CustomWell>
     </React.Fragment>
   );

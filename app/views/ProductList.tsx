@@ -36,8 +36,8 @@ const ExpireList = ({
       expires
         .map((exp) => ({
           ...exp,
-          expire: moment(exp?.expire).utc().format('DD-MM-YYYY'),
-          entryDate: moment(exp?.entryDate).utc().format('DD-MM-YYYY'),
+          expire: moment(exp?.expire).utc().format('YYYY-MM-DD'),
+          entryDate: moment(exp?.entryDate).utc().format('YYYY-MM-DD'),
         }))
         .sort((a, b) => new Date(b.expire) - new Date(a.expire))
     );
@@ -60,6 +60,13 @@ const ExpireList = ({
             const newArray = state.map((i) =>
               i._id === rowData._id ? rowData : i
             );
+
+            const newArrayToSave = newArray.map((item) => ({
+              ...item,
+              expire: item?.expire,
+              entryDate: item?.entryDate,
+            }));
+            debugger;
             resolve(handleSaveExpire(productId, newArray));
           }),
         onRowDelete: (rowData) =>
@@ -185,13 +192,23 @@ const ProductList = ({
   };
 
   const handleUpdate = async (data) => {
+    const dataToSave = {
+      ...data,
+      expires: data.expires.map((item) => ({
+        _id: item._id,
+        amount: item.amount,
+        expire: new Date(item.expire),
+        entryDate: new Date(item.entryDate),
+      })),
+    };
+
     try {
       var response = await apiCall({
         url: `products/${data._id}`,
         method: 'PUT',
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataToSave),
       });
-
+      debugger;
       if (response.success) {
         notification('tc', 'Producto Actualizado', 1);
         handleClose();

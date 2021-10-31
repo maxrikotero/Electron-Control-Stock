@@ -140,6 +140,10 @@ const SalesList = ({ notification }) => {
                 columns={[
                   { title: 'Precio Total', field: 'totalPrice' },
                   {
+                    title: 'Client',
+                    render: (rowData: any) => rowData.client.name,
+                  },
+                  {
                     title: 'Fecha',
                     render: (rowData: any) =>
                       moment(rowData.paidAt).format('DD-MM-YYYY'),
