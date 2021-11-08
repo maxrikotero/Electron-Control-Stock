@@ -62,7 +62,9 @@ const AddSales = ({ notification }) => {
     if (products.length > 0)
       setSales((prev) => ({
         ...prev,
-        totalPrice: products.reduce((acc, item) => acc + item.subTotal, 0),
+        totalPrice: products
+          .reduce((acc, item) => acc + item.subTotal, 0)
+          .toFixed(2),
       }));
     else {
       setSales((prev) => ({ ...prev, totalPrice: 0 }));
@@ -348,7 +350,7 @@ const AddSales = ({ notification }) => {
                     item.quality}
                 </td>
                 <td>{item.price}</td>
-                <td>{item.price * item.quality}</td>
+                <td>{`$ ${(item.price * item.quality).toFixed(2)} `}</td>
 
                 <td>
                   <Row>
