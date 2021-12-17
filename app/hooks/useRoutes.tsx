@@ -16,15 +16,19 @@ import { useSelector } from 'react-redux';
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from 'react';
-import Dashboard from '../views/Dashboard';
+import Dashboard from '../components/DashboardCards';
+import DashboardListCards from '../components/DashboardListCards';
 import UserProfile from '../views/UserProfile';
 import ProductList from '../views/ProductList';
+import RawMaterialList from '../views/RawMaterialList';
 import Sales from '../views/SalesList';
 import AddUser from '../views/AddUser';
 import AddClient from '../views/AddClient';
+import OrderProvider from '../views/forms/OrderProvider';
 import ClientList from '../views/ClientList';
+import DailyEntryList from '../views/list/DailyEntryList';
 import AddCategory from '../views/AddCategory';
+import DailyEntry from '../views/forms/DailyEntry';
 import ProvidertList from '../views/ProvidertList';
 import CategoryList from '../views/CategoryList';
 import Reports from '../views/Reports';
@@ -33,6 +37,17 @@ import AddProvider from '../views/AddProvider';
 import AddSale from '../views/AddSales';
 import UserList from '../views/UserList';
 import AuditList from '../views/AuditList';
+import AddPayment from '../views/AddPayment';
+import Balance from '../views/Balance';
+import PriceType from '../views/PriceType';
+import PaymentsList from '../views/PaymentsList';
+import PriceTypeList from '../views/PriceTypeList';
+import AddRawMaterial from '../views/AddRawMaterial';
+import Process from '../views/Process';
+import OrderList from '../views/list/OrderList';
+import BalanceList from '../views/list/BalanceList';
+import Delivery from '../views/forms/Delivery';
+import AddNewStock from '../views/forms/AddNewStock';
 
 const useRoutes = () => {
   const { sessionData } = useSelector(({ user }) => user);
@@ -44,6 +59,24 @@ const useRoutes = () => {
   } = sessionData;
 
   const adminRoutes = [
+    {
+      path: '/orderprovider',
+      name: 'Nuevo pedido a proveedores',
+      icon: 'pe-7s-graph',
+      component: OrderProvider,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/addnewstock',
+      name: 'Alta de stock',
+      icon: 'pe-7s-graph',
+      component: AddNewStock,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
     {
       path: '/client',
       name: 'Agregar Client',
@@ -66,17 +99,16 @@ const useRoutes = () => {
 
     {
       path: '/provider',
-      name: 'Agregar Proveedor',
+      name: 'Nuevo Proveedor',
       // icon: 'pe-7s-graph',
       component: AddProvider,
       layout: '/admin',
       show: isAdmin || isControlStock,
       redirect: true,
     },
-
     {
       path: '/product',
-      name: 'Agregar Producto',
+      name: 'Nuevo Producto',
       // icon: 'pe-7s-graph',
       component: AddProduct,
       layout: '/admin',
@@ -84,8 +116,17 @@ const useRoutes = () => {
       redirect: true,
     },
     {
+      path: '/rawmaterial',
+      name: 'Nueva Materia Prima',
+      // icon: 'pe-7s-graph',
+      component: AddRawMaterial,
+      layout: '/admin',
+      show: isAdmin || isControlStock,
+      redirect: true,
+    },
+    {
       path: '/user',
-      name: 'Agregar Usuario',
+      name: 'Nuevo Usuario',
       icon: 'pe-7s-user',
       component: AddUser,
       show: isAdmin,
@@ -102,10 +143,52 @@ const useRoutes = () => {
       redirect: true,
     },
     {
+      path: '/dailyentry',
+      name: 'Agregar Diaria',
+      show: isAdmin || isControlStock,
+      // icon: 'pe-7s-graph',
+      component: DailyEntry,
+      layout: '/admin',
+      redirect: true,
+    },
+    {
+      path: '/delivery',
+      name: 'Agregar Entregado',
+      show: isAdmin || isControlStock,
+      // icon: 'pe-7s-graph',
+      component: Delivery,
+      layout: '/admin',
+      redirect: true,
+    },
+    {
       path: '/principal',
       name: 'Principal',
       icon: 'pe-7s-graph',
       component: Dashboard,
+      show: true,
+      layout: '/admin',
+    },
+    {
+      path: '/process',
+      name: 'Procesos',
+      icon: 'pe-7s-graph',
+      component: Process,
+      show: isAdmin,
+      layout: '/admin',
+    },
+    {
+      path: '/list',
+      name: 'Listados',
+      icon: 'pe-7s-news-paper',
+      component: DashboardListCards,
+      show: true,
+      layout: '/admin',
+    },
+    {
+      path: '/balance',
+      name: 'Caja',
+      icon: 'pe-7s-piggy',
+      component: Balance,
       show: true,
       layout: '/admin',
     },
@@ -127,19 +210,23 @@ const useRoutes = () => {
     },
     {
       path: '/inventario',
-      name: 'Listado Productos ',
+      name: 'Productos ',
       show: isAdmin || isControlStock,
       icon: 'pe-7s-news-paper',
       component: ProductList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
-      path: '/rawmaterial',
-      name: 'Listado Materia Prima ',
+      path: '/rawmaterials',
+      name: 'Materia Primas',
       show: isAdmin || isControlStock,
       icon: 'pe-7s-news-paper',
-      component: ProductList,
+      component: RawMaterialList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/sales',
@@ -148,6 +235,8 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: Sales,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/providers',
@@ -156,6 +245,8 @@ const useRoutes = () => {
       show: isAdmin || isControlStock,
       component: ProvidertList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/categories',
@@ -164,6 +255,8 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: CategoryList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/clients',
@@ -172,6 +265,18 @@ const useRoutes = () => {
       icon: 'pe-7s-news-paper',
       component: ClientList,
       layout: '/admin',
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/dailylist',
+      name: 'Diarias',
+      show: isAdmin,
+      icon: 'pe-7s-news-paper',
+      component: DailyEntryList,
+      layout: '/admin',
+      isList: true,
+      redirect: true,
     },
     {
       path: '/users',
@@ -180,6 +285,8 @@ const useRoutes = () => {
       component: UserList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
     },
     {
       path: '/audits',
@@ -188,6 +295,70 @@ const useRoutes = () => {
       component: AuditList,
       layout: '/admin',
       show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/payment',
+      name: 'Tipo del pagos',
+      icon: 'pe-7s-news-paper',
+      component: AddPayment,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/pricetype',
+      name: 'Tipo de precios',
+      icon: 'pe-7s-news-paper',
+      type: 'Agregar ´Precio',
+      method: 'POST',
+      title: ' Nuevo tipo de precio',
+      successMessage: 'Tipo de precio agregado',
+      component: PriceType,
+      layout: '/admin',
+      show: isAdmin,
+      redirect: true,
+    },
+    {
+      path: '/pricetypes',
+      name: 'Listado Precios',
+      icon: 'pe-7s-news-paper',
+      component: PriceTypeList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/payments',
+      name: 'Listado Pagos',
+      icon: 'pe-7s-news-paper',
+      component: PaymentsList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/orders',
+      name: 'Pedidos Proveedores',
+      icon: 'pe-7s-news-paper',
+      component: OrderList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
+    },
+    {
+      path: '/balances',
+      name: 'Cajas',
+      icon: 'pe-7s-news-paper',
+      component: BalanceList,
+      layout: '/admin',
+      show: isAdmin,
+      isList: true,
+      redirect: true,
     },
   ];
 

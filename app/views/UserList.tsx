@@ -1,12 +1,11 @@
 /*eslint-disable */
-import React, { useEffect, useState, Component } from 'react';
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, Modal } from 'react-bootstrap';
 import MaterialTable from 'material-table';
-import moment from 'moment';
 import UserProfile from './UserProfile';
-import Card from '../components/Card/Card';
 import apiCall from '../utils/apiCall';
 import ConfirmModal from '../components/Confirm/Confirm';
+import CustomWell from '../components/CustomWell';
 
 const UserList = ({ notification }) => {
   const [users, setUsers] = useState([]);
@@ -54,76 +53,96 @@ const UserList = ({ notification }) => {
         }),
           notification('tc', 'Usuario Borrado', 1);
         fetchUsers();
+      } else {
+        notification('tc', 'Error', 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Error', 3);
     }
   };
 
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title="Lista de Usuarios"
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div className="content">
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    options={{
-                      actionsColumnIndex: -1,
-                    }}
-                    columns={[
-                      { title: 'DNI', field: 'dni' },
-                      { title: 'CUIL', field: 'cuil' },
+    <CustomWell headerTitle={`Usuarios`} dynamicPath={'/admin/user'}>
+      <div>
+        <MaterialTable
+          title=""
+          components={{ Container: (props) => props.children }}
+          options={{
+            actionsColumnIndex: -1,
+          }}
+          columns={[
+            { title: 'DNI', field: 'dni' },
+            { title: 'CUIL', field: 'cuil' },
 
-                      {
-                        title: 'Nombre',
-                        render: (rowData) =>
-                          `${rowData.firstName} ${rowData.lastName}`,
-                      },
-                      {
-                        title: 'Usuario',
-                        field: 'userName',
-                      },
+            {
+              title: 'Nombre',
+              render: (rowData) => `${rowData.firstName} ${rowData.lastName}`,
+            },
+            {
+              title: 'Usuario',
+              field: 'userName',
+            },
 
-                      {
-                        title: 'Email',
-                        field: 'email',
-                      },
-                      {
-                        title: 'Telefono',
-                        field: 'phone',
-                      },
-                      {
-                        title: 'Celular',
-                        field: 'mobile',
-                      },
-                    ]}
-                    data={users}
-                    actions={[
-                      {
-                        icon: () => {
-                          return <Button bsStyle="info">Edit</Button>;
-                        },
-                        onClick: (event, rowData) => handleEdit(rowData._id),
-                      },
-                      {
-                        icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => handleDelete(rowData._id),
-                      },
-                    ]}
-                  />
-                </div>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+            {
+              title: 'Email',
+              field: 'email',
+            },
+            {
+              title: 'Telefono',
+              field: 'phone',
+            },
+            {
+              title: 'Celular',
+              field: 'mobile',
+            },
+          ]}
+          data={users}
+          localization={{
+            body: {
+              emptyDataSourceMessage: 'No hay registros',
+              addTooltip: 'Agregar',
+              deleteTooltip: 'Eliminar',
+              editTooltip: 'Editar',
+              filterRow: {
+                filterTooltip: 'Filtrar',
+              },
+              editRow: {
+                deleteText: 'Esta seguro de borrar?',
+                cancelTooltip: 'Cancelar',
+              },
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              labelRowsPerPage: 'Filas por pagina:',
+            },
+            toolbar: {
+              nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+              exportTitle: 'Exportar',
+              exportAriaLabel: 'Exportar',
+              exportName: 'Exportar en CSV',
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          actions={[
+            {
+              icon: () => {
+                return <Button bsStyle="info">Edit</Button>;
+              },
+              onClick: (event, rowData) => handleEdit(rowData._id),
+            },
+            {
+              icon: () => <Button bsStyle="danger">Borrar</Button>,
+              onClick: (event, rowData) => handleDelete(rowData._id),
+            },
+          ]}
+        />
+      </div>
+
       <Modal show={show} onHide={handleClose} bsSize="large">
         <Modal.Header closeButton>
           <Modal.Title>Editar Usuario</Modal.Title>
@@ -139,7 +158,7 @@ const UserList = ({ notification }) => {
       <ConfirmModal
         {...{
           closeText: 'Cancelar',
-          confirmText: 'Borrar',
+          confirmText: 'Si',
           title: 'Borrar Usuario',
           body: 'Esta seguro de borrar este usuaria.',
           show: showConfirm.show,
@@ -151,7 +170,7 @@ const UserList = ({ notification }) => {
             }),
         }}
       />
-    </div>
+    </CustomWell>
   );
 };
 

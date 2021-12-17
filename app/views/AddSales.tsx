@@ -1,42 +1,70 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
 import {
-  Grid,
   Row,
   Col,
   Table,
   Button,
-  Modal,
   FormGroup,
   ControlLabel,
   FormControl,
 } from 'react-bootstrap';
-import { saveAs } from 'file-saver';
 import { useSelector, useDispatch } from 'react-redux';
-import Loader from 'react-loader-spinner';
-import Card from '../components/Card/Card';
+import { StatsCard } from '../components/StatsCard/StatsCard';
 import Client from '../components/ClientSelect/ClientSelect';
 import SearchProduct from '../views/SearchProduct';
 import useApiCall from '../hooks/useApiCall';
-import { set } from '../features/apiCallStatus/apiCallStatusSlice';
+import apiCall from '../utils/apiCall';
+import CustomWell from '../components/CustomWell';
+import AddClient from './AddClient';
+import AddPayment from './AddPayment';
+import './AddSales.css';
 
 const AddSales = ({ notification }) => {
   const [sale, setSales] = useState({
     totalPrice: 0,
     client: null,
     products: [],
+    paymentType: '',
+    billType: '',
   });
   const [products, setProducts] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [errors, setErrors] = useState({});
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [reloadClientState, setReloadClientState] = useState(false);
   const dispatch = useDispatch();
   const { sessionData } = useSelector(({ user }) => user);
   const { totalPrice, client } = sale;
+
+  const addClientStyleShow = {
+    width: '600px',
+    position: 'absolute',
+    right: 0,
+    top: '10%',
+  };
+
+  const fetchPayments = async () => {
+    try {
+      const data = await apiCall({ url: 'payments' });
+      if (data) setPayments(data);
+    } catch (error) {
+      setPayments([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
 
   useEffect(() => {
     if (products.length > 0)
       setSales((prev) => ({
         ...prev,
-        totalPrice: products.reduce((acc, item) => acc + item.subTotal, 0),
+        totalPrice: products
+          .reduce((acc, item) => acc + item.subTotal, 0)
+          .toFixed(2),
       }));
     else {
       setSales((prev) => ({ ...prev, totalPrice: 0 }));
@@ -60,14 +88,25 @@ const AddSales = ({ notification }) => {
       return;
     }
 
+    if (!sale.billType) {
+      notification('tc', 'Agregar Tipo de factura', 2);
+      return;
+    }
+
     if (!products.length > 0) {
-      notification('tc', 'Agregar Producto', 2);
+      notification('tc', 'Nuevo Producto', 2);
+      return;
+    }
+
+    if (sale.paymentType === '') {
+      notification('tc', 'Nueva Forma de pago', 2);
       return;
     }
 
     const saleProducts = products.map((item) => ({
       quality: item.quality,
       price: item.price,
+      name: item.name,
       product: item._id,
       description: item.description,
     }));
@@ -90,6 +129,8 @@ const AddSales = ({ notification }) => {
           totalPrice: 0,
           client: '',
           products: [],
+          paymentType: '',
+          billType: '',
         });
         fetchData(response.data._id);
       } else {
@@ -104,14 +145,14 @@ const AddSales = ({ notification }) => {
     }
   };
 
-  const handleAddProduct = (sale) => {
-    setProducts((prev) => [...prev, sale]);
+  const handleAddProduct = (product) => {
+    setProducts((prev) => [...prev, product]);
   };
 
   const handleEdit = (id) => {
     const newArray = products.map(
       (product) =>
-        (product._id === id && {
+        (product.uniqueId === id && {
           ...product,
           qualityEdit: true,
         }) ||
@@ -122,167 +163,321 @@ const AddSales = ({ notification }) => {
   };
 
   const handleRemove = (id) => {
-    const newArray = products.filter((product) => product._id !== id);
+    const newArray = products.filter((product) => product.uniqueId !== id);
     setProducts(newArray);
   };
 
+  const handlePayment = ({ target: { value } }) => {
+    if (value !== 'select')
+      setSales((prev) => ({ ...prev, paymentType: value }));
+    else setSales((prev) => ({ ...prev, paymentType: '' }));
+  };
+
   return (
-    <div className="content">
-      <Grid fluid>
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nueva Venta`}
+      dynamicPath={'/admin/sales'}
+    >
+      <Client
+        onAdd={handleAddClientToSale}
+        clientSale={client}
+        reloadState={reloadClientState}
+      />
+      <SearchProduct
+        onAdd={handleAddProduct}
+        saleProducts={products}
+        alertNotification={notification}
+      />
+      <div className="content">
         <Row>
-          <Col md={12}>
-            <Card
-              title={`Nueva venta  Vendor: ${sessionData.email}`}
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <>
-                  <Client onAdd={handleAddClientToSale} clientSale={client} />
-                  <SearchProduct
-                    onAdd={handleAddProduct}
-                    saleProducts={products}
-                    alertNotification={notification}
-                  />
+          <Col md={4}>
+            <FormGroup controlId="formControlsSelect">
+              <ControlLabel>Forma de pago</ControlLabel>
+              <FormControl
+                componentClass="select"
+                placeholder="select"
+                name="payment"
+                value={sale.paymentType || ''}
+                onChange={handlePayment}
+              >
+                <option value="">Seleccione</option>
+                {payments.length > 0 &&
+                  payments.map((item) => (
+                    <option value={item._id}>{item.name}</option>
+                  ))}
+              </FormControl>
+            </FormGroup>
+          </Col>
+          <Col md={4}>
+            <FormGroup controlId="formControlsSelect">
+              <ControlLabel>Tipo de factura</ControlLabel>
+              <FormControl
+                componentClass="select"
+                placeholder="select"
+                name="billType"
+                value={sale.billType || ''}
+                onChange={({ target: { value } }) => {
+                  if (value !== 'select')
+                    setSales((prev) => ({
+                      ...prev,
+                      billType: value,
+                    }));
+                  else setSales((prev) => ({ ...prev, billType: '' }));
+                }}
+              >
+                <option value="">Seleccione</option>
+                {[
+                  { id: 1, name: 'Factura A' },
+                  { id: 2, name: 'Factura B' },
+                  { id: 3, name: 'Consumidor Final' },
+                ].map((item) => (
+                  <option value={item.id}>{item.name}</option>
+                ))}
+              </FormControl>
+            </FormGroup>
+          </Col>
+        </Row>
+      </div>
+
+      <Row>
+        <Col md={12} style={{ textAlign: 'center', marginBottom: '15px' }}>
+          <h3>Detalle</h3>
+        </Col>
+      </Row>
+      <Table striped hover>
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Venta</th>
+            <th>SubTotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((item, key) => {
+            return (
+              <tr key={key}>
+                <td>{item.code}</td>
+                <td>{item.name}</td>
+                <td>
+                  {(item.qualityEdit && (
+                    <>
+                      <Row>
+                        <Col xs={3}>
+                          <FormGroup controlId="qualityControl">
+                            <FormControl
+                              type="numeric"
+                              name="quality"
+                              onChange={(e) => {
+                                const { value } = e.target;
+                                setErrors({});
+                                if (parseInt(value, 10) === 0) {
+                                  setErrors({
+                                    stock: 'Cantidad Requerida',
+                                  });
+                                  const newArray = products.map(
+                                    (product) =>
+                                      (product.uniqueId === item.uniqueId && {
+                                        ...product,
+                                        quality: '',
+                                        subTotal: item.price * value,
+                                      }) ||
+                                      product
+                                  );
+
+                                  setProducts(newArray);
+                                } else {
+                                  if (parseInt(value, 10) > item.stock)
+                                    setErrors({
+                                      stock: 'Cantidad Invalida',
+                                    });
+                                  const newArray = products.map(
+                                    (product) =>
+                                      (product.uniqueId === item.uniqueId && {
+                                        ...product,
+                                        quality: value ? value : 0,
+                                        subTotal: item.price * value,
+                                      }) ||
+                                      product
+                                  );
+                                  setProducts(newArray);
+                                }
+                              }}
+                              bsClass="form-control"
+                              value={item.quality}
+                            />
+                          </FormGroup>
+                        </Col>
+                        {item.quality <= item.stock && (
+                          <Col xs={3}>
+                            <Button
+                              bsStyle="success"
+                              onClick={() => {
+                                const newArray = products.map(
+                                  (product) =>
+                                    (product.uniqueId === item.uniqueId && {
+                                      ...product,
+                                      qualityEdit: false,
+                                    }) ||
+                                    product
+                                );
+
+                                setProducts(newArray);
+                              }}
+                            >
+                              <i
+                                className="fa fa-check-circle-o"
+                                style={{ fontSize: '21px' }}
+                              >
+                                {' '}
+                              </i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
+
+                      {item.qualityEdit && errors.stock && (
+                        <span style={{ color: 'red' }}>
+                          {errors.stock}
+                          <br />
+                          {`Stock Disponible : ${item.stock}`}
+                        </span>
+                      )}
+                    </>
+                  )) ||
+                    item.quality}
+                </td>
+                <td>{item.price}</td>
+                <td>{`$ ${(item.price * item.quality).toFixed(2)} `}</td>
+
+                <td>
                   <Row>
-                    <Col
-                      md={12}
-                      style={{ textAlign: 'center', marginBottom: '15px' }}
-                    >
-                      <h3>Venta</h3>
+                    {!item.qualityEdit && (
+                      <Col xs={12} md={6}>
+                        <Button
+                          bsStyle="info"
+                          onClick={() => handleEdit(item.uniqueId)}
+                        >
+                          Edit
+                        </Button>
+                      </Col>
+                    )}
+                    <Col xs={12} md={6}>
+                      <Button
+                        bsStyle="danger"
+                        onClick={() => handleRemove(item.uniqueId)}
+                      >
+                        Borrar
+                      </Button>
                     </Col>
                   </Row>
-                  <Table striped hover>
-                    <thead>
-                      <tr>
-                        <th>Codigo</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Venta</th>
-                        <th>SubTotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((item, key) => {
-                        return (
-                          <tr key={key}>
-                            <td>{item.code}</td>
-                            <td>{item.name}</td>
-                            <td>
-                              {(item.qualityEdit && (
-                                <>
-                                  <Row>
-                                    <Col xs={6}>
-                                      <FormGroup controlId="qualityControl">
-                                        <FormControl
-                                          type="numeric"
-                                          name="quality"
-                                          onChange={(e) => {
-                                            const { value } = e.target;
-
-                                            setErrors({});
-                                            if (parseInt(value, 10) === 0) {
-                                              setErrors({
-                                                stock: 'Cantidad Requerida',
-                                              });
-                                            } else {
-                                              if (
-                                                parseInt(value, 10) > item.stock
-                                              )
-                                                setErrors({
-                                                  stock: 'Cantidad Invalida',
-                                                });
-                                              const newArray = products.map(
-                                                (product) =>
-                                                  (product._id === item._id && {
-                                                    ...product,
-                                                    quality: value,
-                                                    subTotal:
-                                                      item.price * value,
-                                                  }) ||
-                                                  product
-                                              );
-
-                                              setProducts(newArray);
-                                            }
-                                          }}
-                                          placeHolder="Cantidad"
-                                          bsClass="form-control"
-                                          value={item.quality}
-                                        />
-                                      </FormGroup>
-                                    </Col>
-                                  </Row>
-
-                                  {item.qualityEdit && errors.stock && (
-                                    <span style={{ color: 'red' }}>
-                                      {' '}
-                                      {errors.stock}
-                                      <br />
-                                      {`Stock Disponible : ${item.stock}`}
-                                    </span>
-                                  )}
-                                </>
-                              )) ||
-                                item.quality}
-                            </td>
-                            <td>{item.price}</td>
-                            <td>{item.price * item.quality}</td>
-
-                            <td>
-                              <Row>
-                                {!item.qualityEdit && (
-                                  <Col xs={12} md={6}>
-                                    <Button
-                                      bsStyle="info"
-                                      onClick={() => handleEdit(item._id)}
-                                    >
-                                      Edit
-                                    </Button>
-                                  </Col>
-                                )}
-                                <Col xs={12} md={6}>
-                                  <Button
-                                    bsStyle="danger"
-                                    onClick={() => handleRemove(item._id)}
-                                  >
-                                    Borrar
-                                  </Button>
-                                </Col>
-                              </Row>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                  <div className="content">
-                    <Row>
-                      <Col xs={12} md={12}>
-                        <div>{`Total a pagar ${totalPrice}`}</div>
-                      </Col>
-                    </Row>
-                  </div>
-                </>
-              }
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+      <div className="content" style={{ marginTop: '50px' }}>
+        <Row>
+          <Col lg={3} sm={6}>
+            <StatsCard
+              bigIcon={<i className="pe-7s-wallet text-success" />}
+              statsText="Total a pagar:"
+              statsValue={'$' + totalPrice}
+              statsIcon={<i className="fa fa-refresh" />}
             />
           </Col>
+          {sale.billType === '1' && (
+            <>
+              <Col lg={3} sm={6}>
+                <StatsCard
+                  bigIcon={<i className="pe-7s-server text-warning" />}
+                  statsText="Iva %:"
+                  statsValue={
+                    totalPrice ? (totalPrice - totalPrice / 1.21).toFixed(2) : 0
+                  }
+                  statsIcon={<i className="fa fa-refresh" />}
+                />
+              </Col>
+            </>
+          )}
         </Row>
-        <Row>
-          <Col xs={12} md={12}>
-            {!errors.stock && (
-              <Button
-                bsStyle="success"
-                className="pull-right"
-                fill
-                onClick={handleAddSale}
-              >
-                VENDER
-              </Button>
+      </div>
+
+      <Row>
+        <Col xs={12} md={12}>
+          {!errors.stock && (
+            <Button
+              bsStyle="success"
+              className="pull-right"
+              fill
+              onClick={handleAddSale}
+            >
+              VENDER
+            </Button>
+          )}
+        </Col>
+      </Row>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+        }}
+      >
+        <div style={{ marginBottom: '15px' }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowAddClient(true)}
+          >
+            Agregar Cliente
+          </button>
+        </div>
+        <div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowPayment(true)}
+            disabled={showAddClient}
+          >
+            Agregar Forma de pago
+          </button>
+        </div>
+      </div>
+      <div className="form__sale">
+        {(showAddClient || showPayment) && (
+          <div style={addClientStyleShow}>
+            {(showAddClient && (
+              <AddClient
+                isSale={true}
+                onCancelSale={() => setShowAddClient(false)}
+                afterSave={() => {
+                  setShowAddClient(false);
+                  setReloadClientState((prev) => !prev);
+                }}
+                {...{ notification }}
+              />
+            )) || (
+              <AddPayment
+                isSale={true}
+                onCancelSale={() => setShowPayment(false)}
+                afterSave={() => {
+                  setShowPayment(false);
+                  fetchPayments();
+                }}
+                {...{ notification }}
+              />
             )}
-          </Col>
-        </Row>
-      </Grid>
-    </div>
+          </div>
+        )}
+      </div>
+    </CustomWell>
   );
 };
 

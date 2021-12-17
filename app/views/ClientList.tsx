@@ -1,14 +1,19 @@
 /*eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 import { useDispatch } from 'react-redux';
 import EditClient from './EditClient';
-import Card from '../components/Card/Card';
 import useApiCall from '../hooks/useApiCall';
+import ConfirmModal from '../components/Confirm/Confirm';
+import CustomWell from '../components/CustomWell';
 
-const ProductList = ({ notification }) => {
+const ClientList = ({ notification }) => {
   const [clients, setClients] = useState([]);
+  const [showConfirm, setShowConfirm] = useState({
+    show: false,
+    id: null,
+  });
   const [editClient, setEditClient] = useState({});
   const [show, setShow] = useState(false);
 
@@ -57,81 +62,108 @@ const ProductList = ({ notification }) => {
     }
   };
 
-  const deleteClient = async (id) => {
-    // if (confirm('Esta seguro de borrar?')) {
-
-    const url = `clients/${id}`;
+  const deleteClient = async () => {
+    const url = `clients/${showConfirm.id}`;
     try {
       const response = await useApiCall({ url, method: 'DELETE' });
 
       if (response.success) {
-        setClients(response.data);
+        setShowConfirm({
+          show: false,
+          id: null,
+        }),
+          setClients(response.data);
+        notification('tc', 'Cliente Borrado', 1);
+      } else {
+        notification('tc', 'Error', 3);
       }
     } catch (error) {
-      alert('error');
+      notification('tc', 'Error', 3);
     }
-    // }
+  };
+
+  const handleDelete = (_id) => {
+    setShowConfirm({ show: true, id: _id });
   };
 
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title="Lista de Clientes"
-              ctTableFullWidth
-              ctTableResponsive
-              content={
-                <div className="content">
-                  <MaterialTable
-                    title=""
-                    components={{ Container: (props) => props.children }}
-                    options={{
-                      actionsColumnIndex: -1,
-                    }}
-                    columns={[
-                      { title: 'Nombre', field: 'name' },
-                      { title: 'Dirección', field: 'address' },
+    <CustomWell headerTitle={`Clientes`} dynamicPath={'/admin/client'}>
+      <div>
+        <MaterialTable
+          title=""
+          components={{ Container: (props) => props.children }}
+          options={{
+            actionsColumnIndex: -1,
+          }}
+          columns={[
+            { title: 'Nombre', field: 'name' },
+            { title: 'Dirección', field: 'address' },
 
-                      {
-                        title: 'Telefono Fijo',
-                        field: 'phone',
-                      },
-                      {
-                        title: 'Celular',
-                        field: 'mobile',
-                      },
+            {
+              title: 'Telefono Fijo',
+              field: 'phone',
+            },
+            {
+              title: 'Celular',
+              field: 'mobile',
+            },
 
-                      {
-                        title: 'Cuil',
-                        field: 'cuil',
-                      },
-                      {
-                        title: 'Descripción',
-                        field: 'description',
-                      },
-                    ]}
-                    data={clients}
-                    actions={[
-                      {
-                        icon: () => {
-                          return <Button bsStyle="info">Edit</Button>;
-                        },
-                        onClick: (event, rowData) => handleEdit(rowData._id),
-                      },
-                      {
-                        icon: () => <Button bsStyle="danger">Borrar</Button>,
-                        onClick: (event, rowData) => deleteClient(rowData._id),
-                      },
-                    ]}
-                  />
-                </div>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+            {
+              title: 'Cuil',
+              field: 'cuil',
+            },
+            {
+              title: 'Descripción',
+              field: 'description',
+            },
+          ]}
+          data={clients}
+          actions={[
+            {
+              icon: () => {
+                return <Button bsStyle="info">Edit</Button>;
+              },
+              onClick: (event, rowData) => handleEdit(rowData._id),
+            },
+            {
+              icon: () => <Button bsStyle="danger">Borrar</Button>,
+              onClick: (event, rowData) => handleDelete(rowData._id),
+            },
+          ]}
+          localization={{
+            body: {
+              emptyDataSourceMessage: 'No hay registros',
+              addTooltip: 'Agregar',
+              deleteTooltip: 'Eliminar',
+              editTooltip: 'Editar',
+              filterRow: {
+                filterTooltip: 'Filtrar',
+              },
+              editRow: {
+                deleteText: 'Esta seguro de borrar?',
+                cancelTooltip: 'Cancelar',
+              },
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              labelRowsPerPage: 'Filas por pagina:',
+            },
+            toolbar: {
+              nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+              exportTitle: 'Exportar',
+              exportAriaLabel: 'Exportar',
+              exportName: 'Exportar en CSV',
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+        />
+      </div>
+
       <Modal show={show} onHide={handleClose} bsSize="large">
         <Modal.Header closeButton>
           <Modal.Title>Editar Cliente</Modal.Title>
@@ -140,8 +172,23 @@ const ProductList = ({ notification }) => {
           <EditClient client={editClient} onEdit={handleUpdate} />
         </Modal.Body>
       </Modal>
-    </div>
+      <ConfirmModal
+        {...{
+          closeText: 'Cancelar',
+          confirmText: 'Si',
+          title: 'Borrar Cliente',
+          body: 'Esta seguro de borrar este Cliente.',
+          show: showConfirm.show,
+          onAction: deleteClient,
+          onClose: () =>
+            setShowConfirm({
+              show: false,
+              id: null,
+            }),
+        }}
+      />
+    </CustomWell>
   );
 };
 
-export default ProductList;
+export default ClientList;

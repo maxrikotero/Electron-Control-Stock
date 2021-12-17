@@ -24,17 +24,17 @@ const App = (props: Props) => {
             url: 'categories',
           }),
         ]);
+
         if (userData.error) {
-          alert('Error ');
+          setRedirect(true);
         } else {
           dispatch(set(userData));
           dispatch(setCategories(categories));
         }
       } catch (error) {
-        alert('Error Cargando Usuario');
+        setRedirect(true);
       }
     };
-
     if (localStorage.getItem('token')) getUserData();
     else {
       setRedirect(true);

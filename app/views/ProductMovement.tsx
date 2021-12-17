@@ -5,17 +5,17 @@ import MaterialTable from 'material-table';
 import moment from 'moment';
 import apiCall from '../utils/apiCall';
 
-const ProductMovement = ({ id, onClose }) => {
+const MovementList = ({ id, onClose, url = 'products' }) => {
   const [movements, setMovements] = useState([]);
   const [show, setShow] = useState(true);
 
-  const fetchProductMovement = async () => {
-    const response = await apiCall({ url: `products/movement/${id}` });
+  const fetchMovement = async () => {
+    const response = await apiCall({ url: `${url}/movement/${id}` });
     setMovements(response);
   };
 
   useEffect(() => {
-    fetchProductMovement();
+    fetchMovement();
   }, []);
 
   const handleClose = () => {
@@ -27,7 +27,7 @@ const ProductMovement = ({ id, onClose }) => {
     <div className="content">
       <Modal show={show} onHide={handleClose} bsSize="large">
         <Modal.Header closeButton>
-          <Modal.Title>Lista de movimiento del Producto</Modal.Title>
+          <Modal.Title>Lista de movimiento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Grid fluid>
@@ -39,11 +39,42 @@ const ProductMovement = ({ id, onClose }) => {
                   options={{
                     actionsColumnIndex: -1,
                   }}
+                  localization={{
+                    body: {
+                      emptyDataSourceMessage: 'No hay registros',
+                      addTooltip: 'Agregar',
+                      deleteTooltip: 'Eliminar',
+                      editTooltip: 'Editar',
+                      filterRow: {
+                        filterTooltip: 'Filtrar',
+                      },
+                      editRow: {
+                        deleteText: 'Esta seguro de borrar?',
+                        cancelTooltip: 'Cancelar',
+                      },
+                    },
+                    header: {
+                      actions: 'Acciones',
+                    },
+                    pagination: {
+                      labelDisplayedRows: '{from}-{to} de {count}',
+                      labelRowsSelect: 'Filas',
+                      labelRowsPerPage: 'Filas por pagina:',
+                    },
+                    toolbar: {
+                      nRowsSelected: '{0} Filas(s) seleccionadas(s)',
+                      exportTitle: 'Exportar',
+                      exportAriaLabel: 'Exportar',
+                      exportName: 'Exportar en CSV',
+                      searchTooltip: 'Buscar',
+                      searchPlaceholder: 'Buscar',
+                    },
+                  }}
                   columns={[
                     {
                       title: 'Fecha',
                       render: (rowData) =>
-                        moment(rowData.dateAt).format('YYYY-MM-DD, h:mm:ss a'),
+                        moment(rowData.dateAt).format('DD-MM-YYYY, h:mm:ss a'),
                     },
                     { title: 'Cantidad', field: 'quality' },
                     {
@@ -83,4 +114,4 @@ const ProductMovement = ({ id, onClose }) => {
   );
 };
 
-export default ProductMovement;
+export default MovementList;

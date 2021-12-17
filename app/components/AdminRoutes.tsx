@@ -13,7 +13,10 @@ const AdminRoutes = ({ notification }) => {
           <Route
             path={prop.layout + prop.path}
             render={(props) => (
-              <prop.component {...props} notification={notification} />
+              <prop.component
+                {...{ ...props, ...prop }}
+                notification={notification}
+              />
             )}
             key={key}
           />

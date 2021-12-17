@@ -1,5 +1,5 @@
 /*eslint-disable */
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import {
   Grid,
   Row,
@@ -7,179 +7,149 @@ import {
   FormGroup,
   ControlLabel,
   FormControl,
+  Well,
 } from 'react-bootstrap';
-
-import { Card } from '../components/Card/Card';
+import { Formik } from 'formik';
+import apiCall from '../utils/apiCall';
 import Button from '../components/CustomButton/CustomButton';
+import CustomWell from '../components/CustomWell';
 
-const AddProvider = ({ notification }: { notification: any }) => {
-  const [state, setState] = useState({
-    socialId: null,
-    dni: null,
-    brand: '',
+const AddProvider = ({
+  notification,
+  isEdit,
+  provider,
+  onSave,
+}: {
+  notification: any;
+}) => {
+  const initialState = {
+    razonSocial: '',
+    dni: 0,
     phone: '',
-    mobile: '',
     email: '',
-    firstName: '',
-    lastName: '',
-  });
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    fetch('http://localhost:3000/api/providers', {
-      method: 'POST',
-      body: JSON.stringify(state),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.json())
-      .then(() => {
-        notification('tc', 'Proveedor Agregado', 1);
-        setState({
-          firstName: '',
-          lastName: '',
-          socialId: null,
-          dni: null,
-          brand: '',
-          phone: '',
-          mobile: '',
-          email: '',
-        });
-      })
-      .catch((err) => console.error(err));
+    name: '',
   };
-
-  const {
-    socialId,
-    dni,
-    brand,
-    phone,
-    mobile,
-    email,
-    firstName,
-    lastName,
-  } = state;
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value }: { name: string; value: string } = event.target;
-
-    setState((prevState) => ({ ...prevState, [name]: value }));
-  };
-
   return (
-    <div className="content">
-      <Grid fluid>
-        <Row>
-          <Col md={12}>
-            <Card
-              title="Agregar Proveedor"
-              content={
-                <form onSubmit={handleSubmit}>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="firstNameControl">
-                        <ControlLabel>Nombre</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="firstName"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={firstName}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="lastNameControl">
-                        <ControlLabel>Apellido</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="lastName"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={lastName}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="socialControl">
-                        <ControlLabel>Razón Social</ControlLabel>
-                        <FormControl
-                          type="text"
-                          name="socialId"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={socialId}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="dniControl">
-                        <ControlLabel>DNI</ControlLabel>
-                        <FormControl
-                          type="number"
-                          name="dni"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={dni}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="fijoControl">
-                        <ControlLabel>Fijo</ControlLabel>
-                        <FormControl
-                          type="number"
-                          name="phone"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={phone}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="celularControl">
-                        <ControlLabel>Celular</ControlLabel>
-                        <FormControl
-                          type="number"
-                          name="mobile"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={mobile}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} md={6}>
-                      <FormGroup controlId="emailControl">
-                        <ControlLabel>Email</ControlLabel>
-                        <FormControl
-                          type="email"
-                          name="email"
-                          onChange={handleChange}
-                          bsClass="form-control"
-                          value={email}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Button bsStyle="info" pullRight fill type="submit">
-                    Guardar
-                  </Button>
-                  <div className="clearfix" />
-                </form>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
-    </div>
+    <CustomWell
+      toLink={'/admin/principal'}
+      headerTitle={`Nuevo Proveedor`}
+      isEdit={isEdit}
+      dynamicPath={isEdit ? null : '/admin/providers'}
+    >
+      <Formik
+        initialValues={isEdit ? { ...provider } : { ...initialState }}
+        validate={(values) => {
+          const errors: any = {};
+          if (!values.name) {
+            errors.name = 'Requerido';
+          }
+
+          return errors;
+        }}
+        onSubmit={async (values: any, { setSubmitting, resetForm }) => {
+          setSubmitting(false);
+          var response = await apiCall({
+            url: !isEdit ? 'providers' : `providers/${values._id}`,
+            method: isEdit ? 'PUT' : 'POST',
+            body: JSON.stringify(values),
+          });
+
+          if (response.success) {
+            notification(
+              'tc',
+              !isEdit ? 'Proveedor Agregado' : 'Proveedor Actualizado',
+              1
+            );
+
+            (!isEdit && resetForm(initialState)) || onSave();
+          } else {
+            let message = 'Agregar Proveedor Error';
+            if (response.error.indexOf('name') > -1)
+              message = 'Proveedor Existente';
+
+            notification('tc', message, 3);
+          }
+        }}
+      >
+        {({ values, errors, handleChange, handleSubmit }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Row>
+                <Col xs={12} md={6}>
+                  <FormGroup controlId="nameControl">
+                    <ControlLabel>Nombre</ControlLabel>
+                    <FormControl
+                      type="text"
+                      name="name"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.name}
+                    />
+                  </FormGroup>
+                  <span style={{ color: 'red' }}> {errors.name}</span>
+                </Col>
+                <Col xs={12} md={6}>
+                  <FormGroup controlId="socialControl">
+                    <ControlLabel>Razón Social</ControlLabel>
+                    <FormControl
+                      type="text"
+                      name="razonSocial"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.razonSocial}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={6}>
+                  <FormGroup controlId="fijoControl">
+                    <ControlLabel>Fijo</ControlLabel>
+                    <FormControl
+                      type="number"
+                      name="phone"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.phone}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col xs={12} md={6}>
+                  <FormGroup controlId="dniControl">
+                    <ControlLabel>DNI</ControlLabel>
+                    <FormControl
+                      type="number"
+                      name="dni"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.dni}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} md={6}>
+                  <FormGroup controlId="emailControl">
+                    <ControlLabel>Email</ControlLabel>
+                    <FormControl
+                      type="email"
+                      name="email"
+                      onChange={handleChange}
+                      bsClass="form-control"
+                      value={values.email}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Button bsStyle="info" pullRight fill type="submit">
+                Guardar
+              </Button>
+              <div className="clearfix" />
+            </form>
+          );
+        }}
+      </Formik>
+    </CustomWell>
   );
 };
 
