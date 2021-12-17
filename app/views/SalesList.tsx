@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Row, Col, Button, Modal, Well } from 'react-bootstrap';
 import moment from 'moment';
 import MaterialTable from 'material-table';
+import { useDispatch } from 'react-redux';
 import ShowSaleDetail from '../components/ShowSaleDetail';
 import useApiCall from '../hooks/useApiCall';
 import HeaderTitle from '../components/HeaderTitle';
@@ -19,7 +20,7 @@ const SalesList = ({ notification }) => {
     show: false,
     id: null,
   });
-
+  const dispatch = useDispatch();
   const { redirect, setRedirect } = useRedirect();
 
   const fetchSales = async () => {
@@ -45,7 +46,17 @@ const SalesList = ({ notification }) => {
     try {
       const res = await fetch(`${process.env.API_URL}/fetch-pdf/${_id}`);
       if (res.statusText === 'Not Found') {
-        notification('tc', 'Factura no disponible', 3);
+        await useApiCall({
+          loadingOn: true,
+          dispatch,
+          url: 'sales/createpdf',
+          method: 'POST',
+          body: JSON.stringify(sales.find((item) => item._id === _id)),
+        });
+        const created = await fetch(`${process.env.API_URL}/fetch-pdf/${_id}`);
+        const raw = await created.blob();
+        const fileURL = URL.createObjectURL(raw);
+        window.open(fileURL, '_blank');
       } else {
         const raw = await res.blob();
         const fileURL = URL.createObjectURL(raw);
